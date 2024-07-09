@@ -3,7 +3,7 @@ let CONST = {
     highscore: 0,
     gridWidth: 8,
     gridHeight: 8,
-    tileWidth: 64,
+    tileWidth: 72,
     tileHeight: 72,
     candyTypes: [
         'cookie1',
