@@ -55,15 +55,15 @@ class GameScene extends Phaser.Scene {
         this.tileGrid.initializeGrid();
 
         
-        const tileSwappedCallback = () => {
-            this.checkMatches();
-        }
-        this.tileGrid.on('tilesSwapped', tileSwappedCallback);
+        this.tileGrid.on('tilesSwapped', this.tweenSwapTiles, this);
 
+        
+        this.tileSwapper.setCanMove(false);
         // Start the simulation
         const onComplete = () => {
             console.log("Simulation complete");
             this.simulationController.off('complete', onComplete);
+            this.tileSwapper.setCanMove(true);
             this.checkMatches();
         };
 
@@ -73,7 +73,7 @@ class GameScene extends Phaser.Scene {
 
     
 
-    private checkMatches(): void {
+    private checkMatches(): boolean {
         //Call the getMatches function to check for spots where there is
         //a run of three or more tiles in a row
         let matches = this.tileMatcher.getMatches(this.tileGrid);
@@ -87,21 +87,22 @@ class GameScene extends Phaser.Scene {
             //Fill the board with new tiles wherever there is an empty spot
             this.tileGrid.fillEmptyWithTile();
             this.tileSwapper.resetSelectedTile();
+            this.tileSwapper.setCanMove(false);
 
             this.simulationController.startSimulation(true);
             const onComplete = () => {
                 this.simulationController.off('complete', onComplete);
+                this.tileSwapper.setCanMove(true);
                 this.checkMatches();
             };
     
             this.simulationController.on('complete', onComplete);
             this.simulationController.startSimulation(true);
-        } else {
-            // No match so just swap the tiles back to their original position and reset
-            this.tileSwapper.unswapTiles();
-            this.tileSwapper.resetSelectedTile();
-            this.tileSwapper.setCanMove(true);
+
+            return true;
         }
+
+        return false;
     }
 
 
@@ -119,6 +120,58 @@ class GameScene extends Phaser.Scene {
         
         this.simulationController.addSimulation(tweenSimulation);
 
+    }
+
+    private tweenSwapTiles(firstSelectedTile: Tile, secondSelectedTile: Tile): void {
+        let tweenSimulation1 = new TweenSimulation(this.add.tween({
+            targets: firstSelectedTile,
+            x: secondSelectedTile.x,
+            y: secondSelectedTile.y,
+            ease: 'Linear',
+            duration: 400,
+            repeat: 0,
+            yoyo: false
+        }));
+
+        let tweenSimulation2 = new TweenSimulation(this.add.tween({
+            targets: secondSelectedTile,
+            x: firstSelectedTile.x,
+            y: firstSelectedTile.y,
+            ease: 'Linear',
+            duration: 400,
+            repeat: 0,
+            yoyo: false,
+        }));
+
+        this.simulationController.addSimulation(tweenSimulation1);
+        this.simulationController.addSimulation(tweenSimulation2);
+        
+        const onComplete = () => {
+            console.log("Swap complete");
+            this.simulationController.off('complete', onComplete);
+            let match = this.checkMatches();
+
+            if (!match) {
+                console.log("No match found");
+                // No match so just swap the tiles back to their original position and reset
+                if (this.tileSwapper.checkIsSwapping()){
+                    console.log("Unswapping tiles");
+                    this.tileSwapper.unswapTiles();
+                }
+                else{
+                    console.log("Resetting selected tiles");
+                    this.tileSwapper.resetSelectedTile();
+                    this.tileSwapper.setCanMove(true);
+                }
+            }
+            else{
+                console.log("Match found");
+                this.tileSwapper.resetSelectedTile();
+            }
+        };
+
+        this.simulationController.on('complete', onComplete);
+        this.simulationController.startSimulation(true);
     }
 }
 

@@ -174,30 +174,8 @@ class TileGrid extends GameObjects.Container {
         this.tileGrid[firstTilePosition.y / this.tileHeight][firstTilePosition.x / this.tileWidth] = secondSelectedTile;
         this.tileGrid[secondTilePosition.y / this.tileHeight][secondTilePosition.x / this.tileWidth] = firstSelectedTile;
 
-        // Move them on the screen with tweens
-        this.scene.add.tween({
-            targets: firstSelectedTile,
-            x: secondSelectedTile.x,
-            y: secondSelectedTile.y,
-            ease: 'Linear',
-            duration: 400,
-            repeat: 0,
-            yoyo: false
-        });
-
-        this.scene.add.tween({
-            targets: secondSelectedTile,
-            x: firstSelectedTile.x,
-            y: firstSelectedTile.y,
-            ease: 'Linear',
-            duration: 400,
-            repeat: 0,
-            yoyo: false,
-            onComplete: () => {
-                this.emit('tilesSwapped', firstSelectedTile, secondSelectedTile);
-            }
-        });
-
+        this.emit('tilesSwapped', firstSelectedTile, secondSelectedTile);
+            
     }
 
     public getDistance(firstTile: Tile, secondTile: Tile): number {

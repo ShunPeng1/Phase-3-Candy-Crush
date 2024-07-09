@@ -5,6 +5,7 @@ class TileSwapper {
     // Selected Tiles
     
     private canMove: boolean;
+    private isSwapping : boolean;
 
     private tileGrid: TileGrid;
 
@@ -15,17 +16,21 @@ class TileSwapper {
         this.firstSelectedTile = null;
         this.secondSelectedTile = null;
         this.canMove = true;
+        this.isSwapping = false;
         this.tileGrid = tileGrid;
     }
 
     public swapTiles(): void {
         if (this.firstSelectedTile && this.secondSelectedTile) {
+            this.isSwapping = true;
+
             this.tileGrid.swapTiles(this.firstSelectedTile, this.secondSelectedTile);
 
             // Swap the selected tiles
             const tempSelectedTile = this.firstSelectedTile;
             this.firstSelectedTile = this.secondSelectedTile;
             this.secondSelectedTile = tempSelectedTile;
+
         }
     }
 
@@ -37,6 +42,7 @@ class TileSwapper {
             const tempSelectedTile = this.firstSelectedTile;
             this.firstSelectedTile = this.secondSelectedTile;
             this.secondSelectedTile = tempSelectedTile;
+            this.isSwapping = false;
         }
     }
 
@@ -45,6 +51,7 @@ class TileSwapper {
             return;
         }
 
+        console.log("Tile selected", gameobject.texture.key, this.tileGrid.getTilePos(gameobject))
         if (!this.firstSelectedTile) {
             this.firstSelectedTile = gameobject;
             //console.log("First tile selected", this.firstSelectedTile?.texture.key, this.tileGrid.getTilePos(this.firstSelectedTile!))
@@ -87,10 +94,15 @@ class TileSwapper {
         // Reset active tiles
         this.firstSelectedTile = null;
         this.secondSelectedTile = null;
+        this.isSwapping = false;
     }
 
     public setCanMove(canMove: boolean): void {
         this.canMove = canMove;
+    }
+
+    public checkIsSwapping(): boolean {
+        return this.isSwapping;
     }
 
 }
