@@ -1,28 +1,34 @@
+import { Scene } from "phaser";
 import Tile from "../tiles/Tile";
 import TileGrid from "./TileGrid";
 
 class TileSwapper {    
     // Selected Tiles
+    private scene: Scene;
     
     private canMove: boolean;
-    private isSwapping : boolean;
+    private isSwapped : boolean;
 
     private tileGrid: TileGrid;
 
     private firstSelectedTile: Tile | null;
     private secondSelectedTile: Tile | null;
 
-    constructor(tileGrid: TileGrid) {
+    constructor(scene : Scene, tileGrid: TileGrid) {
+        this.scene = scene;
         this.firstSelectedTile = null;
         this.secondSelectedTile = null;
         this.canMove = true;
-        this.isSwapping = false;
+        this.isSwapped = false;
         this.tileGrid = tileGrid;
+
+        this.scene.input.on('gameobjectdown', this.selectTile, this);
+    
     }
 
     public swapTiles(): void {
         if (this.firstSelectedTile && this.secondSelectedTile) {
-            this.isSwapping = true;
+            this.isSwapped = true;
 
             this.tileGrid.swapTiles(this.firstSelectedTile, this.secondSelectedTile);
 
@@ -31,18 +37,20 @@ class TileSwapper {
             this.firstSelectedTile = this.secondSelectedTile;
             this.secondSelectedTile = tempSelectedTile;
 
+            
         }
     }
 
     public unswapTiles(): void {
         if (this.firstSelectedTile && this.secondSelectedTile) {
+            this.isSwapped = false;
             this.tileGrid.swapTiles(this.firstSelectedTile, this.secondSelectedTile);
 
             // Swap the selected tiles
             const tempSelectedTile = this.firstSelectedTile;
             this.firstSelectedTile = this.secondSelectedTile;
             this.secondSelectedTile = tempSelectedTile;
-            this.isSwapping = false;
+            
         }
     }
 
@@ -94,15 +102,15 @@ class TileSwapper {
         // Reset active tiles
         this.firstSelectedTile = null;
         this.secondSelectedTile = null;
-        this.isSwapping = false;
+        this.isSwapped = false;
     }
 
     public setCanMove(canMove: boolean): void {
         this.canMove = canMove;
     }
 
-    public checkIsSwapping(): boolean {
-        return this.isSwapping;
+    public checkIsSwapped(): boolean {
+        return this.isSwapped;
     }
 
 }
