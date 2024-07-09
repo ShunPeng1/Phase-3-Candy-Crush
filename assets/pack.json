@@ -60,6 +60,196 @@
         "type": "image",
         "key": "starcookie2",
         "url": "./assets/images/starcookie2.png"
+      },
+      {
+        "type": "image",
+        "key": "background-01",
+        "url": "./assets/candy-crush/images/background-01.png"
+      },
+      {
+        "type": "image",
+        "key": "background-02",
+        "url": "./assets/candy-crush/images/background-02.png"
+      },
+      {
+        "type": "image",
+        "key": "background-03",
+        "url": "./assets/candy-crush/images/background-03.png"
+      },
+      {
+        "type": "image",
+        "key": "background-04",
+        "url": "./assets/candy-crush/images/background-04.png"
+      },
+      {
+        "type": "image",
+        "key": "background-05",
+        "url": "./assets/candy-crush/images/background-05.png"
+      },
+      {
+        "type": "image",
+        "key": "bomb-items-01",
+        "url": "./assets/candy-crush/images/bomb-items-01.png"
+      },
+      {
+        "type": "image",
+        "key": "bomb-items-02",
+        "url": "./assets/candy-crush/images/bomb-items-02.png"
+      },
+      {
+        "type": "image",
+        "key": "bomb-items-03",
+        "url": "./assets/candy-crush/images/bomb-items-03.png"
+      },
+      {
+        "type": "image",
+        "key": "bomb-items-04",
+        "url": "./assets/candy-crush/images/bomb-items-04.png"
+      },
+      {
+        "type": "image",
+        "key": "bomb-items-05",
+        "url": "./assets/candy-crush/images/bomb-items-05.png"
+      },
+      {
+        "type": "image",
+        "key": "bomb-items-06",
+        "url": "./assets/candy-crush/images/bomb-items-06.png"
+      },
+      {
+        "type": "image",
+        "key": "game-item-h",
+        "url": "./assets/candy-crush/images/game-item-h.png"
+      },
+      {
+        "type": "image",
+        "key": "item-01-stripes-horiz",
+        "url": "./assets/candy-crush/images/item-01-stripes-horiz.png"      
+      },
+      {
+        "type": "image",
+        "key": "item-01-stripes-vert",
+        "url": "./assets/candy-crush/images/item-01-stripes-vert.png"       
+      },
+      {
+        "type": "image",
+        "key": "item-01",
+        "url": "./assets/candy-crush/images/item-01.png"
+      },
+      {
+        "type": "image",
+        "key": "item-02-stripes-horiz",
+        "url": "./assets/candy-crush/images/item-02-stripes-horiz.png"      
+      },
+      {
+        "type": "image",
+        "key": "item-02-stripes-vert",
+        "url": "./assets/candy-crush/images/item-02-stripes-vert.png"       
+      },
+      {
+        "type": "image",
+        "key": "item-02",
+        "url": "./assets/candy-crush/images/item-02.png"
+      },
+      {
+        "type": "image",
+        "key": "item-03-stripes-horiz",
+        "url": "./assets/candy-crush/images/item-03-stripes-horiz.png"      
+      },
+      {
+        "type": "image",
+        "key": "item-03-stripes-vert",
+        "url": "./assets/candy-crush/images/item-03-stripes-vert.png"       
+      },
+      {
+        "type": "image",
+        "key": "item-03",
+        "url": "./assets/candy-crush/images/item-03.png"
+      },
+      {
+        "type": "image",
+        "key": "item-04-stripes-horiz",
+        "url": "./assets/candy-crush/images/item-04-stripes-horiz.png"      
+      },
+      {
+        "type": "image",
+        "key": "item-04-stripes-vert",
+        "url": "./assets/candy-crush/images/item-04-stripes-vert.png"       
+      },
+      {
+        "type": "image",
+        "key": "item-04",
+        "url": "./assets/candy-crush/images/item-04.png"
+      },
+      {
+        "type": "image",
+        "key": "item-05-stripes-horiz",
+        "url": "./assets/candy-crush/images/item-05-stripes-horiz.png"      
+      },
+      {
+        "type": "image",
+        "key": "item-05-stripes-vert",
+        "url": "./assets/candy-crush/images/item-05-stripes-vert.png"       
+      },
+      {
+        "type": "image",
+        "key": "item-05",
+        "url": "./assets/candy-crush/images/item-05.png"
+      },
+      {
+        "type": "image",
+        "key": "item-06-stripes-horiz",
+        "url": "./assets/candy-crush/images/item-06-stripes-horiz.png"      
+      },
+      {
+        "type": "image",
+        "key": "item-06-stripes-vert",
+        "url": "./assets/candy-crush/images/item-06-stripes-vert.png"       
+      },
+      {
+        "type": "image",
+        "key": "item-06",
+        "url": "./assets/candy-crush/images/item-06.png"
+      },
+      {
+        "type": "image",
+        "key": "item-mar-01",
+        "url": "./assets/candy-crush/images/item-mar-01.png"
+      },
+      {
+        "type": "image",
+        "key": "item-mar-02",
+        "url": "./assets/candy-crush/images/item-mar-02.png"
+      },
+      {
+        "type": "image",
+        "key": "item-mar-03",
+        "url": "./assets/candy-crush/images/item-mar-03.png"
+      },
+      {
+        "type": "image",
+        "key": "item-mar-04",
+        "url": "./assets/candy-crush/images/item-mar-04.png"
+      },
+      {
+        "type": "image",
+        "key": "item-mar-05",
+        "url": "./assets/candy-crush/images/item-mar-05.png"
+      },
+      {
+        "type": "image",
+        "key": "item-mar-06",
+        "url": "./assets/candy-crush/images/item-mar-06.png"
+      },
+      {
+        "type": "image",
+        "key": "item-spot-01",
+        "url": "./assets/candy-crush/images/item-spot-01.png"
+      },
+      {
+        "type": "image",
+        "key": "item-spot-02",
+        "url": "./assets/candy-crush/images/item-spot-02.png"
       }
     ]
   }
