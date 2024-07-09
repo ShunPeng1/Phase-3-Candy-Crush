@@ -14,10 +14,10 @@ let CONST = {
         'eclair',
         'macaroon',
         'pie',
-        'poptart1',
-        'poptart2',
-        'starcookie1',
-        'starcookie2'
+        //'poptart1',
+        //'poptart2',
+        //'starcookie1',
+        //'starcookie2'
     ]
 };
 

@@ -80,6 +80,7 @@ class GameScene extends Phaser.Scene {
 
         if (!this.firstSelectedTile) {
             this.firstSelectedTile = gameobject;
+            //console.log("First tile selected", this.firstSelectedTile, this.getTilePos(this.tileGrid, this.firstSelectedTile!))
             return;
         } 
 
@@ -193,25 +194,36 @@ class GameScene extends Phaser.Scene {
     }
 
     private resetTile(): void {
-        // Loop through each column starting from the left
-        for (let y = this.tileGrid.length - 1; y > 0; y--) {
-            // Loop through each tile in column from bottom to top
-            for (let x = this.tileGrid[y].length - 1; x > 0; x--) {
+        
+        for (let y = this.tileGrid.length - 1; y >= 0; y--) {// Loop through each row from bottom to top
+            for (let x = this.tileGrid[y].length - 1; x >= 0; x--) { // Loop through each tile in the row from right to left
+                if (this.tileGrid[y][x] !== null) {
+                    continue;
+                }
+                
                 // If this space is blank, but the one above it is not, move the one above down
-                if (
-                    this.tileGrid[y][x] === null &&
-                    this.tileGrid[y - 1][x] !== null
-                ) {
+                let aboveTile = null;
+                let aboveIndex = y - 1;
+                for (let i = y - 1; i >= 0; i--) { // Start at the top of the column and move down
+                    if (aboveTile === null) {
+                        aboveTile = this.tileGrid[i][x];
+                        aboveIndex = i;
+                    }
+                    else{
+                        break;
+                    }
+                }
+                
+                if (aboveTile !== null) {
                     // Move the tile above down one
-                    let tempTile = this.tileGrid[y - 1][x];
-                    this.tileGrid[y][x] = tempTile;
-                    this.tileGrid[y - 1][x] = null;
+                    this.tileGrid[y][x] = aboveTile;
+                    this.tileGrid[aboveIndex][x] = null;
 
                     this.add.tween({
-                        targets: tempTile,
+                        targets: aboveTile,
                         y: CONST.tileHeight * y,
                         ease: 'Linear',
-                        duration: 200,
+                        duration: 200 * (y - aboveIndex),
                         repeat: 0,
                         yoyo: false
                     });
@@ -219,7 +231,7 @@ class GameScene extends Phaser.Scene {
                     //The positions have changed so start this process again from the bottom
                     //NOTE: This is not set to me.tileGrid[i].length - 1 because it will immediately be decremented as
                     //we are at the end of the loop.
-                    x = this.tileGrid[y].length;
+                    //x = this.tileGrid[y].length; 
                 }
             }
         }
