@@ -31,7 +31,7 @@ class GameScene extends Phaser.Scene {
         for (let y = 0; y < CONST.gridHeight; y++) {
             this.tileGrid[y] = [];
             for (let x = 0; x < CONST.gridWidth; x++) {
-                this.tileGrid[y][x] = this.addTile(x, y);
+                this.tileGrid[y][x] = this.addRandomTile(x, y);
             }
         }
 
@@ -51,7 +51,7 @@ class GameScene extends Phaser.Scene {
      * @param x
      * @param y
      */
-    private addTile(x: number, y: number): Tile {
+    private addRandomTile(x: number, y: number): Tile {
         // Get a random tile
         let randomTileType: string =
         CONST.candyTypes[Phaser.Math.RND.between(0, CONST.candyTypes.length - 1)];
@@ -74,29 +74,46 @@ class GameScene extends Phaser.Scene {
      * @param event
      */
     private tileDown(pointer: any, gameobject: any, event: any): void {
-        if (this.canMove) {
+        if (!this.canMove) {
+            return;
+        }
+
         if (!this.firstSelectedTile) {
             this.firstSelectedTile = gameobject;
-        } else {
-            // So if we are here, we must have selected a second tile
-            this.secondSelectedTile = gameobject;
+            return;
+        } 
 
-            let dx = 0;
-            let dy = 0;
-            if (this.firstSelectedTile && this.secondSelectedTile) {
-            dx = Math.abs(this.firstSelectedTile.x - this.secondSelectedTile.x) /
-                CONST.tileWidth;
-            dy = Math.abs(this.firstSelectedTile.y - this.secondSelectedTile.y) /
-                CONST.tileHeight;
-            }
+        // So if we are here, we must have selected a second tile
+        
+        if (this.firstSelectedTile === gameobject) {
+            // If the same tile is clicked twice, deselect it
+            this.resetSelectedTile();
+            return;
+        }
 
-            // Check if the selected tiles are both in range to make a move
-            if ((dx === 1 && dy === 0) || (dx === 0 && dy === 1)) {
+        this.secondSelectedTile = gameobject;
+
+        let dx = 0;
+        let dy = 0;
+        if (this.firstSelectedTile && this.secondSelectedTile) {
+        dx = Math.abs(this.firstSelectedTile.x - this.secondSelectedTile.x) /
+            CONST.tileWidth;
+        dy = Math.abs(this.firstSelectedTile.y - this.secondSelectedTile.y) /
+            CONST.tileHeight;
+        }
+
+        // Check if the selected tiles are both in range to make a move
+        if ((dx === 1 && dy === 0) || (dx === 0 && dy === 1)) {
             this.canMove = false;
             this.swapTiles();
-            }
         }
+        else{
+            // If the selected tiles are not in range, select the second tile
+            this.firstSelectedTile = gameobject;
+            this.secondSelectedTile = null;
         }
+    
+    
     }
 
     /**
@@ -144,6 +161,7 @@ class GameScene extends Phaser.Scene {
             }
         });
 
+        // Reset the selected tiles
         this.firstSelectedTile =
             this.tileGrid[firstTilePosition.y / CONST.tileHeight][firstTilePosition.x / CONST.tileWidth];
         this.secondSelectedTile =
@@ -164,12 +182,12 @@ class GameScene extends Phaser.Scene {
             this.resetTile();
             //Fill the board with new tiles wherever there is an empty spot
             this.fillTile();
-            this.tileUp();
+            this.resetSelectedTile();
             this.checkMatches();
         } else {
             // No match so just swap the tiles back to their original position and reset
             this.swapTiles();
-            this.tileUp();
+            this.resetSelectedTile();
             this.canMove = true;
         }
     }
@@ -181,10 +199,10 @@ class GameScene extends Phaser.Scene {
             for (let x = this.tileGrid[y].length - 1; x > 0; x--) {
                 // If this space is blank, but the one above it is not, move the one above down
                 if (
-                    this.tileGrid[y][x] === undefined &&
-                    this.tileGrid[y - 1][x] !== undefined
+                    this.tileGrid[y][x] === null &&
+                    this.tileGrid[y - 1][x] !== null
                 ) {
-                // Move the tile above down one
+                    // Move the tile above down one
                     let tempTile = this.tileGrid[y - 1][x];
                     this.tileGrid[y][x] = tempTile;
                     this.tileGrid[y - 1][x] = null;
@@ -198,10 +216,10 @@ class GameScene extends Phaser.Scene {
                         yoyo: false
                     });
 
-                //The positions have changed so start this process again from the bottom
-                //NOTE: This is not set to me.tileGrid[i].length - 1 because it will immediately be decremented as
-                //we are at the end of the loop.
-                x = this.tileGrid[y].length;
+                    //The positions have changed so start this process again from the bottom
+                    //NOTE: This is not set to me.tileGrid[i].length - 1 because it will immediately be decremented as
+                    //we are at the end of the loop.
+                    x = this.tileGrid[y].length;
                 }
             }
         }
@@ -211,9 +229,9 @@ class GameScene extends Phaser.Scene {
         //Check for blank spaces in the grid and add new tiles at that position
         for (var y = 0; y < this.tileGrid.length; y++) {
             for (var x = 0; x < this.tileGrid[y].length; x++) {
-                if (this.tileGrid[y][x] === undefined) {
+                if (this.tileGrid[y][x] === null) {
                 //Found a blank spot so lets add animate a tile there
-                let tile = this.addTile(x, y);
+                let tile = this.addRandomTile(x, y);
 
                 //And also update our "theoretical" grid
                 this.tileGrid[y][x] = tile;
@@ -222,13 +240,13 @@ class GameScene extends Phaser.Scene {
         }
     }
 
-    private tileUp(): void {
+    private resetSelectedTile(): void {
         // Reset active tiles
         this.firstSelectedTile = null;
         this.secondSelectedTile = null;
     }
 
-    private removeTileGroup(matches: any): void {
+    private removeTileGroup(matches: Tile[][]): void {
         // Loop through all the matches and remove the associated tiles
         for (var i = 0; i < matches.length; i++) {
             var tempArr = matches[i];
@@ -266,45 +284,47 @@ class GameScene extends Phaser.Scene {
     }
 
     private getMatches(tileGrid: (Tile|null)[][]): Tile[][] {
-        let matches: Tile[][] = [];
-        let groups: Tile[] = [];
+        let matches: Tile[][] = []; // This array will store all the matches
+        let groups: Tile[] = []; // This array will store a single match
 
         // Check for horizontal matches
         for (let y = 0; y < tileGrid.length; y++) {
             let tempArray = tileGrid[y];
             groups = [];
-            for (let x = 0; x < tempArray.length; x++) {
-                if (x < tempArray.length - 2) {
-                    let tile = tileGrid[y][x];
-                    let rightTile = tileGrid[y][x + 1];
-                    let rightRightTile = tileGrid[y][x + 2];
+            for (let x = 0; x < tempArray.length - 2; x++) {
+                let tile = tileGrid[y][x];
+                let rightTile = tileGrid[y][x + 1];
+                let rightRightTile = tileGrid[y][x + 2];
 
-                    if (tile && rightTile && rightRightTile) {
-                        if (
-                            tile.texture.key === rightTile.texture.key &&
-                            rightTile.texture.key === rightRightTile.texture.key
-                        ) {
-                            if (groups.length > 0) {
-                                if (groups.indexOf(tile) == -1) {
-                                matches.push(groups);
-                                groups = [];
-                                }
-                            }
+                if (!tile || !rightTile || !rightRightTile) {
+                    continue;
+                }
 
-                            if (groups.indexOf(tile) == -1) {
-                                groups.push(tile);
-                            }
+                if (tile.texture.key !== rightTile.texture.key ||
+                    rightTile.texture.key !== rightRightTile.texture.key) {
+                    continue;
+                }
 
-                            if (groups.indexOf(rightTile) == -1) {
-                                groups.push(rightTile);
-                            }
-
-                            if (groups.indexOf(rightRightTile) == -1) {
-                                groups.push(rightRightTile);
-                            }
-                        }
+                if (groups.length > 0) { //If there is a match in the group already
+                    if (groups.indexOf(tile) == -1) { //If the current tile is not in the group
+                        matches.push(groups);
+                        groups = []; //Reset the group
                     }
                 }
+
+                if (groups.indexOf(tile) == -1) {
+                    groups.push(tile);
+                }
+
+                if (groups.indexOf(rightTile) == -1) {
+                    groups.push(rightTile);
+                }
+
+                if (groups.indexOf(rightRightTile) == -1) {
+                    groups.push(rightRightTile);
+                }
+                
+            
             }
 
             if (groups.length > 0) {
@@ -312,39 +332,38 @@ class GameScene extends Phaser.Scene {
             }
         }
 
-        //Check for vertical matches
-        for (let j = 0; j < tileGrid.length; j++) {
-            var tempArr = tileGrid[j];
-            groups = [];
-            for (let i = 0; i < tempArr.length; i++) {
-                if (i < tempArr.length - 2){
-                    let tile = tileGrid[i][j];
-                    let tileBelow = tileGrid[i + 1][j];
-                    let tileBelowBelow = tileGrid[i + 2][j];
+        // Check for vertical matches
+        for (let x = 0; x < tileGrid[0].length; x++) { // Iterate over each column
+            let groups = [];
+            for (let y = 0; y < tileGrid.length - 2; y++) { // Iterate over rows within the column, leaving room for comparison
+                let tile = tileGrid[y][x];
+                let belowTile = tileGrid[y + 1][x];
+                let belowBelowTile = tileGrid[y + 2][x];
 
-                    if (tile && tileBelow && tileBelowBelow) {
-                        if (
-                        tile.texture.key === tileBelow.texture.key &&
-                        tileBelow.texture.key === tileBelowBelow.texture.key
-                        ) {
-                        if (groups.length > 0) {
-                            if (groups.indexOf(tile) == -1) {
-                            matches.push(groups);
-                            groups = [];
-                            }
-                        }
+                if (!tile || !belowTile || !belowBelowTile) {
+                    continue; // Skip if any of the tiles in the sequence are null
+                }
 
-                        if (groups.indexOf(tile) == -1) {
-                            groups.push(tile);
-                        }
-                        if (groups.indexOf(tileBelow) == -1) {
-                            groups.push(tileBelow);
-                        }
-                        if (groups.indexOf(tileBelowBelow) == -1) {
-                            groups.push(tileBelowBelow);
-                        }
-                        }
-                    }
+                if (tile.texture.key !== belowTile.texture.key ||
+                    belowTile.texture.key !== belowBelowTile.texture.key) {
+                    continue; // Skip if the tiles do not match
+                }
+
+                // If there is a match in the group already and the current tile is not in the group
+                if (groups.length > 0 && groups.indexOf(tile) == -1) {
+                    matches.push(groups); // Push the current group to matches
+                    groups = []; // Reset the group
+                }
+
+                // Add tiles to the group if they are not already included
+                if (groups.indexOf(tile) == -1) {
+                    groups.push(tile);
+                }
+                if (groups.indexOf(belowTile) == -1) {
+                    groups.push(belowTile);
+                }
+                if (groups.indexOf(belowBelowTile) == -1) {
+                    groups.push(belowBelowTile);
                 }
             }
             if (groups.length > 0) {
