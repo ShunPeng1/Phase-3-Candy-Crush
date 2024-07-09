@@ -200,6 +200,20 @@ class TileGrid extends GameObjects.Container {
 
     }
 
+    public getDistance(firstTile: Tile, secondTile: Tile): number {
+        return Math.abs(firstTile.x - secondTile.x) + Math.abs(firstTile.y - secondTile.y);
+    }
+
+    public getMahattanDistance(firstTile: Tile, secondTile: Tile): Phaser.Math.Vector2 {
+        return new Phaser.Math.Vector2(Math.abs(firstTile.x - secondTile.x), Math.abs(firstTile.y - secondTile.y));
+    }
+
+    public getMahattanIndexDistance(firstTile: Tile, secondTile: Tile): Phaser.Math.Vector2 {
+        return new Phaser.Math.Vector2(Math.abs(firstTile.x - secondTile.x) / this.tileWidth,
+            Math.abs(firstTile.y - secondTile.y) / this.tileHeight);
+    }
+
+
     public getRow(y: number): (Tile|null)[] {
         return this.tileGrid[y];
     }
