@@ -36,10 +36,19 @@ class SimulationController extends Phaser.GameObjects.GameObject {
             simulation.start();
         });
     
+        
+
         if(autoReset){
-            this.on('complete', () => {
-                this.clear();
-            });
+            const onComplete = () => {
+                if(autoReset){
+                    this.clear();
+                }
+                // Remove the 'complete' event listener to prevent it from being called again
+                this.off('complete', onComplete);
+            };
+            
+            this.on('complete', onComplete);
+
         }
     }
 

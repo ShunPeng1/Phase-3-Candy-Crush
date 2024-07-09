@@ -37,9 +37,15 @@ class GameScene extends Phaser.Scene {
         for (let y = 0; y < CONST.gridHeight; y++) {
             this.tileGrid[y] = [];
             for (let x = 0; x < CONST.gridWidth; x++) {
-                this.tileGrid[y][x] = this.createRandomTile(x, y);
+                let tile = this.createRandomTile(x, y);
+                tile.setPosition(x * CONST.tileWidth, (y - CONST.gridHeight) * CONST.tileHeight);
+                this.tweenDropdownTile(tile, (y - CONST.gridHeight), y);
+
+                this.tileGrid[y][x] = tile;
+                
             }
         }
+
 
         // Selected Tiles
         this.firstSelectedTile = null;
@@ -49,7 +55,14 @@ class GameScene extends Phaser.Scene {
         this.input.on('gameobjectdown', this.tileDown, this);
 
         // Check if matches on the start
-        this.checkMatches();
+        this.simulationController.startSimulation(true);
+
+        const onComplete = () => {
+            this.checkMatches();
+            this.simulationController.off('complete', onComplete);
+        };
+
+        this.simulationController.on('complete', onComplete);
     }
 
     /**
@@ -191,11 +204,13 @@ class GameScene extends Phaser.Scene {
             this.fillTile();
             this.resetSelectedTile();
 
-            this.simulationController.startSimulation();
-            this.simulationController.on('complete', () => {
-                console.log("Simulation complete");
+            this.simulationController.startSimulation(true);
+            const onComplete = () => {
                 this.checkMatches();
-            });
+                this.simulationController.off('complete', onComplete);
+            };
+    
+            this.simulationController.on('complete', onComplete);
         } else {
             // No match so just swap the tiles back to their original position and reset
             this.swapTiles();
