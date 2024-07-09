@@ -1,4 +1,4 @@
-import CONST from "../const/const";
+import CONST, { CandyColorKey } from "../types/const";
 import Tile from "../objects/tile";
 import SimulationController from "../simulation/SimulationController";
 import TweenSimulation from "../simulation/TweenSimulation";
@@ -72,16 +72,21 @@ class GameScene extends Phaser.Scene {
      */
     private createRandomTile(x: number, y: number): Tile {
         // Get a random tile
-        let randomTileType: string =
-        CONST.candyTypes[Phaser.Math.RND.between(0, CONST.candyTypes.length - 1)];
+        // Define a type for the keys of normalCandyTextureKey
+        
+        // Ensure randomTileColor is treated as a key of normalCandyTextureKey
+        let randomTileColor: CandyColorKey =
+            CONST.candyColors[Phaser.Math.RND.between(0, CONST.candyColors.length - 1)] as CandyColorKey;
+
+        let randomTileColorTexture: string = CONST.normalCandyTextureKey[randomTileColor as keyof typeof CONST.normalCandyTextureKey];
 
         // Return the created tile
         return new Tile({
             scene: this,
             x: x * CONST.tileWidth,
             y: y * CONST.tileHeight,
-            texture: randomTileType
-        });
+            texture: randomTileColorTexture
+        }).setDisplaySize(CONST.tileWidth, CONST.tileHeight);
     }
 
     /**
