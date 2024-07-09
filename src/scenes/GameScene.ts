@@ -1,5 +1,8 @@
-import CONST, { CandyColorKey } from "../const/const";
-import Tile from "../objects/Tile";
+import CONST, { CandyColorKey, candyColors } from "../const/const";
+import TileGrid from "../objects/grids/TileGrid";
+import Tile from "../objects/tiles/Tile";
+import TileFactory from "../objects/tiles/TileFactory";
+
 import SimulationController from "../simulation/SimulationController";
 import TweenSimulation from "../simulation/TweenSimulation";
 
@@ -8,8 +11,7 @@ class GameScene extends Phaser.Scene {
     // Variables
     private canMove: boolean;
 
-    // Grid with tiles
-    private tileGrid: (Tile|null)[][];
+    private tileGrid : TileGrid;
 
     // Selected Tiles
     private firstSelectedTile: Tile | null;
@@ -33,18 +35,8 @@ class GameScene extends Phaser.Scene {
         this.cameras.main.setBackgroundColor(0x78aade);
 
         // Init grid with tiles
-        this.tileGrid = [];
-        for (let y = 0; y < CONST.gridHeight; y++) {
-            this.tileGrid[y] = [];
-            for (let x = 0; x < CONST.gridWidth; x++) {
-                let tile = this.createRandomTile(x, y);
-                tile.setPosition(x * CONST.tileWidth, (y - CONST.gridHeight) * CONST.tileHeight);
-                this.tweenDropdownTile(tile, (y - CONST.gridHeight), y);
-
-                this.tileGrid[y][x] = tile;
-                
-            }
-        }
+        this.tileGrid = new TileGrid(this, 400, 100, CONST.gridWidth, CONST.gridHeight, CONST.tileWidth, CONST.tileHeight,
+            new TileFactory(this, candyColors)); 
 
 
         // Selected Tiles
@@ -57,12 +49,26 @@ class GameScene extends Phaser.Scene {
         // Check if matches on the start
         this.simulationController.startSimulation(true);
 
+
+        const onTileAdded = (tile: Tile, x: number, y: number, endX: number, endY: number) => {
+            console.log("Tile added", tile.texture.key, "at", x, y, "to", endX, endY);  
+            this.tweenDropdownTile(tile, y, endY);
+        }
+
+        this.tileGrid.on('tileAdded', onTileAdded);
+
+        this.tileGrid.on('tileMoved', onTileAdded);
+
+        this.tileGrid.initializeGrid();
+
         const onComplete = () => {
+            console.log("Simulation complete");
             this.checkMatches();
             this.simulationController.off('complete', onComplete);
         };
 
         this.simulationController.on('complete', onComplete);
+        this.simulationController.startSimulation(true);
     }
 
     /**
@@ -70,24 +76,7 @@ class GameScene extends Phaser.Scene {
      * @param x
      * @param y
      */
-    private createRandomTile(x: number, y: number): Tile {
-        // Get a random tile
-        // Define a type for the keys of normalCandyTextureKey
-        
-        // Ensure randomTileColor is treated as a key of normalCandyTextureKey
-        let randomTileColor: CandyColorKey =
-            CONST.candyColors[Phaser.Math.RND.between(0, CONST.candyColors.length - 1)] as CandyColorKey;
-
-        let randomTileColorTexture: string = CONST.normalCandyTextureKey[randomTileColor as keyof typeof CONST.normalCandyTextureKey];
-
-        // Return the created tile
-        return new Tile({
-            scene: this,
-            x: x * CONST.tileWidth,
-            y: y * CONST.tileHeight,
-            texture: randomTileColorTexture
-        }).setDisplaySize(CONST.tileWidth, CONST.tileHeight);
-    }
+    
 
     /**
      * This function gets called, as soon as a tile has been pressed or clicked.
@@ -104,7 +93,7 @@ class GameScene extends Phaser.Scene {
 
         if (!this.firstSelectedTile) {
             this.firstSelectedTile = gameobject;
-            console.log("First tile selected", this.firstSelectedTile?.texture.key, this.getTilePos(this.tileGrid, this.firstSelectedTile!))
+            //console.log("First tile selected", this.firstSelectedTile?.texture.key, this.tileGrid.getTilePos(this.firstSelectedTile!))
             return;
         } 
 
@@ -147,50 +136,19 @@ class GameScene extends Phaser.Scene {
      */
     private swapTiles(): void {
         if (this.firstSelectedTile && this.secondSelectedTile) {
-        // Get the position of the two tiles
-        let firstTilePosition = {
-            x: this.firstSelectedTile.x,
-            y: this.firstSelectedTile.y
-        };
-
-        let secondTilePosition = {
-            x: this.secondSelectedTile.x,
-            y: this.secondSelectedTile.y
-        };
-
-        // Swap them in our grid with the tiles
-        this.tileGrid[firstTilePosition.y / CONST.tileHeight][firstTilePosition.x / CONST.tileWidth] = this.secondSelectedTile;
-        this.tileGrid[secondTilePosition.y / CONST.tileHeight][secondTilePosition.x / CONST.tileWidth] = this.firstSelectedTile;
-
-        // Move them on the screen with tweens
-        this.add.tween({
-            targets: this.firstSelectedTile,
-            x: this.secondSelectedTile.x,
-            y: this.secondSelectedTile.y,
-            ease: 'Linear',
-            duration: 400,
-            repeat: 0,
-            yoyo: false
-        });
-
-        this.add.tween({
-            targets: this.secondSelectedTile,
-            x: this.firstSelectedTile.x,
-            y: this.firstSelectedTile.y,
-            ease: 'Linear',
-            duration: 400,
-            repeat: 0,
-            yoyo: false,
-            onComplete: () => {
+            
+            this.tileGrid.swapTiles(this.firstSelectedTile, this.secondSelectedTile);
+            
+            const tileSwappedCallback = () => {
                 this.checkMatches();
+                this.simulationController.off('tilesSwapped', tileSwappedCallback);
             }
-        });
+            this.simulationController.on('tilesSwapped', tileSwappedCallback);
 
-        // Reset the selected tiles
-        this.firstSelectedTile =
-            this.tileGrid[firstTilePosition.y / CONST.tileHeight][firstTilePosition.x / CONST.tileWidth];
-        this.secondSelectedTile =
-            this.tileGrid[secondTilePosition.y / CONST.tileHeight][secondTilePosition.x / CONST.tileWidth];
+            // Reset the selected tiles
+            const tempSelectedTile = this.firstSelectedTile;
+            this.firstSelectedTile = this.secondSelectedTile;
+            this.secondSelectedTile = tempSelectedTile;
         }
     }
 
@@ -202,11 +160,11 @@ class GameScene extends Phaser.Scene {
         //If there are matches, remove them
         if (matches.length > 0) {
             //Remove the tiles
-            this.removeTileGroup(matches);
+            this.tileGrid.removeTileGroup(matches);
             // Move the tiles currently on the board into their new positions
-            this.resetTile();
+            this.tileGrid.gravitateTile();
             //Fill the board with new tiles wherever there is an empty spot
-            this.fillTile();
+            this.tileGrid.fillEmptyWithTile();
             this.resetSelectedTile();
 
             this.simulationController.startSimulation(true);
@@ -224,98 +182,14 @@ class GameScene extends Phaser.Scene {
         }
     }
 
-    private resetTile(): void {
-        
-        for (let y = this.tileGrid.length - 1; y >= 0; y--) {// Loop through each row from bottom to top
-            for (let x = this.tileGrid[y].length - 1; x >= 0; x--) { // Loop through each tile in the row from right to left
-                if (this.tileGrid[y][x] !== null) {
-                    continue;
-                }
-                
-                // If this space is blank, but the one above it is not, move the one above down
-                let aboveTile = null;
-                let aboveIndex = y - 1;
-                for (let i = y - 1; i >= 0; i--) { // Start at the top of the column and move down
-                    if (aboveTile === null) {
-                        aboveTile = this.tileGrid[i][x];
-                        aboveIndex = i;
-                    }
-                    else{
-                        break;
-                    }
-                }
-                
-                if (aboveTile !== null) {
-                    // Move the tile above down one
-                    this.tileGrid[y][x] = aboveTile;
-                    this.tileGrid[aboveIndex][x] = null;
-
-                    this.tweenDropdownTile(aboveTile, aboveIndex, y);
-                    
-
-                    //The positions have changed so start this process again from the bottom
-                    //NOTE: This is not set to me.tileGrid[i].length - 1 because it will immediately be decremented as
-                    //we are at the end of the loop.
-                    //x = this.tileGrid[y].length; 
-                }
-            }
-        }
-    }
-
-    private fillTile(): void {
-        //Check for blank spaces in the grid and add new tiles at that position
-        for (var y = 0; y < this.tileGrid.length; y++) {
-            for (var x = 0; x < this.tileGrid[y].length; x++) {
-                if (this.tileGrid[y][x] !== null) {
-                    continue;
-                }
-
-                let belowIndex = this.tileGrid.length;
-                for (let i = y + 1; i < this.tileGrid.length; i++) { // Start at the top of the column and move down
-                    if (this.tileGrid[i][x] !== null) {
-                        belowIndex = i;
-                        break;
-                    }
-                }
-
-                const fromYIndex = belowIndex - y;
-                //Found a blank spot so lets add animate a tile there
-                let tile = this.createRandomTile(x, y);
-                tile.setPosition(x * CONST.tileWidth, -CONST.tileHeight * (belowIndex - y));
-                
-                this.tweenDropdownTile(tile, y - belowIndex, y);
-                //And also update our "theoretical" grid
-                this.tileGrid[y][x] = tile;
-                
-                
-            }
-        }
-    }
-
+    
     private resetSelectedTile(): void {
         // Reset active tiles
         this.firstSelectedTile = null;
         this.secondSelectedTile = null;
     }
 
-    private removeTileGroup(matches: Tile[][]): void {
-        // Loop through all the matches and remove the associated tiles
-        for (var i = 0; i < matches.length; i++) {
-            var tempArr = matches[i];
-
-            for (var j = 0; j < tempArr.length; j++) {
-                let tile = tempArr[j];
-                //Find where this tile lives in the theoretical grid
-                let tilePos = this.getTilePos(this.tileGrid, tile);
-
-                // Remove the tile from the theoretical grid
-                if (tilePos.x !== -1 && tilePos.y !== -1) {
-                    tile.destroy();
-                    this.tileGrid[tilePos.y][tilePos.x] = null;
-                }
-            }
-        }
-    }
+    
 
     private getTilePos(tileGrid: (Tile|null)[][], tile: Tile): any {
         let pos = { x: -1, y: -1 };
@@ -335,18 +209,18 @@ class GameScene extends Phaser.Scene {
         return pos;
     }
 
-    private getMatches(tileGrid: (Tile|null)[][]): Tile[][] {
+    private getMatches(tileGrid: TileGrid): Tile[][] {
         let matches: Tile[][] = []; // This array will store all the matches
         let groups: Tile[] = []; // This array will store a single match
 
         // Check for horizontal matches
-        for (let y = 0; y < tileGrid.length; y++) {
-            let tempArray = tileGrid[y];
+        for (let y = 0; y < tileGrid.getRowCount(); y++) {
+            let tempArray = tileGrid.getRow(y);
             groups = [];
             for (let x = 0; x < tempArray.length - 2; x++) {
-                let tile = tileGrid[y][x];
-                let rightTile = tileGrid[y][x + 1];
-                let rightRightTile = tileGrid[y][x + 2];
+                let tile = tileGrid.getTile(x, y);
+                let rightTile = tileGrid.getTile(x + 1, y);
+                let rightRightTile = tileGrid.getTile(x + 2, y);
 
                 if (!tile || !rightTile || !rightRightTile) {
                     continue;
@@ -385,12 +259,12 @@ class GameScene extends Phaser.Scene {
         }
 
         // Check for vertical matches
-        for (let x = 0; x < tileGrid[0].length; x++) { // Iterate over each column
+        for (let x = 0; x < tileGrid.getColumnCount(); x++) { // Iterate over each column
             let groups = [];
-            for (let y = 0; y < tileGrid.length - 2; y++) { // Iterate over rows within the column, leaving room for comparison
-                let tile = tileGrid[y][x];
-                let belowTile = tileGrid[y + 1][x];
-                let belowBelowTile = tileGrid[y + 2][x];
+            for (let y = 0; y < tileGrid.getRowCount() - 2; y++) { // Iterate over rows within the column, leaving room for comparison
+                let tile = tileGrid.getTile(x, y);
+                let belowTile = tileGrid.getTile(x, y + 1);
+                let belowBelowTile = tileGrid.getTile(x, y + 2);
 
                 if (!tile || !belowTile || !belowBelowTile) {
                     continue; // Skip if any of the tiles in the sequence are null

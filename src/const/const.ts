@@ -5,20 +5,7 @@ let CONST = {
     gridHeight: 8,
     tileWidth: 72,
     tileHeight: 72,
-    candyTypes: [
-        'cookie1',
-        'cookie2',
-        //'croissant',
-        //'cupcake',
-        //'donut',
-        //'eclair',
-        //'macaroon',
-        //'pie',
-        //'poptart1',
-        //'poptart2',
-        //'starcookie1',
-        //'starcookie2'
-    ],
+    
     candyColors: [
         'red',
         'yellow',
@@ -90,6 +77,7 @@ interface ConstType {
     candyTypes: string[];
 }
 
+export const candyColors: CandyColorKey[] = ["red", "yellow", "green", "purple", "blue", "orange"];
 
 export type CandyColorKey = keyof typeof CONST.normalCandyTextureKey;
 

@@ -1,6 +1,6 @@
 
 class Tile extends Phaser.GameObjects.Image {
-    constructor(params: ImageConstructor) {
+    constructor(params: IImageConstructor) {
         super(params.scene, params.x, params.y, params.texture, params.frame);
 
         // set image settings
