@@ -1,5 +1,7 @@
 import CONST from "../const/const";
 import Tile from "../objects/tile";
+import SimulationController from "../simulation/SimulationController";
+import TweenSimulation from "../simulation/TweenSimulation";
 
 
 class GameScene extends Phaser.Scene {
@@ -13,6 +15,8 @@ class GameScene extends Phaser.Scene {
     private firstSelectedTile: Tile | null;
     private secondSelectedTile: Tile | null;
 
+    private simulationController: SimulationController;
+
     constructor() {
         super({
         key: 'GameScene'
@@ -23,6 +27,8 @@ class GameScene extends Phaser.Scene {
         // Init variables
         this.canMove = true;
 
+        this.simulationController = new SimulationController(this);
+
         // set background color
         this.cameras.main.setBackgroundColor(0x78aade);
 
@@ -31,7 +37,7 @@ class GameScene extends Phaser.Scene {
         for (let y = 0; y < CONST.gridHeight; y++) {
             this.tileGrid[y] = [];
             for (let x = 0; x < CONST.gridWidth; x++) {
-                this.tileGrid[y][x] = this.addRandomTile(x, y);
+                this.tileGrid[y][x] = this.createRandomTile(x, y);
             }
         }
 
@@ -51,7 +57,7 @@ class GameScene extends Phaser.Scene {
      * @param x
      * @param y
      */
-    private addRandomTile(x: number, y: number): Tile {
+    private createRandomTile(x: number, y: number): Tile {
         // Get a random tile
         let randomTileType: string =
         CONST.candyTypes[Phaser.Math.RND.between(0, CONST.candyTypes.length - 1)];
@@ -80,7 +86,7 @@ class GameScene extends Phaser.Scene {
 
         if (!this.firstSelectedTile) {
             this.firstSelectedTile = gameobject;
-            //console.log("First tile selected", this.firstSelectedTile, this.getTilePos(this.tileGrid, this.firstSelectedTile!))
+            console.log("First tile selected", this.firstSelectedTile?.texture.key, this.getTilePos(this.tileGrid, this.firstSelectedTile!))
             return;
         } 
 
@@ -158,7 +164,7 @@ class GameScene extends Phaser.Scene {
             repeat: 0,
             yoyo: false,
             onComplete: () => {
-            this.checkMatches();
+                this.checkMatches();
             }
         });
 
@@ -174,7 +180,7 @@ class GameScene extends Phaser.Scene {
         //Call the getMatches function to check for spots where there is
         //a run of three or more tiles in a row
         let matches = this.getMatches(this.tileGrid);
-
+        
         //If there are matches, remove them
         if (matches.length > 0) {
             //Remove the tiles
@@ -184,7 +190,12 @@ class GameScene extends Phaser.Scene {
             //Fill the board with new tiles wherever there is an empty spot
             this.fillTile();
             this.resetSelectedTile();
-            this.checkMatches();
+
+            this.simulationController.startSimulation();
+            this.simulationController.on('complete', () => {
+                console.log("Simulation complete");
+                this.checkMatches();
+            });
         } else {
             // No match so just swap the tiles back to their original position and reset
             this.swapTiles();
@@ -219,14 +230,8 @@ class GameScene extends Phaser.Scene {
                     this.tileGrid[y][x] = aboveTile;
                     this.tileGrid[aboveIndex][x] = null;
 
-                    this.add.tween({
-                        targets: aboveTile,
-                        y: CONST.tileHeight * y,
-                        ease: 'Linear',
-                        duration: 200 * (y - aboveIndex),
-                        repeat: 0,
-                        yoyo: false
-                    });
+                    this.tweenDropdownTile(aboveTile, aboveIndex, y);
+                    
 
                     //The positions have changed so start this process again from the bottom
                     //NOTE: This is not set to me.tileGrid[i].length - 1 because it will immediately be decremented as
@@ -241,13 +246,28 @@ class GameScene extends Phaser.Scene {
         //Check for blank spaces in the grid and add new tiles at that position
         for (var y = 0; y < this.tileGrid.length; y++) {
             for (var x = 0; x < this.tileGrid[y].length; x++) {
-                if (this.tileGrid[y][x] === null) {
-                //Found a blank spot so lets add animate a tile there
-                let tile = this.addRandomTile(x, y);
+                if (this.tileGrid[y][x] !== null) {
+                    continue;
+                }
 
+                let belowIndex = this.tileGrid.length;
+                for (let i = y + 1; i < this.tileGrid.length; i++) { // Start at the top of the column and move down
+                    if (this.tileGrid[i][x] !== null) {
+                        belowIndex = i;
+                        break;
+                    }
+                }
+
+                const fromYIndex = belowIndex - y;
+                //Found a blank spot so lets add animate a tile there
+                let tile = this.createRandomTile(x, y);
+                tile.setPosition(x * CONST.tileWidth, -CONST.tileHeight * (belowIndex - y));
+                
+                this.tweenDropdownTile(tile, y - belowIndex, y);
                 //And also update our "theoretical" grid
                 this.tileGrid[y][x] = tile;
-                }
+                
+                
             }
         }
     }
@@ -384,6 +404,22 @@ class GameScene extends Phaser.Scene {
         }
 
         return matches;
+    }
+
+    private tweenDropdownTile(tile: Tile, fromY: number, endY: number): void {
+        //console.log("Tweening tile", tile.texture.key, "from", fromY, "to", endY);
+
+        let tweenSimulation = new TweenSimulation(this.tweens.add({
+            targets: tile,
+            y: endY * CONST.tileHeight,
+            ease: 'Linear',
+            duration: 200 * (endY - fromY),
+            repeat: 0,
+            yoyo: false
+        }));
+        
+        this.simulationController.addSimulation(tweenSimulation);
+
     }
 }
 
