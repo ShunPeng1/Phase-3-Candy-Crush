@@ -77,7 +77,7 @@ interface ConstType {
     candyTypes: string[];
 }
 
-export const candyColors: CandyColorKey[] = ["red", "yellow", "green", "purple", "blue", "orange"];
+export const candyColors: CandyColorKey[] = ["red", "yellow"]//, "green", "purple", "blue", "orange"];
 
 export type CandyColorKey = keyof typeof CONST.normalCandyTextureKey;
 

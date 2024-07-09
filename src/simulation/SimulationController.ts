@@ -3,6 +3,11 @@ class SimulationController extends Phaser.GameObjects.GameObject {
     private simulations : ISimulation[] = [];
     private hasStarted : boolean = false;
     private hasCompleted : boolean = false;
+    private isAutoReset : boolean = true;
+
+    private nextSimulations : ISimulation[] = [];
+    private hasInvokeNextStart : boolean = false;
+    private isNextReset : boolean = false;
     constructor(scene: Phaser.Scene){
         super(scene, 'SimulationController');
         this.simulations = [];
@@ -16,40 +21,50 @@ class SimulationController extends Phaser.GameObjects.GameObject {
         // this.simulations.forEach(simulation => {
         //     simulation.update();
         // });
+
+        if (this.hasInvokeNextStart && this.hasCompleted) {
+            this.simulations = this.nextSimulations;
+            this.nextSimulations = [];
+            this.startSimulation(this.isNextReset);
+        }
         
 
         if(this.getCompleted() && this.hasStarted && !this.hasCompleted){
-            this.hasCompleted = true;
+
             this.emit('complete');
+            if (this.isAutoReset){
+                this.clear();
+            }
+            this.hasCompleted = true;
         }
     }
 
     public addSimulation(simulation: ISimulation) : void{
-        this.simulations.push(simulation);
+        if (this.hasStarted){
+            this.nextSimulations.push(simulation);
+        }
+        else{
+            this.simulations.push(simulation);
+        }
     }
 
     public startSimulation(autoReset: boolean = true) : void{
+
+        if (this.hasStarted) {
+            this.hasInvokeNextStart = true;
+            this.isNextReset = autoReset;
+            return;
+        }
+
         this.hasStarted = true;
+        this.hasInvokeNextStart = false;
         this.hasCompleted = false;
+        this.isAutoReset = autoReset;
 
         this.simulations.forEach(simulation => {
             simulation.start();
         });
     
-        
-
-        if(autoReset){
-            const onComplete = () => {
-                if(autoReset){
-                    this.clear();
-                }
-                // Remove the 'complete' event listener to prevent it from being called again
-                this.off('complete', onComplete);
-            };
-            
-            this.on('complete', onComplete);
-
-        }
     }
 
     public removeSimulation(simulation: ISimulation): void{

@@ -46,12 +46,8 @@ class GameScene extends Phaser.Scene {
         // Input
         this.input.on('gameobjectdown', this.tileDown, this);
 
-        // Check if matches on the start
-        this.simulationController.startSimulation(true);
-
-
         const onTileAdded = (tile: Tile, x: number, y: number, endX: number, endY: number) => {
-            console.log("Tile added", tile.texture.key, "at", x, y, "to", endX, endY);  
+            //console.log("Tile added", tile.texture.key, "at", x, y, "to", endX, endY);  
             this.tweenDropdownTile(tile, y, endY);
         }
 
@@ -61,10 +57,12 @@ class GameScene extends Phaser.Scene {
 
         this.tileGrid.initializeGrid();
 
+
+        // Start the simulation
         const onComplete = () => {
             console.log("Simulation complete");
-            this.checkMatches();
             this.simulationController.off('complete', onComplete);
+            this.checkMatches();
         };
 
         this.simulationController.on('complete', onComplete);
@@ -141,9 +139,10 @@ class GameScene extends Phaser.Scene {
             
             const tileSwappedCallback = () => {
                 this.checkMatches();
-                this.simulationController.off('tilesSwapped', tileSwappedCallback);
+                this.tileGrid.off('tilesSwapped', tileSwappedCallback);
             }
-            this.simulationController.on('tilesSwapped', tileSwappedCallback);
+            this.tileGrid.on('tilesSwapped', tileSwappedCallback);
+
 
             // Reset the selected tiles
             const tempSelectedTile = this.firstSelectedTile;
@@ -169,11 +168,12 @@ class GameScene extends Phaser.Scene {
 
             this.simulationController.startSimulation(true);
             const onComplete = () => {
-                this.checkMatches();
                 this.simulationController.off('complete', onComplete);
+                this.checkMatches();
             };
     
             this.simulationController.on('complete', onComplete);
+            this.simulationController.startSimulation(true);
         } else {
             // No match so just swap the tiles back to their original position and reset
             this.swapTiles();
