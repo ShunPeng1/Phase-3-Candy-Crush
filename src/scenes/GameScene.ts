@@ -1,5 +1,5 @@
-import CONST, { CandyColorKey } from "../types/const";
-import Tile from "../objects/tile";
+import CONST, { CandyColorKey } from "../const/const";
+import Tile from "../objects/Tile";
 import SimulationController from "../simulation/SimulationController";
 import TweenSimulation from "../simulation/TweenSimulation";
 
