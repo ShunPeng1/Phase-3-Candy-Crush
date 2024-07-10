@@ -39,11 +39,18 @@ class BootScene extends Phaser.Scene {
 
         // load out package
         this.load.pack('preload', './assets/pack.json', 'preload');
+
+
+       
+        this.load.on('complete', () => {
+            
+            this.progressBar.destroy();
+            this.loadingBar.destroy();
+
+            this.scene.start('GameScene'); // Move scene transition here
+        }, this);
     }
 
-    update(): void {
-        this.scene.start('GameScene');
-    }
 
     private createLoadingbar(): void {
         this.loadingBar = this.add.graphics();

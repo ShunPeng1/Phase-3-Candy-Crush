@@ -112,6 +112,10 @@ class TileSwapper {
         return this.isSwapped;
     }
 
+    public checkFirstTileSelected(): boolean {
+        return this.firstSelectedTile !== null;
+    }
+
     public getCanMove() : boolean {
         return this.canMove;
     }    

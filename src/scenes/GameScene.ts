@@ -19,7 +19,9 @@ class GameScene extends Phaser.Scene {
         super({ key: 'GameScene' });
     }
 
-    init(): void {
+    
+
+    create(): void {
         this.initializeVariables();
         this.setBackground();
         this.initializeGrid();
