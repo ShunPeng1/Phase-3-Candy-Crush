@@ -1,11 +1,11 @@
 import TweenUtilities from "../../ultilities/TweenUtilities";
 
 class Tile extends Phaser.GameObjects.Image {
-    private tileType: ITileType;
+    private tileType: ITileEffect;
 
     private hoverTween: Phaser.Tweens.Tween;
 
-    constructor(params: IImageConstructor, tileType: ITileType) {
+    constructor(params: IImageConstructor, tileType: ITileEffect) {
         super(params.scene, params.x, params.y, params.texture, params.frame);
 
         this.tileType = tileType;

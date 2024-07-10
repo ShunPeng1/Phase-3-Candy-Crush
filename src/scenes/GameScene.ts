@@ -61,7 +61,7 @@ class GameScene extends Phaser.Scene {
         let matches = this.tileMatcher.getMatches();
 
         if (matches.length > 0) {
-            this.tileGrid.removeTileGroup(matches);
+            this.tileGrid.removeTileGroup(matches.map((match) => match.matchTiles));
             this.tileGrid.gravitateTile();
             this.tileGrid.fillEmptyWithTile();
             

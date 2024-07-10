@@ -1,17 +1,247 @@
 import Tile from "../tiles/Tile";
 import TileGrid from "./TileGrid";
+import TileMatchResult from "./TileMatchResult";
 
 class TileMatcher {
     private tileGrid : TileGrid;
-    
+    private visitedTiles: Set<Tile>;
+
     constructor(tileGrid : TileGrid){
         this.tileGrid = tileGrid;
     }
 
+    
 
-    public getMatches(): Tile[][] {
-        let matches: Tile[][] = []; // This array will store all the matches
-        let groups: Tile[] = []; // This array will store a single match
+    public getMatches(): TileMatchResult[] {
+        this.visitedTiles = new Set<Tile>();
+
+        let verticalMatches = this.findVerticalMatches();
+        let horizontalMatches = this.findHorizontalMatches();
+        let squareMatches = this.findSquareMatches();
+
+        let results: TileMatchResult[] = [];
+
+
+        this.extract5OrMoreContinuousMatch(verticalMatches, results, horizontalMatches);
+        
+        verticalMatches = this.sliceAllNonVisitedTileInMatch(verticalMatches);
+        horizontalMatches = this.sliceAllNonVisitedTileInMatch(horizontalMatches);
+        this.extractCornerMatch(verticalMatches, horizontalMatches, results);
+        
+        verticalMatches = this.sliceAllNonVisitedTileInMatch(verticalMatches);
+        horizontalMatches = this.sliceAllNonVisitedTileInMatch(horizontalMatches);
+        this.extract4ContinuousMatch(verticalMatches, results, horizontalMatches);
+       
+        this.sliceAndExtractSquareMatch(squareMatches, results);
+        
+        verticalMatches = this.sliceAllNonVisitedTileInMatch(verticalMatches);
+        horizontalMatches = this.sliceAllNonVisitedTileInMatch(horizontalMatches);
+        this.extract3ContinuousMatch(verticalMatches, results, horizontalMatches);
+
+        return results;
+    }
+
+    private extract3ContinuousMatch(verticalMatches: Tile[][], results: TileMatchResult[], horizontalMatches: Tile[][]) : void {
+        for (let i = verticalMatches.length - 1; i >= 0; i--) {
+
+            if (verticalMatches[i].length == 3) {
+                let match = verticalMatches[i];
+                let originTile = match[0];
+                let count = match.length;
+
+                results.push(new TileMatchResult(count, match, originTile, "ROW_CLEAR"));
+                match.forEach(tile => {
+                    this.visitedTiles.add(tile);
+                });
+                verticalMatches.splice(i, 1);
+            }
+        }
+
+        for (let i = horizontalMatches.length - 1; i >= 0; i--) {
+            if (horizontalMatches[i].length == 3) {
+                let match = horizontalMatches[i];
+                let originTile = match[0];
+                let count = match.length;
+
+                results.push(new TileMatchResult(count, match, originTile, "COLUMN_CLEAR"));
+                match.forEach(tile => {
+                    this.visitedTiles.add(tile);
+                });
+                horizontalMatches.splice(i, 1);
+
+            }
+        }
+    }
+
+    private extractCornerMatch(verticalMatches: Tile[][], horizontalMatches: Tile[][], results: TileMatchResult[]) {
+        for (let i = verticalMatches.length - 1; i >= 0; i--) {
+
+            let verticalMatch = verticalMatches[i];
+
+            for (let j = horizontalMatches.length - 1; j >= 0; j--) {
+
+                let horizontalMatch = horizontalMatches[j];
+
+                let intersectTiles = this.intersection2TilesArray(verticalMatch, horizontalMatch);
+                if (intersectTiles.length == 0)
+                    continue;
+
+
+                let unionTiles = this.union2TilesArray(verticalMatch, horizontalMatch);
+                let originTile = intersectTiles[0];
+                let count = unionTiles.length;
+
+
+                results.push(new TileMatchResult(count, unionTiles, originTile, "BOMB"));
+
+                intersectTiles.forEach(tile => {
+                    this.visitedTiles.add(tile);
+                });
+
+                horizontalMatches.splice(j, 1);
+                verticalMatches.splice(i, 1);
+
+            }
+
+        }
+    }
+
+    private extract5OrMoreContinuousMatch(verticalMatches: Tile[][], results: TileMatchResult[], horizontalMatches: Tile[][]) : void{
+        for (let i = verticalMatches.length - 1; i >= 0; i--) {
+
+            if (verticalMatches[i].length >= 5) {
+                let match = verticalMatches[i];
+                let originTile = match[0];
+                let count = match.length;
+
+                results.push(new TileMatchResult(count, match, originTile, "COLOR_CLEAR"));
+                match.forEach(tile => {
+                    this.visitedTiles.add(tile);
+                });
+                verticalMatches.splice(i, 1);
+            }
+        }
+
+        for (let i = horizontalMatches.length - 1; i >= 0; i--) {
+            if (horizontalMatches[i].length >= 5) {
+                let match = horizontalMatches[i];
+                let originTile = match[0];
+                let count = match.length;
+
+                results.push(new TileMatchResult(count, match, originTile, "COLOR_CLEAR"));
+                match.forEach(tile => {
+                    this.visitedTiles.add(tile);
+                });
+                horizontalMatches.splice(i, 1);
+
+            }
+        }
+        
+    }
+
+    private extract4ContinuousMatch(verticalMatches: Tile[][], results: TileMatchResult[], horizontalMatches: Tile[][]) : void{
+        for (let i = verticalMatches.length - 1; i >= 0; i--) {
+
+            if (verticalMatches[i].length == 4 ) {
+                let match = verticalMatches[i];
+                let originTile = match[0];
+                let count = match.length;
+
+                results.push(new TileMatchResult(count, match, originTile, "ROW_CLEAR"));
+                match.forEach(tile => {
+                    this.visitedTiles.add(tile);
+                });
+                verticalMatches.splice(i, 1);
+            }
+        }
+
+        for (let i = horizontalMatches.length - 1; i >= 0; i--) {
+            if (horizontalMatches[i].length == 4) {
+                let match = horizontalMatches[i];
+                let originTile = match[0];
+                let count = match.length;
+
+                results.push(new TileMatchResult(count, match, originTile, "COLUMN_CLEAR"));
+                match.forEach(tile => {
+                    this.visitedTiles.add(tile);
+                });
+                horizontalMatches.splice(i, 1);
+
+            }
+        }
+        
+    }
+
+    private sliceAndExtractSquareMatch(squareMatches: Tile[][], results: TileMatchResult[]) {
+        squareMatches = this.sliceAllNonVisitedTileInMatch(squareMatches);
+        
+        
+        for (let i = squareMatches.length - 1; i >= 0; i--) {
+
+            if (squareMatches[i].length != 4) {
+                continue;
+            }
+
+            let match = squareMatches[i];
+            let originTile = match[0];
+            let count = match.length;
+
+            results.push(new TileMatchResult(count, match, originTile, "RANDOM_2"));
+            match.forEach(tile => {
+                this.visitedTiles.add(tile);
+            });
+
+            squareMatches.slice(i, 1);
+            squareMatches = this.sliceAllNonVisitedTileInMatch(squareMatches);
+            i = 0;
+        }
+    }
+
+    
+
+    private sliceNonVisitedTileInVisitedTiles(tiles: Tile[]) {
+        let result: Tile[] = [];
+        for (let i = 0; i < tiles.length; i++) {
+            if (!this.visitedTiles.has(tiles[i])) {
+                result.push(tiles[i]);
+            }
+        }
+        return result;
+    }
+
+    private sliceAllNonVisitedTileInMatch(tiles: Tile[][]) {
+        let result: Tile[][] = [];
+        for (let i = 0; i < tiles.length; i++) {
+            let match = tiles[i];
+            let nonVisitedMatch = this.sliceNonVisitedTileInVisitedTiles(match);
+            if (nonVisitedMatch.length > 0) {
+                result.push(nonVisitedMatch);
+            }
+        }
+        return result;
+    }
+
+    private union2TilesArray(array1: Tile[], array2: Tile[]): Tile[] {
+        return [...new Set([...array1, ...array2])];
+    }
+
+    private union3TilesArray(array1: Tile[], array2: Tile[], array3: Tile[]): Tile[] {
+        return [...new Set([...array1, ...array2, ...array3])];
+    }
+
+    private intersection2TilesArray(array1: Tile[], array2: Tile[]): Tile[] {
+        return array1.filter(value => array2.includes(value));
+    }
+
+    private intersection3TilesArray(array1: Tile[], array2: Tile[], array3: Tile[]): Tile[] {
+        return array1.filter(value => array2.includes(value) && array3.includes(value));
+    }
+
+
+    
+    private findHorizontalMatches(): Tile[][] {
+        let horizontalMatches: Tile[][] = [];
+        let groups: Tile[] = [];
 
         // Check for horizontal matches
         for (let y = 0; y < this.tileGrid.getRowCount(); y++) {
@@ -33,7 +263,7 @@ class TileMatcher {
 
                 if (groups.length > 0) { //If there is a match in the group already
                     if (groups.indexOf(tile) == -1) { //If the current tile is not in the group
-                        matches.push(groups);
+                        horizontalMatches.push(groups);
                         groups = []; //Reset the group
                     }
                 }
@@ -54,9 +284,17 @@ class TileMatcher {
             }
 
             if (groups.length > 0) {
-                matches.push(groups);
+                horizontalMatches.push(groups);
             }
         }
+
+        return horizontalMatches;
+    }
+    
+
+    private findVerticalMatches(): Tile[][] {
+        let verticalMatches: Tile[][] = [];
+        let groups: Tile[] = [];
 
         // Check for vertical matches
         for (let x = 0; x < this.tileGrid.getColumnCount(); x++) { // Iterate over each column
@@ -77,7 +315,7 @@ class TileMatcher {
 
                 // If there is a match in the group already and the current tile is not in the group
                 if (groups.length > 0 && groups.indexOf(tile) == -1) {
-                    matches.push(groups); // Push the current group to matches
+                    verticalMatches.push(groups); // Push the current group to matches
                     groups = []; // Reset the group
                 }
 
@@ -93,11 +331,39 @@ class TileMatcher {
                 }
             }
             if (groups.length > 0) {
-                matches.push(groups);
+                verticalMatches.push(groups);
             }
         }
 
-        return matches;
+        return verticalMatches;
+    }
+
+    private findSquareMatches(): Tile[][] {
+        let squareMatches: Tile[][] = [];
+
+        // Check for square matches
+        for (let y = 0; y < this.tileGrid.getRowCount() - 1; y++) {
+            for (let x = 0; x < this.tileGrid.getColumnCount() - 1; x++) {
+                let tile = this.tileGrid.getTile(x, y);
+                let rightTile = this.tileGrid.getTile(x + 1, y);
+                let belowTile = this.tileGrid.getTile(x, y + 1);
+                let belowRightTile = this.tileGrid.getTile(x + 1, y + 1);
+
+                if (!tile || !rightTile || !belowTile || !belowRightTile) {
+                    continue;
+                }
+
+                if (tile.texture.key !== rightTile.texture.key ||
+                    tile.texture.key !== belowTile.texture.key ||
+                    tile.texture.key !== belowRightTile.texture.key) {
+                    continue;
+                }
+
+                squareMatches.push([tile, rightTile, belowTile, belowRightTile]);
+            }
+        }
+
+        return squareMatches;
     }
 
 }
