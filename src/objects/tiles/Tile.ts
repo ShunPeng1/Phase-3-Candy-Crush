@@ -1,14 +1,29 @@
+import TweenUtilities from "../../ultilities/TweenUtilities";
 
 class Tile extends Phaser.GameObjects.Image {
-    constructor(params: IImageConstructor) {
+    private tileType: ITileType;
+
+    private hoverTween: Phaser.Tweens.Tween;
+
+    constructor(params: IImageConstructor, tileType: ITileType) {
         super(params.scene, params.x, params.y, params.texture, params.frame);
 
+        this.tileType = tileType;
+
         // set image settings
-        this.setOrigin(0, 0);
+        this.setOrigin(0.5, 0.5);
         this.setInteractive();
 
         this.scene.add.existing(this);
+
+
+        TweenUtilities.applyImageDisplaySizeTweens(this, 'pointerover', 'pointerout', 1.1, 100);
     }
+
+    
+
+
+
 }
 
 

@@ -68,9 +68,8 @@ class TileGrid extends GameObjects.Container {
             this.tileGrid[y] = [];
             for (let x = 0; x < this.gridWidth; x++) {
                 let tile = this.createRandomTile(x, (y - this.gridHeight));
-                tile.setPosition(x * this.tileWidth, (y - this.gridHeight) * this.tileHeight);
-                //this.tweenDropdownTile(tile, (y - this.gridHeight), y);
-
+                
+                
                 this.tileGrid[y][x] = tile;
                 this.emit('tileAdded', tile, x, (y - this.gridHeight), x, y);
                 
@@ -155,8 +154,7 @@ class TileGrid extends GameObjects.Container {
 
                 const fromYIndex = belowIndex - y;
                 //Found a blank spot so lets add animate a tile there
-                let tile = this.createRandomTile(x, y);
-                tile.setPosition(x * this.tileWidth, (y - belowIndex) * this.tileHeight);
+                let tile = this.createRandomTile(x, (y - belowIndex));
                 
                 this.tileGrid[y][x] = tile;
 
@@ -206,8 +204,8 @@ class TileGrid extends GameObjects.Container {
         };
 
         // Swap them in our grid with the tiles
-        this.tileGrid[firstTilePosition.y / this.tileHeight][firstTilePosition.x / this.tileWidth] = secondSelectedTile;
-        this.tileGrid[secondTilePosition.y / this.tileHeight][secondTilePosition.x / this.tileWidth] = firstSelectedTile;
+        this.tileGrid[firstTilePosition.y / this.tileHeight -0.5][firstTilePosition.x / this.tileWidth -0.5] = secondSelectedTile;
+        this.tileGrid[secondTilePosition.y / this.tileHeight -0.5][secondTilePosition.x / this.tileWidth -0.5] = firstSelectedTile;
 
         this.emit('tilesSwapped', firstSelectedTile, secondSelectedTile);
             
@@ -252,7 +250,7 @@ class TileGrid extends GameObjects.Container {
     }
 
     private createRandomTile(xIndex: number, yIndex: number): Tile {
-        let tile = this.tileFactory.createRandomTile(xIndex * this.tileWidth, yIndex * this.tileHeight, this.tileWidth, this.tileHeight);
+        let tile = this.tileFactory.createRandomTile((xIndex +0.5) * this.tileWidth, (yIndex + 0.5) * this.tileHeight, this.tileWidth, this.tileHeight);
     
         //this.scene.add.existing(tile);
         this.add(tile);

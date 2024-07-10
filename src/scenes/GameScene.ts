@@ -89,7 +89,7 @@ class GameScene extends Phaser.Scene {
     private tweenDropdownTile(tile: Tile, fromX: number, fromY: number, endX: number, endY: number): void {
         const tweenSimulation = new TweenSimulation(this.tweens.add({
             targets: tile,
-            y: endY * CONST.tileHeight,
+            y: (endY+0.5) * CONST.tileHeight,
             ease: 'Linear',
             duration: 150 * (endY - fromY),
             repeat: 0,

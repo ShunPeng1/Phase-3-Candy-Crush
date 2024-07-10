@@ -26,6 +26,11 @@ class TileFactory {
             x: x ,
             y: y ,
             texture: randomTileColorTexture
+        }, {
+            color: randomTileColor,
+            texture: randomTileColorTexture,
+            onTilePop: () => {},
+            onTileSwap: () => {}
         }).setDisplaySize(textureWidth, textureHeight);
     }
 }
