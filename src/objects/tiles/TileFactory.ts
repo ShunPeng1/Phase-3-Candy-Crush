@@ -1,4 +1,5 @@
 import CONST, { CandyColorKey } from "../../const/const";
+import NormalTileEffect from "./NormalTileEffect";
 import Tile from "./Tile";
 
 class TileFactory {
@@ -27,17 +28,17 @@ class TileFactory {
         let randomTileColorTexture: string = CONST.normalCandyTextureKey[randomTileColor as keyof typeof CONST.normalCandyTextureKey];
 
         // Return the created tile
-        return new Tile({
+        let tile = new Tile({
             scene: this.scene,
             x: x ,
             y: y ,
             texture: randomTileColorTexture
-        }, {
-            color: randomTileColor,
-            texture: randomTileColorTexture,
-            onTilePop: () => {},
-            onTileSwap: () => {}
-        }).setDisplaySize(this.textureWidth, this.textureHeight);
+        });
+
+        tile.setTileEffect(new NormalTileEffect(this.scene, tile, randomTileColor, randomTileColorTexture))
+            .setDisplaySize(this.textureWidth, this.textureHeight);
+
+        return tile;
     }
 
     public createSpecialTile(color : CandyColorKey, specialTileType: SpecialTileEffectType, x: number, y: number) {
@@ -65,17 +66,17 @@ class TileFactory {
                 break;
         }
 
-        return new Tile({
+        let tile = new Tile({
             scene: this.scene,
-            x: x,
-            y: y,
+            x: x ,
+            y: y ,
             texture: specialTileTexture
-        }, {
-            color: color,
-            texture: specialTileTexture,
-            onTilePop: () => {},
-            onTileSwap: () => {}
-        }).setDisplaySize(this.textureWidth, this.textureHeight);
+        });
+        
+        tile.setTileEffect(new NormalTileEffect(this.scene, tile, color, specialTileTexture))
+            .setDisplaySize(this.textureWidth, this.textureHeight);
+        
+        return tile;
     }
 }
 

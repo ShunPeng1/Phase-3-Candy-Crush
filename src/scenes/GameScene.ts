@@ -67,7 +67,7 @@ class GameScene extends Phaser.Scene {
                 
                 //console.log("Match", match.count, match.specialTileType, this.tileGrid.getTileIndex(match.originTile), match.matchTilesExceptOrigin.map(tile => this.tileGrid.getTileIndex(tile)));
                 if (match.specialTileType !== "NONE") {
-                    let specialTile= this.tileFactory.createSpecialTile(match.originTile.tileType.color as CandyColorKey, match.specialTileType, match.originTile.x, match.originTile.y);
+                    let specialTile= this.tileFactory.createSpecialTile(match.originTile.getColor() as CandyColorKey, match.specialTileType, match.originTile.x, match.originTile.y);
                     this.tileGrid.replaceTile(match.originTile, specialTile);
                     this.tileGrid.removeTiles(match.matchTilesExceptOrigin);
 

@@ -1,14 +1,12 @@
 import TweenUtilities from "../../ultilities/TweenUtilities";
+import TileGrid from "../grids/TileGrid";
 
 class Tile extends Phaser.GameObjects.Image {
-    public readonly tileType: ITileEffect;
-
-    private hoverTween: Phaser.Tweens.Tween;
-
-    constructor(params: IImageConstructor, tileType: ITileEffect) {
+    private tileEffect: ITileEffect;
+    private grid : TileGrid;
+    constructor(params: IImageConstructor) {
         super(params.scene, params.x, params.y, params.texture, params.frame);
 
-        this.tileType = tileType;
 
         // set image settings
         this.setOrigin(0.5, 0.5);
@@ -16,12 +14,41 @@ class Tile extends Phaser.GameObjects.Image {
 
         this.scene.add.existing(this);
 
-
         TweenUtilities.applyImageDisplaySizeTweens(this, 'pointerover', 'pointerout', 1.1, 100);
+    
+        
     }
 
-    
+    public getWorldTransformMatrix(): Phaser.GameObjects.Components.TransformMatrix {
 
+        const gridWorldTransform = this.grid.getWorldTransformMatrix();
+
+        let localTransform = this.getLocalTransformMatrix();
+    
+        localTransform.tx += gridWorldTransform.tx
+        localTransform.ty += gridWorldTransform.ty;
+
+        return localTransform;
+    }
+
+    public setTileEffect(tileEffect: ITileEffect): this {
+        this.tileEffect = tileEffect;
+        return this;
+    }
+
+    public setTileGrid(grid : TileGrid) : this { 
+        this.grid = grid;
+        return this;
+    }
+    
+    public getColor(): string {
+        return this.tileEffect.color;
+    }
+
+    public destroy(fromScene?: boolean): void {
+        this.tileEffect.onTilePop();
+        super.destroy(fromScene);
+    }
 
 
 }

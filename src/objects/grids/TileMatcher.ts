@@ -299,8 +299,8 @@ for (let i = tiles.length - 1; i >= 0; i--) {
                     continue;
                 }
 
-                if (tile.tileType.color !== rightTile.tileType.color ||
-                    rightTile.tileType.color !== rightRightTile.tileType.color) {
+                if (tile.getColor() !== rightTile.getColor() ||
+                    rightTile.getColor() !== rightRightTile.getColor()) {
                     continue;
                 }
 
@@ -351,8 +351,8 @@ for (let i = tiles.length - 1; i >= 0; i--) {
                     continue; // Skip if any of the tiles in the sequence are null
                 }
 
-                if (tile.tileType.color !== belowTile.tileType.color ||
-                    belowTile.tileType.color !== belowBelowTile.tileType.color) {
+                if (tile.getColor() !== belowTile.getColor() ||
+                    belowTile.getColor() !== belowBelowTile.getColor()) {
                     continue; // Skip if the tiles do not match
                 }
 
@@ -396,9 +396,9 @@ for (let i = tiles.length - 1; i >= 0; i--) {
                     continue;
                 }
                 
-                if (tile.tileType.color !== rightTile.tileType.color ||
-                    tile.tileType.color !== belowTile.tileType.color ||
-                    tile.tileType.color !== belowRightTile.tileType.color) {
+                if (tile.getColor() !== rightTile.getColor() ||
+                    tile.getColor() !== belowTile.getColor() ||
+                    tile.getColor() !== belowRightTile.getColor()) {
                     continue;
                 }
 

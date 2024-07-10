@@ -196,6 +196,8 @@ class TileGrid extends GameObjects.Container {
             return;
         }
 
+        
+        newTile.setTileGrid(this);
         this.add(newTile);
         newTile.setPosition(oldTile.x, oldTile.y);
 
@@ -272,7 +274,7 @@ class TileGrid extends GameObjects.Container {
     private createRandomTile(xIndex: number, yIndex: number): Tile {
         let tile = this.tileFactory.createRandomTile((xIndex +0.5) * this.tileWidth, (yIndex + 0.5) * this.tileHeight);
     
-        //this.scene.add.existing(tile);
+        tile.setTileGrid(this);
         this.add(tile);
 
         return tile;
