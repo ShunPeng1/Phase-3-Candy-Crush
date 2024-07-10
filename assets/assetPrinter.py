@@ -1,7 +1,7 @@
 import os
 
 # Step 2: Define the directory
-directory = "./assets/candy-crush/images"
+directory = "./assets/candy-crush/effects"
 
 # Step 3: List files in the directory
 files = os.listdir(directory)

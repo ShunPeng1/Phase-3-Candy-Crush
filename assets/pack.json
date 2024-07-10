@@ -250,6 +250,216 @@
         "type": "image",
         "key": "item-spot-02",
         "url": "./assets/candy-crush/images/item-spot-02.png"
+      },
+      {
+        "type": "image",
+        "key": "Bolt",
+        "url": "./assets/candy-crush/effects/Bolt.png"
+      },
+      {
+        "type": "image",
+        "key": "bomb-selection-01",
+        "url": "./assets/candy-crush/effects/bomb-selection-01.png"        
+      },
+      {
+        "type": "image",
+        "key": "bomb-selection-02",
+        "url": "./assets/candy-crush/effects/bomb-selection-02.png"        
+      },
+      {
+        "type": "image",
+        "key": "boom-05",
+        "url": "./assets/candy-crush/effects/boom-05.png"
+      },
+      {
+        "type": "image",
+        "key": "boom-06",
+        "url": "./assets/candy-crush/effects/boom-06.png"
+      },
+      {
+        "type": "image",
+        "key": "boom-07",
+        "url": "./assets/candy-crush/effects/boom-07.png"
+      },
+      {
+        "type": "image",
+        "key": "boom-08",
+        "url": "./assets/candy-crush/effects/boom-08.png"
+      },
+      {
+        "type": "image",
+        "key": "boom-09",
+        "url": "./assets/candy-crush/effects/boom-09.png"
+      },
+      {
+        "type": "image",
+        "key": "boom-10",
+        "url": "./assets/candy-crush/effects/boom-10.png"
+      },
+      {
+        "type": "image",
+        "key": "boom-11",
+        "url": "./assets/candy-crush/effects/boom-11.png"
+      },
+      {
+        "type": "image",
+        "key": "boom-12",
+        "url": "./assets/candy-crush/effects/boom-12.png"
+      },
+      {
+        "type": "image",
+        "key": "boom-13",
+        "url": "./assets/candy-crush/effects/boom-13.png"
+      },
+      {
+        "type": "image",
+        "key": "boom-14",
+        "url": "./assets/candy-crush/effects/boom-14.png"
+      },
+      {
+        "type": "image",
+        "key": "boom-15",
+        "url": "./assets/candy-crush/effects/boom-15.png"
+      },
+      {
+        "type": "image",
+        "key": "boom-16",
+        "url": "./assets/candy-crush/effects/boom-16.png"
+      },
+      {
+        "type": "image",
+        "key": "boom-17",
+        "url": "./assets/candy-crush/effects/boom-17.png"
+      },
+      {
+        "type": "image",
+        "key": "Bubble",
+        "url": "./assets/candy-crush/effects/Bubble.png"
+      },
+      {
+        "type": "image",
+        "key": "bubble-crush",
+        "url": "./assets/candy-crush/effects/bubble-crush.png"
+      },
+      {
+        "type": "image",
+        "key": "circle-exp-1",
+        "url": "./assets/candy-crush/effects/circle-exp-1.png"
+      },
+      {
+        "type": "image",
+        "key": "circle-exp-2",
+        "url": "./assets/candy-crush/effects/circle-exp-2.png"
+      },
+      {
+        "type": "image",
+        "key": "circle-exp-3",
+        "url": "./assets/candy-crush/effects/circle-exp-3.png"
+      },
+      {
+        "type": "image",
+        "key": "circle-exp-4",
+        "url": "./assets/candy-crush/effects/circle-exp-4.png"
+      },
+      {
+        "type": "image",
+        "key": "emty-sprite",
+        "url": "./assets/candy-crush/effects/emty-sprite.png"
+      },
+      {
+        "type": "image",
+        "key": "indicator-0",
+        "url": "./assets/candy-crush/effects/indicator-0.png"
+      },
+      {
+        "type": "image",
+        "key": "indicator-1",
+        "url": "./assets/candy-crush/effects/indicator-1.png"
+      },
+      {
+        "type": "image",
+        "key": "indicator-2",
+        "url": "./assets/candy-crush/effects/indicator-2.png"
+      },
+      {
+        "type": "image",
+        "key": "indicator-3",
+        "url": "./assets/candy-crush/effects/indicator-3.png"
+      },
+      {
+        "type": "image",
+        "key": "package-anim-1",
+        "url": "./assets/candy-crush/effects/package-anim-1.png"
+      },
+      {
+        "type": "image",
+        "key": "package-anim-2",
+        "url": "./assets/candy-crush/effects/package-anim-2.png"
+      },
+      {
+        "type": "image",
+        "key": "package-anim-3",
+        "url": "./assets/candy-crush/effects/package-anim-3.png"
+      },
+      {
+        "type": "image",
+        "key": "package-anim-4",
+        "url": "./assets/candy-crush/effects/package-anim-4.png"
+      },
+      {
+        "type": "image",
+        "key": "package-animation-1",
+        "url": "./assets/candy-crush/effects/package-animation-1.png"      
+      },
+      {
+        "type": "image",
+        "key": "package-animation-2",
+        "url": "./assets/candy-crush/effects/package-animation-2.png"      
+      },
+      {
+        "type": "image",
+        "key": "package-animation-3",
+        "url": "./assets/candy-crush/effects/package-animation-3.png"      
+      },
+      {
+        "type": "image",
+        "key": "package-animation-4",
+        "url": "./assets/candy-crush/effects/package-animation-4.png"      
+      },
+      {
+        "type": "image",
+        "key": "snow",
+        "url": "./assets/candy-crush/effects/snow.png"
+      },
+      {
+        "type": "image",
+        "key": "teleport-anim-effect-01",
+        "url": "./assets/candy-crush/effects/teleport-anim-effect-01.png"  
+      },
+      {
+        "type": "image",
+        "key": "teleport-anim-effect-02",
+        "url": "./assets/candy-crush/effects/teleport-anim-effect-02.png"  
+      },
+      {
+        "type": "image",
+        "key": "teleport-anim-effect-03",
+        "url": "./assets/candy-crush/effects/teleport-anim-effect-03.png"  
+      },
+      {
+        "type": "image",
+        "key": "teleport-anim-effect-04",
+        "url": "./assets/candy-crush/effects/teleport-anim-effect-04.png"  
+      },
+      {
+        "type": "image",
+        "key": "teleport-anim-effect-05",
+        "url": "./assets/candy-crush/effects/teleport-anim-effect-05.png"  
+      },
+      {
+        "type": "image",
+        "key": "teleport-anim-effect-06",
+        "url": "./assets/candy-crush/effects/teleport-anim-effect-06.png"  
       }
     ]
   }
