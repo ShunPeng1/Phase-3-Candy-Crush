@@ -13,8 +13,9 @@ class TileGrid extends GameObjects.Container {
     private tileHeight: number;
 
     private tileFactory: TileFactory;
+    private gridTextures: string[];
 
-    constructor(scene: Phaser.Scene, x: number, y: number, gridWidth: number, gridHeight: number, tileWidth: number, tileHeight: number, tileFactory : TileFactory) {
+    constructor(scene: Phaser.Scene, x: number, y: number, gridWidth: number, gridHeight: number, tileWidth: number, tileHeight: number, tileFactory : TileFactory, gridTextures: string[] = []) {
         super(scene, x, y);
         this.scene = scene;
         this.gridWidth = gridWidth;
@@ -22,13 +23,46 @@ class TileGrid extends GameObjects.Container {
         this.tileWidth = tileWidth;
         this.tileHeight = tileHeight;
         this.tileFactory = tileFactory;
+        this.gridTextures = gridTextures;
 
         this.scene.add.existing(this);
 
+        this.initializeGrid();
+
+    }
+    
+    private initializeGrid() :void{
+        if (this.gridTextures.length == 0){
+            return;
+        }
+
+        if (this.gridTextures.length === 1){
+            for (let y = 0; y < this.gridHeight; y++) {
+                for (let x = 0; x < this.gridWidth; x++) {
+                    let gridImage = this.scene.add.image(x * this.tileWidth, y * this.tileHeight, this.gridTextures[0]);
+                    gridImage.setDisplaySize(this.tileWidth, this.tileHeight);
+                    gridImage.setOrigin(0,0);
+                    this.add(gridImage);
+                    this.sendToBack(gridImage);
+                }
+            }
+        }
+
+        else if (this.gridTextures.length === 2){
+            for (let y = 0; y < this.gridHeight; y++) {
+                for (let x = 0; x < this.gridWidth; x++) {
+                    let gridImage = this.scene.add.image(x * this.tileWidth, y * this.tileHeight, this.gridTextures[(x + y) % 2]);
+                    gridImage.setDisplaySize(this.tileWidth, this.tileHeight);
+                    gridImage.setOrigin(0,0);
+                    this.add(gridImage);
+                    this.sendToBack(gridImage);
+                }
+            }
+        }
     }
 
 
-    public initializeGrid(){
+    public initializeTiles(){
         this.tileGrid = [];
         for (let y = 0; y < this.gridHeight; y++) {
             this.tileGrid[y] = [];
@@ -44,6 +78,7 @@ class TileGrid extends GameObjects.Container {
         }
 
     }
+
 
     
 
