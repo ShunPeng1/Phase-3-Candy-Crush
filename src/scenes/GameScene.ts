@@ -21,14 +21,15 @@ class GameScene extends Phaser.Scene {
         this.initializeVariables();
         this.setBackground();
         this.initializeGrid();
-        this.startInitialSimulation();
+        
+        this.startCheckMatch();
     }
 
     private initializeVariables(): void {
         this.simulationController = new SimulationController(this);
         this.tileGrid = new TileGrid(this, 400, 100, CONST.gridWidth, CONST.gridHeight, CONST.tileWidth, CONST.tileHeight,
             new TileFactory(this, candyColors), ["item-spot-01", "item-spot-02"]);
-        this.tileMatcher = new TileMatcher();
+        this.tileMatcher = new TileMatcher(this.tileGrid);
         this.tileSwapper = new TileSwapper(this, this.tileGrid);
     }
 
@@ -42,45 +43,23 @@ class GameScene extends Phaser.Scene {
     }
 
     private initializeGrid(): void {
-        const onTileMoved = (tile: Tile, x: number, y: number, endX: number, endY: number) => {
-            this.tweenDropdownTile(tile, y, endY);
-        };
-        this.tileGrid.on('tileAdded', onTileMoved);
-        this.tileGrid.on('tileMoved', onTileMoved);
+        this.tileGrid.on('tileAdded', this.tweenDropdownTile, this);
+        this.tileGrid.on('tileMoved', this.tweenDropdownTile, this);
         this.tileGrid.on('tilesSwapped', this.tweenSwapTiles, this);
+
         this.tileGrid.initializeTiles();
     }
 
 
-    private startInitialSimulation(): void {
-        this.tileSwapper.setCanMove(false);
-        const onComplete = () => {
-            this.simulationController.off('complete', onComplete);
-            this.tileSwapper.setCanMove(true);
-            this.checkMatches();
-        };
-        this.simulationController.on('complete', onComplete);
-        this.simulationController.startSimulation(true);
-    }
-
     private checkMatches(): boolean {
-        let matches = this.tileMatcher.getMatches(this.tileGrid);
+        let matches = this.tileMatcher.getMatches();
 
         if (matches.length > 0) {
             this.tileGrid.removeTileGroup(matches);
             this.tileGrid.gravitateTile();
             this.tileGrid.fillEmptyWithTile();
-            this.tileSwapper.resetSelectedTile();
-            this.tileSwapper.setCanMove(false);
-
-            const onComplete = () => {
-                this.simulationController.off('complete', onComplete);
-                this.tileSwapper.setCanMove(true);
-                this.checkMatches();
-            };
-
-            this.simulationController.on('complete', onComplete);
-            this.simulationController.startSimulation(true);
+            
+            this.startCheckMatch();
 
             return true;
         }
@@ -88,7 +67,22 @@ class GameScene extends Phaser.Scene {
         return false;
     }
 
-    private tweenDropdownTile(tile: Tile, fromY: number, endY: number): void {
+    private startCheckMatch(): void {
+        
+        this.tileSwapper.setCanMove(false);
+
+        const onComplete = () => {
+            this.simulationController.off('complete', onComplete);
+            this.tileSwapper.setCanMove(true);
+            this.checkMatches();
+        };
+
+        this.simulationController.on('complete', onComplete);
+        this.simulationController.startSimulation(true);
+    }
+
+
+    private tweenDropdownTile(tile: Tile, fromX: number, fromY: number, endX: number, endY: number): void {
         const tweenSimulation = new TweenSimulation(this.tweens.add({
             targets: tile,
             y: endY * CONST.tileHeight,
