@@ -1,4 +1,5 @@
 import CONST, { CandyColorKey, candyColors } from "../const/const";
+import GameInputHandler from "../handlers/GameInputHandler";
 import TileGrid from "../objects/grids/TileGrid";
 import TileMatcher from "../objects/grids/TileMatcher";
 import TileSwapper from "../objects/grids/TileSwapper";
@@ -12,6 +13,7 @@ class GameScene extends Phaser.Scene {
     private tileMatcher: TileMatcher;
     private tileSwapper: TileSwapper;
     private simulationController: SimulationController;
+    private gameInputHandler : GameInputHandler;
 
     constructor() {
         super({ key: 'GameScene' });
@@ -31,6 +33,8 @@ class GameScene extends Phaser.Scene {
             new TileFactory(this, candyColors), ["item-spot-01", "item-spot-02"]);
         this.tileMatcher = new TileMatcher(this.tileGrid);
         this.tileSwapper = new TileSwapper(this, this.tileGrid);
+
+        this.gameInputHandler = new GameInputHandler(this, this.tileSwapper);
     }
 
     private setBackground(): void {

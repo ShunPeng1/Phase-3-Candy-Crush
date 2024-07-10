@@ -2,7 +2,8 @@ import { Scene } from "phaser";
 import Tile from "../tiles/Tile";
 import TileGrid from "./TileGrid";
 
-class TileSwapper {    
+class TileSwapper {
+    
     // Selected Tiles
     private scene: Scene;
     
@@ -21,8 +22,6 @@ class TileSwapper {
         this.canMove = true;
         this.isSwapped = false;
         this.tileGrid = tileGrid;
-
-        this.scene.input.on('gameobjectdown', this.selectTile, this);
     
     }
 
@@ -54,7 +53,7 @@ class TileSwapper {
         }
     }
 
-    public selectTile(pointer: any, gameobject: any, event: any): void {
+    public selectTile(gameobject: Tile): void {
         if (!this.canMove) {
             return;
         }
@@ -112,6 +111,10 @@ class TileSwapper {
     public checkIsSwapped(): boolean {
         return this.isSwapped;
     }
+
+    public getCanMove() : boolean {
+        return this.canMove;
+    }    
 
 }
 
