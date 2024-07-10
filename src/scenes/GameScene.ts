@@ -10,6 +10,7 @@ import TweenSimulation from "../simulation/TweenSimulation";
 
 class GameScene extends Phaser.Scene {
     private tileGrid: TileGrid;
+    private tileFactory: TileFactory;
     private tileMatcher: TileMatcher;
     private tileSwapper: TileSwapper;
     private simulationController: SimulationController;
@@ -31,8 +32,9 @@ class GameScene extends Phaser.Scene {
 
     private initializeVariables(): void {
         this.simulationController = new SimulationController(this);
+        this.tileFactory = new TileFactory(this, candyColors, CONST.tileWidth, CONST.tileHeight);
         this.tileGrid = new TileGrid(this, 400, 100, CONST.gridWidth, CONST.gridHeight, CONST.tileWidth, CONST.tileHeight,
-            new TileFactory(this, candyColors), ["item-spot-01", "item-spot-02"]);
+            this.tileFactory, ["item-spot-01", "item-spot-02"]);
         this.tileMatcher = new TileMatcher(this.tileGrid);
         this.tileSwapper = new TileSwapper(this, this.tileGrid);
 
@@ -61,7 +63,21 @@ class GameScene extends Phaser.Scene {
         let matches = this.tileMatcher.getMatches();
 
         if (matches.length > 0) {
-            this.tileGrid.removeTileGroup(matches.map((match) => match.matchTiles));
+            matches.forEach((match) => {
+                
+                //console.log("Match", match.count, match.specialTileType, this.tileGrid.getTileIndex(match.originTile), match.matchTilesExceptOrigin.map(tile => this.tileGrid.getTileIndex(tile)));
+                if (match.specialTileType !== "NONE") {
+                    let specialTile= this.tileFactory.createSpecialTile(match.originTile.tileType.color as CandyColorKey, match.specialTileType, match.originTile.x, match.originTile.y);
+                    this.tileGrid.replaceTile(match.originTile, specialTile);
+                    this.tileGrid.removeTiles(match.matchTilesExceptOrigin);
+
+                }
+                else{
+                    this.tileGrid.removeTiles(match.matchTiles);
+                }
+            });
+
+
             this.tileGrid.gravitateTile();
             this.tileGrid.fillEmptyWithTile();
             

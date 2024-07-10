@@ -81,7 +81,7 @@ class TileGrid extends GameObjects.Container {
 
     
 
-    public getTilePos(tile: Tile): Phaser.Math.Vector2  | null {
+    public getTileIndex(tile: Tile): Phaser.Math.Vector2  | null {
         let pos : Phaser.Math.Vector2 | null = null;
 
         //Find the position of a specific tile in the grid
@@ -170,22 +170,42 @@ class TileGrid extends GameObjects.Container {
     public removeTileGroup(matches: Tile[][]): void {
         // Loop through all the matches and remove the associated tiles
         for (var i = 0; i < matches.length; i++) {
-            var tempArr = matches[i];
+            this.removeTiles(matches[i]);
+        }
+    }
 
-            for (var j = 0; j < tempArr.length; j++) {
-                let tile = tempArr[j];
-                //Find where this tile lives in the theoretical grid
-                let tilePos = this.getTilePos(tile);
+    public removeTiles(tiles: Tile[]): void {
+        // Loop through all the matches and remove the associated tiles
+        for (var i = 0; i < tiles.length; i++) {
+            let tile = tiles[i];
+            //Find where this tile lives in the theoretical grid
+            let tilePos = this.getTileIndex(tile);
 
-                // Remove the tile from the theoretical grid
-                if (tilePos) {
-                    this.remove(tile);
-                    tile.destroy();
-                    this.tileGrid[tilePos.y][tilePos.x] = null;
-                }
+            // Remove the tile from the theoretical grid
+            if (tilePos) {
+                this.remove(tile);
+                tile.destroy();
+                this.tileGrid[tilePos.y][tilePos.x] = null;
             }
         }
     }
+
+    public replaceTile(oldTile : Tile, newTile: Tile): void {
+        let tilePos = this.getTileIndex(oldTile);
+        if (!tilePos) {
+            return;
+        }
+
+        this.add(newTile);
+        newTile.setPosition(oldTile.x, oldTile.y);
+
+        this.remove(oldTile);
+        oldTile.destroy();
+        this.tileGrid[tilePos.y][tilePos.x] = newTile;
+
+    
+    }
+    
 
     public swapTiles(firstSelectedTile : Tile, secondSelectedTile : Tile ): void {
         if (!firstSelectedTile || !secondSelectedTile) {
@@ -250,7 +270,7 @@ class TileGrid extends GameObjects.Container {
     }
 
     private createRandomTile(xIndex: number, yIndex: number): Tile {
-        let tile = this.tileFactory.createRandomTile((xIndex +0.5) * this.tileWidth, (yIndex + 0.5) * this.tileHeight, this.tileWidth, this.tileHeight);
+        let tile = this.tileFactory.createRandomTile((xIndex +0.5) * this.tileWidth, (yIndex + 0.5) * this.tileHeight);
     
         //this.scene.add.existing(tile);
         this.add(tile);

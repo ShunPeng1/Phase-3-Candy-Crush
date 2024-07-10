@@ -4,6 +4,8 @@ class TileMatchResult {
     public readonly count: number;
     public readonly matchTiles: Tile[];
     public readonly originTile: Tile;
+    public readonly matchTilesExceptOrigin: Tile[];
+
     public readonly specialTileType: SpecialTileEffectType;
 
     constructor(count: number, matchTiles: Tile[], originTile: Tile, specialTileType: SpecialTileEffectType) {
@@ -11,7 +13,9 @@ class TileMatchResult {
         this.matchTiles = matchTiles;
         this.originTile = originTile;
         this.specialTileType = specialTileType;
+        this.matchTilesExceptOrigin = this.matchTiles.filter(tile => tile !== this.originTile);
     }
+    
 }
 
 export default TileMatchResult;

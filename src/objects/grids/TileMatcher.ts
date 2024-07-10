@@ -24,68 +24,79 @@ class TileMatcher {
 
         this.extract5OrMoreContinuousMatch(verticalMatches, results, horizontalMatches);
         
-        verticalMatches = this.sliceAllNonVisitedTileInMatch(verticalMatches);
-        horizontalMatches = this.sliceAllNonVisitedTileInMatch(horizontalMatches);
         this.extractCornerMatch(verticalMatches, horizontalMatches, results);
         
-        verticalMatches = this.sliceAllNonVisitedTileInMatch(verticalMatches);
-        horizontalMatches = this.sliceAllNonVisitedTileInMatch(horizontalMatches);
         this.extract4ContinuousMatch(verticalMatches, results, horizontalMatches);
        
-        this.sliceAndExtractSquareMatch(squareMatches, results);
+        this.extractSquareMatch(squareMatches, results);
         
-        verticalMatches = this.sliceAllNonVisitedTileInMatch(verticalMatches);
-        horizontalMatches = this.sliceAllNonVisitedTileInMatch(horizontalMatches);
         this.extract3ContinuousMatch(verticalMatches, results, horizontalMatches);
 
         return results;
     }
 
-    private extract3ContinuousMatch(verticalMatches: Tile[][], results: TileMatchResult[], horizontalMatches: Tile[][]) : void {
+    private extract5OrMoreContinuousMatch(verticalMatches: Tile[][], results: TileMatchResult[], horizontalMatches: Tile[][]) : void{
+        
+        this.sliceAllNonVisitedTileInMatch(verticalMatches);
+        
         for (let i = verticalMatches.length - 1; i >= 0; i--) {
 
-            if (verticalMatches[i].length == 3) {
-                let match = verticalMatches[i];
-                let originTile = match[0];
-                let count = match.length;
-
-                results.push(new TileMatchResult(count, match, originTile, "ROW_CLEAR"));
-                match.forEach(tile => {
-                    this.visitedTiles.add(tile);
-                });
-                verticalMatches.splice(i, 1);
+            if (verticalMatches[i].length < 5) {
+                continue;
             }
+
+            let match = verticalMatches[i];
+            let originTile = match[0];
+            let count = match.length;
+
+            results.push(new TileMatchResult(count, match, originTile, "COLOR_CLEAR"));
+            this.addToVisitedTiles(match);
+
+            verticalMatches.splice(i, 1);
+            this.sliceAllNonVisitedTileInMatch(verticalMatches);
+            i = verticalMatches.length;
         }
 
+        this.sliceAllNonVisitedTileInMatch(horizontalMatches);
         for (let i = horizontalMatches.length - 1; i >= 0; i--) {
-            if (horizontalMatches[i].length == 3) {
-                let match = horizontalMatches[i];
-                let originTile = match[0];
-                let count = match.length;
-
-                results.push(new TileMatchResult(count, match, originTile, "COLUMN_CLEAR"));
-                match.forEach(tile => {
-                    this.visitedTiles.add(tile);
-                });
-                horizontalMatches.splice(i, 1);
-
+            
+            if (horizontalMatches[i].length < 5) {
+                continue;
             }
+            
+            let match = horizontalMatches[i];
+            let originTile = match[0];
+            let count = match.length;
+
+            results.push(new TileMatchResult(count, match, originTile, "COLOR_CLEAR"));
+            this.addToVisitedTiles(match);
+            
+            horizontalMatches.splice(i, 1);
+            this.sliceAllNonVisitedTileInMatch(horizontalMatches);
+            i = horizontalMatches.length;
         }
+        
     }
 
+
     private extractCornerMatch(verticalMatches: Tile[][], horizontalMatches: Tile[][], results: TileMatchResult[]) {
+        this.sliceAllNonVisitedTileInMatch(verticalMatches);
+        this.sliceAllNonVisitedTileInMatch(horizontalMatches);
+        
         for (let i = verticalMatches.length - 1; i >= 0; i--) {
-
-            let verticalMatch = verticalMatches[i];
-
             for (let j = horizontalMatches.length - 1; j >= 0; j--) {
+                if (i < 0 ) {
+                    break;
+                }
 
+                let verticalMatch = verticalMatches[i];
                 let horizontalMatch = horizontalMatches[j];
 
                 let intersectTiles = this.intersection2TilesArray(verticalMatch, horizontalMatch);
-                if (intersectTiles.length == 0)
+                if (intersectTiles.length == 0){
                     continue;
-
+                }
+                    
 
                 let unionTiles = this.union2TilesArray(verticalMatch, horizontalMatch);
                 let originTile = intersectTiles[0];
@@ -94,90 +105,109 @@ class TileMatcher {
 
                 results.push(new TileMatchResult(count, unionTiles, originTile, "BOMB"));
 
-                intersectTiles.forEach(tile => {
-                    this.visitedTiles.add(tile);
-                });
+                this.addToVisitedTiles(unionTiles);
 
                 horizontalMatches.splice(j, 1);
                 verticalMatches.splice(i, 1);
 
+                
+                this.sliceAllNonVisitedTileInMatch(verticalMatches);
+                this.sliceAllNonVisitedTileInMatch(horizontalMatches);
+
+                i = verticalMatches.length - 1;
+                j = horizontalMatches.length;
             }
 
         }
+
     }
 
-    private extract5OrMoreContinuousMatch(verticalMatches: Tile[][], results: TileMatchResult[], horizontalMatches: Tile[][]) : void{
+    private extract3ContinuousMatch(verticalMatches: Tile[][], results: TileMatchResult[], horizontalMatches: Tile[][]) : void {
+        this.sliceAllNonVisitedTileInMatch(verticalMatches);
+
         for (let i = verticalMatches.length - 1; i >= 0; i--) {
-
-            if (verticalMatches[i].length >= 5) {
-                let match = verticalMatches[i];
-                let originTile = match[0];
-                let count = match.length;
-
-                results.push(new TileMatchResult(count, match, originTile, "COLOR_CLEAR"));
-                match.forEach(tile => {
-                    this.visitedTiles.add(tile);
-                });
-                verticalMatches.splice(i, 1);
+            if (verticalMatches[i].length != 3) {
+                continue;
             }
+            let match = verticalMatches[i];
+            let originTile = match[0];
+            let count = match.length;
+
+            results.push(new TileMatchResult(count, match, originTile, "NONE"));
+            this.addToVisitedTiles(match);
+
+            verticalMatches.splice(i, 1);
+            this.sliceAllNonVisitedTileInMatch(verticalMatches);
+            i = verticalMatches.length;
         }
 
+        this.sliceAllNonVisitedTileInMatch(horizontalMatches);
+            
         for (let i = horizontalMatches.length - 1; i >= 0; i--) {
-            if (horizontalMatches[i].length >= 5) {
-                let match = horizontalMatches[i];
-                let originTile = match[0];
-                let count = match.length;
-
-                results.push(new TileMatchResult(count, match, originTile, "COLOR_CLEAR"));
-                match.forEach(tile => {
-                    this.visitedTiles.add(tile);
-                });
-                horizontalMatches.splice(i, 1);
-
+            if (horizontalMatches[i].length != 3) {
+                continue;
             }
-        }
-        
-    }
 
+            let match = horizontalMatches[i];
+            let originTile = match[0];
+            let count = match.length;
+
+            results.push(new TileMatchResult(count, match, originTile, "NONE"));
+            this.addToVisitedTiles(match);
+
+            horizontalMatches.splice(i, 1);
+            this.sliceAllNonVisitedTileInMatch(horizontalMatches);
+            i = horizontalMatches.length;
+            
+        }
+    }
+    
     private extract4ContinuousMatch(verticalMatches: Tile[][], results: TileMatchResult[], horizontalMatches: Tile[][]) : void{
+        this.sliceAllNonVisitedTileInMatch(verticalMatches);
         for (let i = verticalMatches.length - 1; i >= 0; i--) {
 
-            if (verticalMatches[i].length == 4 ) {
-                let match = verticalMatches[i];
-                let originTile = match[0];
-                let count = match.length;
-
-                results.push(new TileMatchResult(count, match, originTile, "ROW_CLEAR"));
-                match.forEach(tile => {
-                    this.visitedTiles.add(tile);
-                });
-                verticalMatches.splice(i, 1);
+            if (verticalMatches[i].length != 4 ) {
+                continue;
             }
+
+            let match = verticalMatches[i];
+            let originTile = match[0];
+            let count = match.length;
+
+            results.push(new TileMatchResult(count, match, originTile, "ROW_CLEAR"));
+            this.addToVisitedTiles(match);
+
+            verticalMatches.splice(i, 1);
+            this.sliceAllNonVisitedTileInMatch(verticalMatches);
+            i = verticalMatches.length;
         }
 
+        this.sliceAllNonVisitedTileInMatch(horizontalMatches);
         for (let i = horizontalMatches.length - 1; i >= 0; i--) {
-            if (horizontalMatches[i].length == 4) {
-                let match = horizontalMatches[i];
-                let originTile = match[0];
-                let count = match.length;
-
-                results.push(new TileMatchResult(count, match, originTile, "COLUMN_CLEAR"));
-                match.forEach(tile => {
-                    this.visitedTiles.add(tile);
-                });
-                horizontalMatches.splice(i, 1);
-
+            
+            if (horizontalMatches[i].length != 4) {
+                continue;
             }
+
+            let match = horizontalMatches[i];
+            let originTile = match[0];
+            let count = match.length;
+
+            results.push(new TileMatchResult(count, match, originTile, "COLUMN_CLEAR"));
+            this.addToVisitedTiles(match);
+
+            horizontalMatches.splice(i, 1);
+            this.sliceAllNonVisitedTileInMatch(horizontalMatches);
+            i = horizontalMatches.length;
         }
         
     }
 
-    private sliceAndExtractSquareMatch(squareMatches: Tile[][], results: TileMatchResult[]) {
-        squareMatches = this.sliceAllNonVisitedTileInMatch(squareMatches);
+    private extractSquareMatch(squareMatches: Tile[][], results: TileMatchResult[]) {
         
-        
-        for (let i = squareMatches.length - 1; i >= 0; i--) {
+        this.sliceAllNonVisitedTileInMatch(squareMatches);
 
+        for (let i = squareMatches.length - 1; i >= 0; i--) {
             if (squareMatches[i].length != 4) {
                 continue;
             }
@@ -187,38 +217,51 @@ class TileMatcher {
             let count = match.length;
 
             results.push(new TileMatchResult(count, match, originTile, "RANDOM_2"));
-            match.forEach(tile => {
-                this.visitedTiles.add(tile);
-            });
+            this.addToVisitedTiles(match);
 
-            squareMatches.slice(i, 1);
-            squareMatches = this.sliceAllNonVisitedTileInMatch(squareMatches);
-            i = 0;
+            squareMatches.splice(i, 1);
+            this.sliceAllNonVisitedTileInMatch(squareMatches);
+            i = squareMatches.length;
+        
         }
     }
 
     
-
-    private sliceNonVisitedTileInVisitedTiles(tiles: Tile[]) {
-        let result: Tile[] = [];
-        for (let i = 0; i < tiles.length; i++) {
-            if (!this.visitedTiles.has(tiles[i])) {
-                result.push(tiles[i]);
-            }
+    private addToVisitedTiles(match: Tile[]) {
+        for (let tile of match) {
+            this.visitedTiles.add(tile);
         }
-        return result;
+
     }
+    
 
     private sliceAllNonVisitedTileInMatch(tiles: Tile[][]) {
-        let result: Tile[][] = [];
-        for (let i = 0; i < tiles.length; i++) {
+for (let i = tiles.length - 1; i >= 0; i--) {
             let match = tiles[i];
-            let nonVisitedMatch = this.sliceNonVisitedTileInVisitedTiles(match);
-            if (nonVisitedMatch.length > 0) {
-                result.push(nonVisitedMatch);
+            
+            for (let j = match.length - 1; j >= 0; j--) {
+                if (this.visitedTiles.has(match[j])) {
+                    // Break the array to 2 parts
+                    let firstPart = match.slice(0, j);
+                    let secondPart = match.slice(j + 1, match.length);
+                    tiles.splice(i, 1);
+                    if (firstPart.length >= 3) {
+                        tiles.push(firstPart);
+                        
+                        i = tiles.length;
+                    }
+                    
+                    if (secondPart.length >= 3) {
+                        tiles.push(secondPart);
+                        
+                        i = tiles.length;
+                    }
+                    
+                    break;
+                }
             }
+
         }
-        return result;
     }
 
     private union2TilesArray(array1: Tile[], array2: Tile[]): Tile[] {
@@ -256,8 +299,8 @@ class TileMatcher {
                     continue;
                 }
 
-                if (tile.texture.key !== rightTile.texture.key ||
-                    rightTile.texture.key !== rightRightTile.texture.key) {
+                if (tile.tileType.color !== rightTile.tileType.color ||
+                    rightTile.tileType.color !== rightRightTile.tileType.color) {
                     continue;
                 }
 
@@ -308,8 +351,8 @@ class TileMatcher {
                     continue; // Skip if any of the tiles in the sequence are null
                 }
 
-                if (tile.texture.key !== belowTile.texture.key ||
-                    belowTile.texture.key !== belowBelowTile.texture.key) {
+                if (tile.tileType.color !== belowTile.tileType.color ||
+                    belowTile.tileType.color !== belowBelowTile.tileType.color) {
                     continue; // Skip if the tiles do not match
                 }
 
@@ -352,10 +395,10 @@ class TileMatcher {
                 if (!tile || !rightTile || !belowTile || !belowRightTile) {
                     continue;
                 }
-
-                if (tile.texture.key !== rightTile.texture.key ||
-                    tile.texture.key !== belowTile.texture.key ||
-                    tile.texture.key !== belowRightTile.texture.key) {
+                
+                if (tile.tileType.color !== rightTile.tileType.color ||
+                    tile.tileType.color !== belowTile.tileType.color ||
+                    tile.tileType.color !== belowRightTile.tileType.color) {
                     continue;
                 }
 
