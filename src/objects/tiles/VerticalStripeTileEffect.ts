@@ -3,6 +3,7 @@ import TileEffect from "./TileEffect";
 import Tile from "./Tile";
 import SimulationController from "../../simulation/SimulationController";
 import TweenSimulation from "../../simulation/TweenSimulation";
+import TweenChainSimulation from "../../simulation/TweenChainSimulation";
 
 class VerticalStripeTileEffect extends TileEffect {
     constructor(scene : Scene, tile : Tile, color: string, texture: string) {
@@ -11,16 +12,8 @@ class VerticalStripeTileEffect extends TileEffect {
 
     
     public onTilePop(): void {
-        let matrix = this.tile.getWorldPosition();
-        
-        let stripeDestroyDown = this.scene.add.image(matrix.tx, matrix.ty, "stripes_destroy");
-        stripeDestroyDown.setRotation(Math.PI/2);
-        stripeDestroyDown.setOrigin(0, 0.5);
-        
         let tileGrid = this.tile.getTileGrid();
-        let popSet = new Set<number>();
-        popSet.add(tileGrid.y);
-
+        
         let tileIndex = tileGrid.getTileIndex(this.tile)!;
 
         for (let i = 0; i < tileGrid.getRowCount(); i++) {
@@ -30,6 +23,21 @@ class VerticalStripeTileEffect extends TileEffect {
                 tileGrid.popTiles([tile]);
             }
         }
+
+    }
+
+    public onTileDestroy(): void {
+        let simulationController = this.scene.data.get("simulationController") as SimulationController;
+        let matrix = this.tile.getWorldPosition();
+        let tileGrid = this.tile.getTileGrid();
+        let popSet = new Set<number>();
+        popSet.add(tileGrid.y);
+
+        
+        let stripeDestroyDown = this.scene.add.image(matrix.tx, matrix.ty, "stripes_destroy");
+        stripeDestroyDown.setRotation(Math.PI/2);
+        stripeDestroyDown.setOrigin(0, 0.5);
+        
 
         const dynamicDestroy = (tween : Phaser.Tweens.Tween) => {
             const value = tween.getValue();
@@ -41,19 +49,19 @@ class VerticalStripeTileEffect extends TileEffect {
         }
     
         
-        this.scene.tweens.chain({
+        let chainDown = this.scene.tweens.chain({
             tweens: [{
                 targets: stripeDestroyDown,
                 y : { from: matrix.ty, to: matrix.ty + 200},
                 scaleY: {from: 1, to: 1.5 },
                 scaleX: {from: 1, to: 5 },
                 duration: 350,
-                ease: 'Cubic.in',
+                ease: 'Cubic.in'
             },{
                 targets: stripeDestroyDown,
                 y: { from: matrix.ty + 200, to: matrix.ty + 400},
                 duration: 350,
-                ease: 'Cubic.out',
+                ease: 'Cubic.out'
             }]
         });
 
@@ -61,39 +69,43 @@ class VerticalStripeTileEffect extends TileEffect {
         stripeDestroyUp.setRotation(-Math.PI/2);
         stripeDestroyUp.setOrigin(0, 0.5);
 
-        this.scene.tweens.chain({
+        let chainUp = this.scene.tweens.chain({
             tweens: [{
                 targets: stripeDestroyUp,
                 y : { from: matrix.ty, to: matrix.ty - 200},
                 scaleY: {from: 1, to: 1.5 },
                 scaleX: {from: 1, to: 5 },
                 duration: 350,
-                ease: 'Cubic.in',
+                ease: 'Cubic.in'
             },{
                 targets: stripeDestroyUp,
                 y: { from: matrix.ty - 200, to: matrix.ty - 400},
                 duration: 350,
-                ease: 'Cubic.out',
+                ease: 'Cubic.out'
             }]
         });
 
-
-        this.scene.add.tween({
+        // Adjust these tweens for horizontal movement
+        let destroyUp =this.scene.add.tween({
             targets: this.tile,
             values: { from: matrix.ty, to: matrix.ty - 600},
             duration: 700,
-            ease: 'Cubic.out',
+            ease: 'Cubic.easeInOut',
             onUpdate: dynamicDestroy
         });
 
-
-        this.scene.add.tween({
+        let destroyDown =this.scene.add.tween({
             targets: this.tile,
             values: { from: matrix.ty, to: matrix.ty + 600},
             duration: 700,
-            ease: 'Cubic.out',
+            ease: 'Cubic.easeInOut',
             onUpdate: dynamicDestroy
         });
+
+        simulationController.addSimulation(new TweenChainSimulation(chainDown));
+        simulationController.addSimulation(new TweenChainSimulation(chainUp));
+        simulationController.addSimulation(new TweenSimulation(destroyUp));
+        simulationController.addSimulation(new TweenSimulation(destroyDown));
 
 
         this.scene.time.delayedCall(700, () => {
