@@ -5,6 +5,7 @@ import TileFactory from "../tiles/TileFactory";
 
 class TileGrid extends GameObjects.Container {
     private tileGrid: (Tile|null)[][];
+    private popedTiles: Tile[] = [];
     
     private gridWidth: number;
     private gridHeight: number;
@@ -167,14 +168,35 @@ class TileGrid extends GameObjects.Container {
         }
     }
 
-    public removeTileGroup(matches: Tile[][]): void {
+    
+    public destroyAllPopTiles(): void {
         // Loop through all the matches and remove the associated tiles
-        for (var i = 0; i < matches.length; i++) {
-            this.removeTiles(matches[i]);
+        this.popedTiles.forEach(element => {
+            this.remove(element);
+            element.destroy();
+        });
+    }
+
+    public destroyPopTile(tile: Tile): void {
+        let tilePos = this.popedTiles.indexOf(tile);
+        if (tilePos == -1) {
+            return;
+        }
+
+        this.remove(tile);
+        tile.destroy();
+    }
+
+    public destroyPopTiles(tiles: Tile[]): void {
+        // Loop through all the matches and remove the associated tiles
+        for (var i = 0; i < tiles.length; i++) {
+            let tile = tiles[i];
+            this.remove(tile);
+            tile.destroy();
         }
     }
 
-    public removeTiles(tiles: Tile[]): void {
+    public popTiles(tiles: Tile[]): void {
         // Loop through all the matches and remove the associated tiles
         for (var i = 0; i < tiles.length; i++) {
             let tile = tiles[i];
@@ -183,8 +205,8 @@ class TileGrid extends GameObjects.Container {
 
             // Remove the tile from the theoretical grid
             if (tilePos) {
-                this.remove(tile);
-                tile.destroy();
+                this.popedTiles.push(tile);
+                tile.pop();
                 this.tileGrid[tilePos.y][tilePos.x] = null;
             }
         }
@@ -195,16 +217,14 @@ class TileGrid extends GameObjects.Container {
         if (!tilePos) {
             return;
         }
-
         
         newTile.setTileGrid(this);
         this.add(newTile);
         newTile.setPosition(oldTile.x, oldTile.y);
-
-        this.remove(oldTile);
-        oldTile.destroy();
+        
+        this.popedTiles.push(oldTile);
+        oldTile.pop();
         this.tileGrid[tilePos.y][tilePos.x] = newTile;
-
     
     }
     
@@ -259,7 +279,7 @@ class TileGrid extends GameObjects.Container {
         return column;
     }
 
-    public getTile(x: number, y: number): Tile | null {
+    public getTileAtIndex(x: number, y: number): Tile | null {
         return this.tileGrid[y][x];
     }
 

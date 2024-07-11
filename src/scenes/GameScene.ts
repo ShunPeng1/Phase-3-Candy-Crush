@@ -17,6 +17,7 @@ class GameScene extends Phaser.Scene {
     private simulationController: SimulationController;
     private gameInputHandler : GameInputHandler;
 
+
     constructor() {
         super({ key: 'GameScene' });
     }
@@ -40,6 +41,8 @@ class GameScene extends Phaser.Scene {
         this.tileSwapper = new TileSwapper(this, this.tileGrid);
 
         this.gameInputHandler = new GameInputHandler(this, this.tileSwapper);
+    
+        this.data.set('simulationController', this.simulationController);
     }
 
     private setBackground(): void {
@@ -70,20 +73,19 @@ class GameScene extends Phaser.Scene {
                 if (match.specialTileType !== "NONE") {
                     let specialTile= this.tileFactory.createSpecialTile(match.originTile.getColor() as CandyColorKey, match.specialTileType, match.originTile.x, match.originTile.y);
                     this.tileGrid.replaceTile(match.originTile, specialTile);
-                    this.tileGrid.removeTiles(match.matchTilesExceptOrigin);
+                    this.tileGrid.destroyAllPopTiles();
+                    this.tileGrid.popTiles(match.matchTilesExceptOrigin);
 
                 }
                 else{
-                    this.tileGrid.removeTiles(match.matchTiles);
+                    this.tileGrid.popTiles(match.matchTiles);
                 }
             });
 
 
             this.tileGrid.gravitateTile();
             this.tileGrid.fillEmptyWithTile();
-            
-            this.startCheckMatch();
-
+            this.tileGrid.destroyAllPopTiles();
             return true;
         }
 
@@ -96,8 +98,15 @@ class GameScene extends Phaser.Scene {
 
         const onComplete = () => {
             this.simulationController.off('complete', onComplete);
-            this.tileSwapper.setCanMove(true);
-            this.checkMatches();
+            
+            let isMatch = this.checkMatches();
+            
+            if (isMatch) {
+                this.startCheckMatch();
+            }
+            else{
+                this.tileSwapper.setCanMove(true);
+            }
         };
 
         this.simulationController.on('complete', onComplete);
@@ -157,7 +166,8 @@ class GameScene extends Phaser.Scene {
             
         }}));
 
-        this.simulationController.addSimulation(tweenSimulation);
+        this.simulationController.addSimulation(tweenSimulation, true);
+    
     }
 
     private tweenSwapTiles(firstSelectedTile: Tile, secondSelectedTile: Tile): void {
@@ -197,6 +207,7 @@ class GameScene extends Phaser.Scene {
                 }
             } else {
                 this.tileSwapper.resetSelectedTile();
+                this.startCheckMatch();
             }
         };
 

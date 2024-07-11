@@ -8,6 +8,7 @@ class Tile extends Phaser.GameObjects.Image {
     private mapTween : Map<string, Phaser.Tweens.Tween> = new Map<string, Phaser.Tweens.Tween>();
     private isPointerOver: boolean = false; 
     private isDestroyed: boolean = false;
+    private isPop: boolean = false;
     
     constructor(params: IImageConstructor) {
         super(params.scene, params.x, params.y, params.texture, params.frame);
@@ -96,10 +97,17 @@ class Tile extends Phaser.GameObjects.Image {
         return this.tileEffect.color;
     }
 
-    public destroy(fromScene?: boolean): void {
+    public pop(): void {
+        if (this.isPop) return;
+        this.isPop = true;
         this.tileEffect.onTilePop();
-        
+    }
+
+    public destroy(fromScene?: boolean): void {
+        if (this.isDestroyed) return;
+
         this.isDestroyed = true;
+        this.tileEffect.onTileDestroy();
         super.destroy(fromScene);
     }
 

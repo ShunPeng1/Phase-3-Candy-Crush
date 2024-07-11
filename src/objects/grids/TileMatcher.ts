@@ -291,9 +291,9 @@ for (let i = tiles.length - 1; i >= 0; i--) {
             let tempArray = this.tileGrid.getRow(y);
             groups = [];
             for (let x = 0; x < tempArray.length - 2; x++) {
-                let tile = this.tileGrid.getTile(x, y);
-                let rightTile = this.tileGrid.getTile(x + 1, y);
-                let rightRightTile = this.tileGrid.getTile(x + 2, y);
+                let tile = this.tileGrid.getTileAtIndex(x, y);
+                let rightTile = this.tileGrid.getTileAtIndex(x + 1, y);
+                let rightRightTile = this.tileGrid.getTileAtIndex(x + 2, y);
 
                 if (!tile || !rightTile || !rightRightTile) {
                     continue;
@@ -343,9 +343,9 @@ for (let i = tiles.length - 1; i >= 0; i--) {
         for (let x = 0; x < this.tileGrid.getColumnCount(); x++) { // Iterate over each column
             let groups = [];
             for (let y = 0; y < this.tileGrid.getRowCount() - 2; y++) { // Iterate over rows within the column, leaving room for comparison
-                let tile = this.tileGrid.getTile(x, y);
-                let belowTile = this.tileGrid.getTile(x, y + 1);
-                let belowBelowTile = this.tileGrid.getTile(x, y + 2);
+                let tile = this.tileGrid.getTileAtIndex(x, y);
+                let belowTile = this.tileGrid.getTileAtIndex(x, y + 1);
+                let belowBelowTile = this.tileGrid.getTileAtIndex(x, y + 2);
 
                 if (!tile || !belowTile || !belowBelowTile) {
                     continue; // Skip if any of the tiles in the sequence are null
@@ -387,10 +387,10 @@ for (let i = tiles.length - 1; i >= 0; i--) {
         // Check for square matches
         for (let y = 0; y < this.tileGrid.getRowCount() - 1; y++) {
             for (let x = 0; x < this.tileGrid.getColumnCount() - 1; x++) {
-                let tile = this.tileGrid.getTile(x, y);
-                let rightTile = this.tileGrid.getTile(x + 1, y);
-                let belowTile = this.tileGrid.getTile(x, y + 1);
-                let belowRightTile = this.tileGrid.getTile(x + 1, y + 1);
+                let tile = this.tileGrid.getTileAtIndex(x, y);
+                let rightTile = this.tileGrid.getTileAtIndex(x + 1, y);
+                let belowTile = this.tileGrid.getTileAtIndex(x, y + 1);
+                let belowRightTile = this.tileGrid.getTileAtIndex(x + 1, y + 1);
 
                 if (!tile || !rightTile || !belowTile || !belowRightTile) {
                     continue;

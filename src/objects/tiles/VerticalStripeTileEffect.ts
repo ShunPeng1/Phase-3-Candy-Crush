@@ -1,6 +1,8 @@
 import { Scene } from "phaser";
 import TileEffect from "./TileEffect";
 import Tile from "./Tile";
+import SimulationController from "../../simulation/SimulationController";
+import TweenSimulation from "../../simulation/TweenSimulation";
 
 class VerticalStripeTileEffect extends TileEffect {
     constructor(scene : Scene, tile : Tile, color: string, texture: string) {
@@ -19,20 +21,25 @@ class VerticalStripeTileEffect extends TileEffect {
         let popSet = new Set<number>();
         popSet.add(tileGrid.y);
 
-        const dynamicRemove = (tween : Phaser.Tweens.Tween) => {
+        let tileIndex = tileGrid.getTileIndex(this.tile)!;
+
+        for (let i = 0; i < tileGrid.getRowCount(); i++) {
+            if (i == tileIndex.y) continue;
+            let tile = tileGrid.getTileAtIndex(tileIndex.x, i);
+            if (tile != null && tile != this.tile) {
+                tileGrid.popTiles([tile]);
+            }
+        }
+
+        const dynamicDestroy = (tween : Phaser.Tweens.Tween) => {
             const value = tween.getValue();
             let tile = tileGrid.getTileAtWorldPosition(matrix.tx, value);
             if (tile != null && !popSet.has(tile.y)) {
                 popSet.add(tile.y);
-                tileGrid.removeTiles([tile]);
+                tileGrid.destroyPopTile(tile);
             }
         }
-
-        const refillTile = () => {
-            tileGrid.gravitateTile();
-            tileGrid.fillEmptyWithTile();
-        }
-            
+    
         
         this.scene.tweens.chain({
             tweens: [{
@@ -47,8 +54,7 @@ class VerticalStripeTileEffect extends TileEffect {
                 y: { from: matrix.ty + 200, to: matrix.ty + 400},
                 duration: 350,
                 ease: 'Cubic.out',
-            }],
-            onComplete: refillTile
+            }]
         });
 
         let stripeDestroyUp = this.scene.add.image(matrix.tx, matrix.ty, "stripes_destroy");
@@ -68,24 +74,25 @@ class VerticalStripeTileEffect extends TileEffect {
                 y: { from: matrix.ty - 200, to: matrix.ty - 400},
                 duration: 350,
                 ease: 'Cubic.out',
-            }],
-            onComplete: refillTile
+            }]
         });
+
 
         this.scene.add.tween({
             targets: this.tile,
             values: { from: matrix.ty, to: matrix.ty - 600},
             duration: 700,
             ease: 'Cubic.out',
-            onUpdate: dynamicRemove
+            onUpdate: dynamicDestroy
         });
+
 
         this.scene.add.tween({
             targets: this.tile,
-            values: { from: matrix.ty, to: matrix.ty + 700},
-            duration: 1000,
+            values: { from: matrix.ty, to: matrix.ty + 600},
+            duration: 700,
             ease: 'Cubic.out',
-            onUpdate: dynamicRemove
+            onUpdate: dynamicDestroy
         });
 
 
@@ -94,6 +101,7 @@ class VerticalStripeTileEffect extends TileEffect {
             stripeDestroyUp.destroy();
         });
     }
+
 }
 
 

@@ -31,6 +31,10 @@ class TileEffect implements ITileEffect{
     public onTilePop(): void {
 
     }
+
+    public onTileDestroy(): void {
+            
+    }
     public onTileSwap(other: ITileEffect): void {
 
     }

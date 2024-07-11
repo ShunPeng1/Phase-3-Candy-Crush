@@ -2,6 +2,7 @@ class SimulationController extends Phaser.GameObjects.GameObject {
 
     private simulations : ISimulation[] = [];
     private hasStarted : boolean = false;
+    private hasEnded : boolean = false;
     private hasCompleted : boolean = false;
     private isAutoReset : boolean = true;
 
@@ -22,30 +23,34 @@ class SimulationController extends Phaser.GameObjects.GameObject {
         //     simulation.update();
         // });
 
-        if (this.hasInvokeNextStart && this.hasCompleted) {
+        if ((this.hasInvokeNextStart) && this.hasEnded ) {
             this.simulations = this.nextSimulations;
             this.nextSimulations = [];
             this.startSimulation(this.isNextReset);
         }
+
         
 
         if(this.getCompleted() && this.hasStarted && !this.hasCompleted){
 
+            this.hasCompleted = true;
             this.emit('complete');
             if (this.isAutoReset){
                 this.clear();
             }
-            this.hasCompleted = true;
+            this.hasEnded = true;
         }
     }
 
-    public addSimulation(simulation: ISimulation) : void{
-        if (this.hasStarted){
-            this.nextSimulations.push(simulation);
-        }
-        else{
+    public addSimulation(simulation: ISimulation, mustInThisLoop : boolean = false) : void{
+        if (mustInThisLoop && !this.hasCompleted || !this.hasStarted){
             this.simulations.push(simulation);
+            simulation.start();
+            return;
         }
+        
+        this.nextSimulations.push(simulation);
+        
     }
 
     public startSimulation(autoReset: boolean = true) : void{
@@ -59,6 +64,7 @@ class SimulationController extends Phaser.GameObjects.GameObject {
         this.hasStarted = true;
         this.hasInvokeNextStart = false;
         this.hasCompleted = false;
+        this.hasEnded = false;
         this.isAutoReset = autoReset;
 
         this.simulations.forEach(simulation => {

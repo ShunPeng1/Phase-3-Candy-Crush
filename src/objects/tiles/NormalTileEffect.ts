@@ -8,7 +8,7 @@ class NormalTileEffect extends TileEffect{
         super(scene, tile, color, texture);
     }
 
-    public onTilePop(): void {
+    public onTileDestroy(): void {
         let matrix = this.tile.getWorldPosition();
         
         let particles = this.scene.add.particles(matrix.tx, matrix.ty, this.texture, {

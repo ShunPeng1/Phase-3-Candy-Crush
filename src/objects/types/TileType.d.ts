@@ -1,7 +1,8 @@
 interface ITileEffect{
     color : string;
     texture : string;
-
+    
+    onTileDestroy(): void;
     onTileAppear(): void;
     onTilePop(): void;
     onTileSwap(other: ITileEffect): void;
