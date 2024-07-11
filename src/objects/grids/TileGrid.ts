@@ -231,10 +231,15 @@ class TileGrid extends GameObjects.Container {
         
         newTile.setTileGrid(this);
         this.add(newTile);
-        newTile.setPosition(oldTile.x, oldTile.y);
-        
-        this.popedTiles.push(oldTile);
-        oldTile.pop();
+
+        if (this.popedTiles.includes(oldTile)){
+            this.popedTiles.push(oldTile);
+            oldTile.pop();
+        }
+        else{
+            newTile.setPosition(oldTile.x, oldTile.y);
+        }
+
         this.tileGrid[tilePos.y][tilePos.x] = newTile;
     
         this.emit(TileGrid.TILE_CHANGE_EVENT);
@@ -292,6 +297,10 @@ class TileGrid extends GameObjects.Container {
     }
 
     public getTileAtIndex(x: number, y: number): Tile | null {
+        if (y < 0 || y >= this.tileGrid.length || x < 0 || x >= this.tileGrid[y].length) {
+            return null;
+        }
+
         return this.tileGrid[y][x];
     }
 

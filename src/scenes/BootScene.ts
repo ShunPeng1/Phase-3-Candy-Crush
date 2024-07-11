@@ -39,8 +39,6 @@ class BootScene extends Phaser.Scene {
 
         // load out package
         this.load.pack('preload', './assets/pack.json', 'preload');
-
-
        
         this.load.on('complete', () => {
             
@@ -49,8 +47,12 @@ class BootScene extends Phaser.Scene {
 
             this.scene.start('GameScene'); // Move scene transition here
         }, this);
+        
     }
 
+    create(): void {
+        this.createAnimations();
+    }
 
     private createLoadingbar(): void {
         this.loadingBar = this.add.graphics();
@@ -62,6 +64,20 @@ class BootScene extends Phaser.Scene {
             20
         );
         this.progressBar = this.add.graphics();
+    }
+
+    private createAnimations(): void {
+        
+        let frames = [];
+        for (let i = 5; i <= 17; i++) {
+            frames.push({ key: `boom-${i.toString().padStart(2, '0')}` });
+        }
+
+        this.anims.create({
+            key: 'bomb-animation',
+            frames: frames,
+            frameRate: 15,
+        });
     }
 }
 
