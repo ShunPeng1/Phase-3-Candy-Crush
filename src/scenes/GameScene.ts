@@ -6,6 +6,7 @@ import TileSwapper from "../objects/grids/TileSwapper";
 import Tile from "../objects/tiles/Tile";
 import TileFactory from "../objects/tiles/TileFactory";
 import SimulationController from "../simulation/SimulationController";
+import TweenChainSimulation from "../simulation/TweenChainSimulation";
 import TweenSimulation from "../simulation/TweenSimulation";
 
 class GameScene extends Phaser.Scene {
@@ -105,14 +106,56 @@ class GameScene extends Phaser.Scene {
 
 
     private tweenDropdownTile(tile: Tile, fromX: number, fromY: number, endX: number, endY: number): void {
-        const tweenSimulation = new TweenSimulation(this.tweens.add({
+        
+        
+        const tweenSimulation = new TweenChainSimulation(this.tweens.chain({
+            tweens: [{
             targets: tile,
             y: (endY+0.5) * CONST.tileHeight,
-            ease: 'Linear',
+            ease: "Quad.In", // Directly reference the custom easing function
             duration: 150 * (endY - fromY),
             repeat: 0,
             yoyo: false
-        }));
+        }],
+        onActive: () => {
+            console.log("Disable Tile Interaction")
+            tile.disableTileInteraction();
+        }, 
+        onComplete: () => {
+            // Squash effect
+            
+            tile.getMapTween("displaySize")?.stop();
+            
+            const originalHeight = tile.displayHeight;
+            const originalWidth = tile.displayWidth;
+            
+
+            let squashTween = this.tweens.add({
+                targets: tile,
+                displayHeight: originalHeight * 0.8, // Squash the tile a bit
+                displayWidth: originalWidth * 1.2, // Compensate for the squashing to maintain volume
+                ease: "Quad.Out",
+                duration: 100,
+                yoyo: true, // Return to original scale
+                repeat: 0,
+                onComplete: () => {
+                    //tile.off('pointerover', pauseTween);
+                    //tile.off('pointerout', unpauseTween);
+                    console.log("Enable Tile Interaction")
+                    
+                    tile.removeMapTween("displaySize");
+                    tile.enableTileInteraction();
+                },
+                onStop: () => {
+                    tile.setDisplaySize(originalWidth, originalHeight);
+                    tile.removeMapTween("displaySize");
+                }
+            });
+            
+            tile.addMapTween("displaySize", squashTween);
+
+            
+        }}));
 
         this.simulationController.addSimulation(tweenSimulation);
     }

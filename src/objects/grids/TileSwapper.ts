@@ -58,7 +58,7 @@ class TileSwapper {
             return;
         }
 
-        console.log("Tile selected", gameobject.texture.key, this.tileGrid.getTileIndex(gameobject))
+        //console.log("Tile selected", gameobject.texture.key, this.tileGrid.getTileIndex(gameobject))
         if (!this.firstSelectedTile) {
             this.firstSelectedTile = gameobject;
             //console.log("First tile selected", this.firstSelectedTile?.texture.key, this.tileGrid.getTilePos(this.firstSelectedTile!))
