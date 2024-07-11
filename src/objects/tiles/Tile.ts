@@ -16,11 +16,14 @@ class Tile extends Phaser.GameObjects.Image {
 
         TweenUtilities.applyImageDisplaySizeTweens(this, 'pointerover', 'pointerout', 1.1, 100);
     
-        
+        this.on('pointerdown', ()=>{
+            console.log("Tile Clicked");
+        }, this);
     }
 
-    public getWorldTransformMatrix(): Phaser.GameObjects.Components.TransformMatrix {
+    
 
+    public getWorldPosition() {
         const gridWorldTransform = this.grid.getWorldTransformMatrix();
 
         let localTransform = this.getLocalTransformMatrix();

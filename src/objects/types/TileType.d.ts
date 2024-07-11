@@ -2,7 +2,7 @@ interface ITileEffect{
     color : string;
     texture : string;
     onTilePop(): void;
-    onTileSwap(): void;
+    onTileSwap(other: ITileEffect): void;
     
 } 
 
