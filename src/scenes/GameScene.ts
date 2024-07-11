@@ -112,8 +112,8 @@ class GameScene extends Phaser.Scene {
             tweens: [{
             targets: tile,
             y: (endY+0.5) * CONST.tileHeight,
-            ease: "Quad.In", // Directly reference the custom easing function
-            duration: 150 * (endY - fromY),
+            ease: "Cubic.In", // Directly reference the custom easing function
+            duration: Math.max(150 * (endY - fromY), 300),
             repeat: 0,
             yoyo: false
         }],
