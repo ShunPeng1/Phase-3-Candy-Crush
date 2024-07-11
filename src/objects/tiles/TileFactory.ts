@@ -35,8 +35,8 @@ class TileFactory {
             texture: randomTileColorTexture
         });
 
-        tile.setTileEffect(new NormalTileEffect(this.scene, tile, randomTileColor, randomTileColorTexture))
-            .setDisplaySize(this.textureWidth, this.textureHeight);
+        tile.setDisplaySize(this.textureWidth, this.textureHeight)
+            .setTileEffect(new NormalTileEffect(this.scene, tile, randomTileColor, randomTileColorTexture));
 
         return tile;
     }
@@ -73,8 +73,8 @@ class TileFactory {
             texture: specialTileTexture
         });
         
-        tile.setTileEffect(new NormalTileEffect(this.scene, tile, color, specialTileTexture))
-            .setDisplaySize(this.textureWidth, this.textureHeight);
+        tile.setDisplaySize(this.textureWidth, this.textureHeight)
+            .setTileEffect(new NormalTileEffect(this.scene, tile, color, specialTileTexture));
         
         return tile;
     }

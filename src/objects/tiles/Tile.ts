@@ -18,7 +18,6 @@ class Tile extends Phaser.GameObjects.Image {
 
         this.scene.add.existing(this);
 
-        
     }
 
     public disableTileInteraction(): void {
@@ -79,6 +78,8 @@ class Tile extends Phaser.GameObjects.Image {
 
     public setTileEffect(tileEffect: ITileEffect): this {
         this.tileEffect = tileEffect;
+        this.tileEffect.onTileAppear();
+
         return this;
     }
 

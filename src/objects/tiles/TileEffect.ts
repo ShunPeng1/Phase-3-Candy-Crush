@@ -12,6 +12,21 @@ class TileEffect implements ITileEffect{
         this.color = color;
         this.texture = texture;
     }
+
+    public onTileAppear(): void {
+        const currentScaleX = this.tile.scaleX;
+        const currentScaleY = this.tile.scaleY;
+
+        this.scene.add.tween({
+            targets: this.tile,
+            scaleX: { from: 0, to: currentScaleX },
+            scaleY: { from: 0, to: currentScaleY },
+            duration: 500,
+            ease: 'Back.out',
+        });
+
+
+    }
     
     public onTilePop(): void {
 
