@@ -82,8 +82,8 @@ class VerticalStripeTileEffect extends TileEffect {
 
         this.scene.add.tween({
             targets: this.tile,
-            values: { from: matrix.ty, to: matrix.ty + 600},
-            duration: 700,
+            values: { from: matrix.ty, to: matrix.ty + 700},
+            duration: 1000,
             ease: 'Cubic.out',
             onUpdate: dynamicRemove
         });
