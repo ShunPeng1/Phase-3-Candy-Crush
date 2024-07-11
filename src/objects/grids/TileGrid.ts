@@ -16,6 +16,12 @@ class TileGrid extends GameObjects.Container {
     private tileFactory: TileFactory;
     private gridTextures: string[];
 
+    public static readonly TILE_CHANGE_EVENT = "tileChange";
+    public static readonly  TILE_SWAP_EVENT = "tileSwap"
+    public static readonly  TILE_ADD_EVENT = "tileAdd";
+    public static readonly  TILE_GRAVITATE_EVENT = "tileGravitate";
+    
+
     constructor(scene: Phaser.Scene, x: number, y: number, gridWidth: number, gridHeight: number, tileWidth: number, tileHeight: number, tileFactory : TileFactory, gridTextures: string[] = []) {
         super(scene, x, y);
         this.scene = scene;
@@ -72,11 +78,12 @@ class TileGrid extends GameObjects.Container {
                 
                 
                 this.tileGrid[y][x] = tile;
-                this.emit('tileAdded', tile, x, (y - this.gridHeight), x, y);
+                this.emit(TileGrid.TILE_ADD_EVENT, tile, x, (y - this.gridHeight), x, y);
                 
             }
         }
 
+        this.emit(TileGrid.TILE_CHANGE_EVENT);
     }
 
 
@@ -126,7 +133,7 @@ class TileGrid extends GameObjects.Container {
                     this.tileGrid[y][x] = aboveTile;
                     this.tileGrid[aboveIndex][x] = null;
 
-                    this.emit('tileMoved', aboveTile, x, aboveIndex, x, y);
+                    this.emit(TileGrid.TILE_GRAVITATE_EVENT, aboveTile, x, aboveIndex, x, y);
 
                     //The positions have changed so start this process again from the bottom
                     //NOTE: This is not set to me.tileGrid[i].length - 1 because it will immediately be decremented as
@@ -159,13 +166,15 @@ class TileGrid extends GameObjects.Container {
                 
                 this.tileGrid[y][x] = tile;
 
-                this.emit('tileAdded', tile, x, (y - belowIndex), x, y);
+                this.emit(TileGrid.TILE_ADD_EVENT, tile, x, (y - belowIndex), x, y);
                 
                 //And also update our "theoretical" grid
                 
                 
             }
         }
+
+        this.emit(TileGrid.TILE_CHANGE_EVENT);
     }
 
     
@@ -210,6 +219,8 @@ class TileGrid extends GameObjects.Container {
                 this.tileGrid[tilePos.y][tilePos.x] = null;
             }
         }
+
+        this.emit(TileGrid.TILE_CHANGE_EVENT);
     }
 
     public replaceTile(oldTile : Tile, newTile: Tile): void {
@@ -226,6 +237,7 @@ class TileGrid extends GameObjects.Container {
         oldTile.pop();
         this.tileGrid[tilePos.y][tilePos.x] = newTile;
     
+        this.emit(TileGrid.TILE_CHANGE_EVENT);
     }
     
 
@@ -249,8 +261,8 @@ class TileGrid extends GameObjects.Container {
         this.tileGrid[firstTilePosition.y / this.tileHeight -0.5][firstTilePosition.x / this.tileWidth -0.5] = secondSelectedTile;
         this.tileGrid[secondTilePosition.y / this.tileHeight -0.5][secondTilePosition.x / this.tileWidth -0.5] = firstSelectedTile;
 
-        this.emit('tilesSwapped', firstSelectedTile, secondSelectedTile);
-            
+        this.emit(TileGrid.TILE_SWAP_EVENT, firstSelectedTile, secondSelectedTile);
+        this.emit(TileGrid.TILE_CHANGE_EVENT);
     }
 
     public getDistance(firstTile: Tile, secondTile: Tile): number {

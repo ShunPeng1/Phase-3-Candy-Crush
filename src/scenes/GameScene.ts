@@ -55,9 +55,9 @@ class GameScene extends Phaser.Scene {
     }
 
     private initializeGrid(): void {
-        this.tileGrid.on('tileAdded', this.tweenDropdownTile, this);
-        this.tileGrid.on('tileMoved', this.tweenDropdownTile, this);
-        this.tileGrid.on('tilesSwapped', this.tweenSwapTiles, this);
+        this.tileGrid.on(TileGrid.TILE_ADD_EVENT, this.tweenDropdownTile, this);
+        this.tileGrid.on(TileGrid.TILE_GRAVITATE_EVENT, this.tweenDropdownTile, this);
+        this.tileGrid.on(TileGrid.TILE_SWAP_EVENT, this.tweenSwapTiles, this);
 
         this.tileGrid.initializeTiles();
     }
@@ -110,7 +110,7 @@ class GameScene extends Phaser.Scene {
         };
 
         this.simulationController.on('complete', onComplete);
-        this.simulationController.startSimulation(true);
+        this.simulationController.startSimulation();
     }
 
 
@@ -166,7 +166,7 @@ class GameScene extends Phaser.Scene {
             
         }}));
 
-        this.simulationController.addSimulation(tweenSimulation, true);
+        this.simulationController.addSimulation(tweenSimulation);
     
     }
 
@@ -212,7 +212,7 @@ class GameScene extends Phaser.Scene {
         };
 
         this.simulationController.on('complete', onComplete);
-        this.simulationController.startSimulation(true);
+        this.simulationController.startSimulation();
     }
 }
 
