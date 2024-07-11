@@ -7,6 +7,7 @@ class Tile extends Phaser.GameObjects.Image {
 
     private mapTween : Map<string, Phaser.Tweens.Tween> = new Map<string, Phaser.Tweens.Tween>();
     private isPointerOver: boolean = false; 
+    private isDestroyed: boolean = false;
     
     constructor(params: IImageConstructor) {
         super(params.scene, params.x, params.y, params.texture, params.frame);
@@ -21,6 +22,8 @@ class Tile extends Phaser.GameObjects.Image {
     }
 
     public disableTileInteraction(): void {
+        if (this.isDestroyed) return;
+
         this.disableInteractive();
 
         if (this.isPointerOver) { 
@@ -32,17 +35,14 @@ class Tile extends Phaser.GameObjects.Image {
     }
 
     public enableTileInteraction(): void {
-        try{
-            this.setInteractive();
-            this.on('pointerover', this.onPointerOver, this);
-            this.on('pointerout', this.onPointerOut, this);
-            
-            TweenUtilities.applyImageDisplaySizeTweens(this, 'pointerover', 'pointerout', 1.1, 100);
-    
-        }
-        catch (error){
-            // Ignore
-        }
+        if (this.isDestroyed) return;
+        
+        this.setInteractive();
+        this.on('pointerover', this.onPointerOver, this);
+        this.on('pointerout', this.onPointerOut, this);
+        
+        TweenUtilities.applyImageDisplaySizeTweens(this, 'pointerover', 'pointerout', 1.1, 100);
+
     }
 
     public addMapTween(key: string, tween: Phaser.Tweens.Tween): void {
@@ -65,17 +65,6 @@ class Tile extends Phaser.GameObjects.Image {
         this.isPointerOver = false; 
     }
 
-    public getWorldPosition() {
-        const gridWorldTransform = this.grid.getWorldTransformMatrix();
-
-        let localTransform = this.getLocalTransformMatrix();
-    
-        localTransform.tx += gridWorldTransform.tx
-        localTransform.ty += gridWorldTransform.ty;
-
-        return localTransform;
-    }
-
     public setTileEffect(tileEffect: ITileEffect): this {
         this.tileEffect = tileEffect;
         this.tileEffect.onTileAppear();
@@ -88,12 +77,29 @@ class Tile extends Phaser.GameObjects.Image {
         return this;
     }
     
+    public getWorldPosition() {
+        const gridWorldTransform = this.grid.getWorldTransformMatrix();
+
+        let localTransform = this.getLocalTransformMatrix();
+    
+        localTransform.tx += gridWorldTransform.tx
+        localTransform.ty += gridWorldTransform.ty;
+
+        return localTransform;
+    }
+
+    public getTileGrid() : TileGrid {
+        return this.grid;
+    }
+
     public getColor(): string {
         return this.tileEffect.color;
     }
 
     public destroy(fromScene?: boolean): void {
         this.tileEffect.onTilePop();
+        
+        this.isDestroyed = true;
         super.destroy(fromScene);
     }
 

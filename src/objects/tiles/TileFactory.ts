@@ -1,6 +1,8 @@
 import CONST, { CandyColorKey } from "../../const/const";
 import NormalTileEffect from "./NormalTileEffect";
 import Tile from "./Tile";
+import TileEffect from "./TileEffect";
+import VerticalStripeTileEffect from "./VerticalStripeTileEffect";
 
 class TileFactory {
     
@@ -43,29 +45,9 @@ class TileFactory {
 
     public createSpecialTile(color : CandyColorKey, specialTileType: SpecialTileEffectType, x: number, y: number) {
             
-        let specialTileTexture : string;
-
-        switch (specialTileType) {
-            case "BOMB":
-                specialTileTexture =  CONST.bombCandyTextureKey[color as keyof typeof CONST.normalCandyTextureKey];
-                break;
-            case "COLOR_CLEAR":
-                specialTileTexture = CONST.cholateCandyTextureKey;
-                break;
-            case "COLUMN_CLEAR":
-                specialTileTexture = CONST.verticalStripesCandyTextureKey[color as keyof typeof CONST.normalCandyTextureKey]
-                break;
-            case "ROW_CLEAR":
-                specialTileTexture = CONST.horizontalStripesCandyTextureKey[color as keyof typeof CONST.normalCandyTextureKey];
-                break;
-            case "RANDOM_2":
-                specialTileTexture = CONST.bearCandyTextureKey[color as keyof typeof CONST.normalCandyTextureKey];
-                break;
-            default:
-                specialTileTexture = CONST.normalCandyTextureKey[color as keyof typeof CONST.normalCandyTextureKey];
-                break;
-        }
-
+        let specialTileTexture : string = this.getSpecialTileTexture(specialTileType, color);
+        
+        
         let tile = new Tile({
             scene: this.scene,
             x: x ,
@@ -73,10 +55,47 @@ class TileFactory {
             texture: specialTileTexture
         });
         
-        tile.setDisplaySize(this.textureWidth, this.textureHeight)
-            .setTileEffect(new NormalTileEffect(this.scene, tile, color, specialTileTexture));
+        tile.setDisplaySize(this.textureWidth, this.textureHeight);
+       
+        let specialTileEffect : TileEffect = this.getSpecialTileEffect(specialTileType, color, tile);
+       
+        tile.setTileEffect(specialTileEffect);
         
         return tile;
+    }
+
+    private getSpecialTileTexture(specialTileType: SpecialTileEffectType, color: CandyColorKey): string {
+        switch (specialTileType) {
+            case "BOMB":
+                return CONST.bombCandyTextureKey[color as keyof typeof CONST.normalCandyTextureKey];
+            case "COLOR_CLEAR":
+                return CONST.cholateCandyTextureKey;
+            case "COLUMN_CLEAR":
+                return CONST.verticalStripesCandyTextureKey[color as keyof typeof CONST.normalCandyTextureKey];
+            case "ROW_CLEAR":
+                return CONST.horizontalStripesCandyTextureKey[color as keyof typeof CONST.normalCandyTextureKey];
+            case "RANDOM_2":
+                return CONST.bearCandyTextureKey[color as keyof typeof CONST.normalCandyTextureKey];
+            default:
+                return CONST.normalCandyTextureKey[color as keyof typeof CONST.normalCandyTextureKey];
+        }
+    }
+
+    private getSpecialTileEffect(specialTileType: SpecialTileEffectType, color: CandyColorKey, tile: Tile): TileEffect {
+        switch (specialTileType) {
+            case "BOMB":
+                return new NormalTileEffect(this.scene, tile, color, CONST.bombCandyTextureKey[color as keyof typeof CONST.normalCandyTextureKey]);
+            case "COLOR_CLEAR":
+                return new NormalTileEffect(this.scene, tile, color, CONST.cholateCandyTextureKey);
+            case "COLUMN_CLEAR":
+                return new VerticalStripeTileEffect(this.scene, tile, color, CONST.verticalStripesCandyTextureKey[color as keyof typeof CONST.normalCandyTextureKey]);
+            case "ROW_CLEAR":
+                return new NormalTileEffect(this.scene, tile, color, CONST.horizontalStripesCandyTextureKey[color as keyof typeof CONST.normalCandyTextureKey]);
+            case "RANDOM_2":
+                return new NormalTileEffect(this.scene, tile, color, CONST.bearCandyTextureKey[color as keyof typeof CONST.normalCandyTextureKey]);
+            default:
+                return new NormalTileEffect(this.scene, tile, color, CONST.normalCandyTextureKey[color as keyof typeof CONST.normalCandyTextureKey]);
+        }
     }
 }
 

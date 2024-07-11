@@ -266,14 +266,13 @@ class TileGrid extends GameObjects.Container {
     public getTileAtWorldPosition(x: number, y: number): Tile | null {
         let tile = null;
         
-        if (x < 0 || y < 0 || x >= this.gridWidth * this.tileWidth || y >= this.gridHeight * this.tileHeight) {
-            return tile;
-        }
 
         let tileX = Math.floor((x - this.x) / this.tileWidth);
         let tileY = Math.floor((y - this.y) / this.tileHeight);
 
-        tile = this.tileGrid[tileY][tileX];
+        if (tileY >= 0 && tileY < this.tileGrid.length && tileX >= 0 && tileX < this.tileGrid[tileY].length) {
+            tile = this.tileGrid[tileY][tileX];
+        }
 
         return tile;
     }
@@ -285,6 +284,7 @@ class TileGrid extends GameObjects.Container {
     public getColumnCount(): number {
         return this.gridWidth;
     }
+
 
     private createRandomTile(xIndex: number, yIndex: number): Tile {
         let tile = this.tileFactory.createRandomTile((xIndex +0.5) * this.tileWidth, (yIndex + 0.5) * this.tileHeight);
