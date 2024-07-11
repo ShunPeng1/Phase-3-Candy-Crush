@@ -460,6 +460,11 @@
         "type": "image",
         "key": "teleport-anim-effect-06",
         "url": "./assets/candy-crush/effects/teleport-anim-effect-06.png"  
+      },
+      {
+        "type": "image",
+        "key": "stripes_destroy",
+        "url": "./assets/candy-crush/effects/stripes_destroy.png"  
       }
     ]
   }
