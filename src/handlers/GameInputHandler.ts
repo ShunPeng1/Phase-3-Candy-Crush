@@ -6,8 +6,9 @@ import Tile from "../objects/tiles/Tile";
 class GameInputHandler extends Phaser.Events.EventEmitter {
     private scene: Scene;
     private tileSwapper: TileSwapper;
+
+    private downPosition: Phaser.Math.Vector2;
     private selectingTile: Tile | null;
-    private tileHovered : Tile | null;
     private indicator: GameObjects.Sprite;
     
 
@@ -16,7 +17,7 @@ class GameInputHandler extends Phaser.Events.EventEmitter {
         this.scene = scene;
         this.tileSwapper = tileSwapper;
         this.selectingTile = null;
-        this.tileHovered = null;
+        
 
             
         this.scene.anims.create({
@@ -54,7 +55,7 @@ class GameInputHandler extends Phaser.Events.EventEmitter {
                     this.indicator.setVisible(true);
                     let worldPosition = this.selectingTile.getWorldTransformMatrix()
                     this.indicator.setPosition(worldPosition.tx, worldPosition.ty);
-                
+                    this.downPosition = new Phaser.Math.Vector2(pointer.x, pointer.y);
                 }
                 else{
                     this.selectingTile = null;
@@ -78,31 +79,23 @@ class GameInputHandler extends Phaser.Events.EventEmitter {
             }
         });
 
+
         // New hover event (pointerover)
         scene.input.on('pointerover', (pointer: any, gameObjects: any[]) => {
             gameObjects.forEach((gameObject: GameObjects.GameObject): void => {
             
                 if (gameObject instanceof Tile){
-                    this.tileHovered = gameObject; 
+
+                    if (this.tileSwapper.getCanMove() && this.selectingTile && this.selectingTile !== gameObject) {
+                        this.tileSwapper.selectTile(gameObject);
+                        this.selectingTile = null;
+                        this.indicator.setVisible(false);
+                    }
                 }  
                 
             });
         });
 
-        // Optionally, handle pointerout for when the mouse leaves a game object
-        scene.input.on('pointerout', (pointer: any, gameObjects: any[]) => {
-            //gameObjects.forEach((gameObject: { onHoverOut: (arg0: any) => void; }) => {
-            gameObjects.forEach((gameObject: GameObjects.GameObject): void => {
-            
-            
-                if (gameObject instanceof Tile){
-                    this.tileHovered = gameObject; 
-                }  
-                
-
-
-            });
-        });
     }
 }
 

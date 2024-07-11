@@ -263,6 +263,21 @@ class TileGrid extends GameObjects.Container {
         return this.tileGrid[y][x];
     }
 
+    public getTileAtWorldPosition(x: number, y: number): Tile | null {
+        let tile = null;
+        
+        if (x < 0 || y < 0 || x >= this.gridWidth * this.tileWidth || y >= this.gridHeight * this.tileHeight) {
+            return tile;
+        }
+
+        let tileX = Math.floor((x - this.x) / this.tileWidth);
+        let tileY = Math.floor((y - this.y) / this.tileHeight);
+
+        tile = this.tileGrid[tileY][tileX];
+
+        return tile;
+    }
+
     public getRowCount(): number {
         return this.gridHeight;
     }
