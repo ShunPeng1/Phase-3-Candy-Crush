@@ -4,8 +4,10 @@ import Tile from "./Tile";
 import SimulationController from "../../simulation/SimulationController";
 import TweenSimulation from "../../simulation/TweenSimulation";
 import TweenChainSimulation from "../../simulation/TweenChainSimulation";
+import TileGrid from "../grids/TileGrid";
 
 class BearTileEffect extends TileEffect {
+    private tileGrid: TileGrid;
     private tileIndex: Phaser.Math.Vector2;
     private tileToDestroy1: Tile;
     private tileToDestroy2: Tile;
@@ -18,6 +20,7 @@ class BearTileEffect extends TileEffect {
 
 	public onTilePop(): void {
 		let tileGrid = this.tile.getTileGrid();
+        this.tileGrid = tileGrid;
 		let flattenGrid = tileGrid.getFlattenTileGrid();
 
         let randomTile1 = flattenGrid[Math.floor(Math.random() * flattenGrid.length)];
@@ -35,7 +38,7 @@ class BearTileEffect extends TileEffect {
 
         tileGrid.popTiles([randomTile1, randomTile2]);
         
-        tileGrid.destroyPopTile(this.tile);
+        //tileGrid.destroyPopTile(this.tile);
 	}
 
 	public onTileDestroy(): void {
@@ -108,8 +111,8 @@ class BearTileEffect extends TileEffect {
                 {
                     targets: smallBomb,
                     scale: {from: 0.25, to: 1},
-                    alpha: {from: 0.5, to: 1},
-                    duration: 500,
+                    alpha: {from: 0.5, to: 2},
+                    duration: 300,
                     ease: "Linear",
                     onStart: () => {
                         smallBomb.setVisible(true);
@@ -117,6 +120,8 @@ class BearTileEffect extends TileEffect {
                     onComplete: () => {
                         smallBomb.setVisible(false);
                         smallBomb.destroy();
+
+                        this.tileGrid.destroyPopTile(tileToDestroy);
                     }
                 }
             ]

@@ -37,7 +37,7 @@ class HorizontalStripeTileEffect extends TileEffect {
         tileGrid.popTiles(this.popTilesRight);
         tileGrid.popTiles(this.popTilesLeft);
 
-        tileGrid.destroyPopTile(this.tile);
+        //tileGrid.destroyPopTile(this.tile);
     }
 
     public onTileDestroy(): void {
@@ -98,7 +98,7 @@ class HorizontalStripeTileEffect extends TileEffect {
         let destroyRight = this.scene.add.tween({
             targets: this.popTilesRight,
             values: { from: 0, to: this.popTilesRight.length - 1},
-            duration: 500,
+            duration: 400,
             ease: 'Cubic.easeInOut', // Corrected easing function name
             onUpdate: dynamicDestroy
         });
@@ -106,15 +106,15 @@ class HorizontalStripeTileEffect extends TileEffect {
         let destroyLeft = this.scene.add.tween({
             targets: this.popTilesLeft,
             values: { from: 0, to: this.popTilesLeft.length - 1},
-            duration: 500,
+            duration: 400,
             ease: 'Cubic.easeInOut', // Corrected easing function name
             onUpdate: dynamicDestroy
         });
 
-        simulationController.addSimulation(new TweenChainSimulation(chainRight));
-        simulationController.addSimulation(new TweenChainSimulation(chainLeft));
-        simulationController.addSimulation(new TweenSimulation(destroyRight));
-        simulationController.addSimulation(new TweenSimulation(destroyLeft));
+        simulationController.addSimulation(new TweenChainSimulation(chainRight), true);
+        simulationController.addSimulation(new TweenChainSimulation(chainLeft), true);
+        simulationController.addSimulation(new TweenSimulation(destroyRight), true);
+        simulationController.addSimulation(new TweenSimulation(destroyLeft), true);
 
 
         this.scene.time.delayedCall(500, () => {

@@ -68,6 +68,7 @@ class GameScene extends Phaser.Scene {
 
         if (matches.length > 0) {
             let map = new Map<Tile, {x : number, y : number}>();
+            
             matches.forEach((match) => {
                 if (match.specialTileType !== "NONE") {
                     map.set(match.originTile, {x: match.originTile.x, y: match.originTile.y});
@@ -87,7 +88,13 @@ class GameScene extends Phaser.Scene {
 
             this.tileGrid.gravitateTile();
             this.tileGrid.fillEmptyGridWithTile();
-            //this.tileGrid.destroyAllPopTiles();
+            
+            matches.forEach((match) => {
+                match.matchTiles.forEach((tile) => {
+                    tile.destroy();
+                });
+            });
+
             return true;
         }
 

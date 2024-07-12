@@ -1,6 +1,8 @@
 import { Scene } from "phaser";
 import Tile from "./Tile";
 import TileEffect from "./TileEffect";
+import SimulationController from "../../simulation/SimulationController";
+import TimerEventSimulation from "../../simulation/TimerEventSimulation";
 
 class NormalTileEffect extends TileEffect{
     
@@ -11,10 +13,11 @@ class NormalTileEffect extends TileEffect{
     public onTilePop(): void {
         let tileGrid = this.tile.getTileGrid();
 
-        tileGrid.destroyPopTile(this.tile);
+        //tileGrid.destroyPopTile(this.tile);
     }
 
     public onTileDestroy(): void {
+        let simulationController = this.scene.data.get("simulationController") as SimulationController;
         let matrix = this.tile.getWorldPosition();
         
         let particles = this.scene.add.particles(matrix.tx, matrix.ty, this.texture, {
@@ -33,9 +36,10 @@ class NormalTileEffect extends TileEffect{
 
         particles.explode(25);
 
-        this.scene.time.delayedCall(2000, () => {
+
+        simulationController.addSimulation(new TimerEventSimulation(this.scene, 600, () => {
             particles.destroy();
-        });
+        }));
     }
 
 

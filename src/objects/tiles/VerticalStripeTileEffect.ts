@@ -38,7 +38,7 @@ class VerticalStripeTileEffect extends TileEffect {
         tileGrid.popTiles(this.popTilesUp);
         tileGrid.popTiles(this.popTilesDown);
 
-        tileGrid.destroyPopTile(this.tile);
+        //tileGrid.destroyPopTile(this.tile);
 
     }
 
@@ -106,7 +106,7 @@ class VerticalStripeTileEffect extends TileEffect {
         let destroyUp =this.scene.add.tween({
             targets: this.popTilesUp,
             values: { from: 0, to: this.popTilesUp.length - 1},
-            duration: 700,
+            duration: 500,
             ease: 'Cubic.easeInOut',
             onUpdate: dynamicDestroy
         });
@@ -114,15 +114,15 @@ class VerticalStripeTileEffect extends TileEffect {
         let destroyDown =this.scene.add.tween({
             targets: this.popTilesDown,
             values: { from: 0, to: this.popTilesDown.length - 1},
-            duration: 700,
+            duration: 500,
             ease: 'Cubic.easeInOut',
             onUpdate: dynamicDestroy
         });
 
-        simulationController.addSimulation(new TweenChainSimulation(chainDown));
-        simulationController.addSimulation(new TweenChainSimulation(chainUp));
-        simulationController.addSimulation(new TweenSimulation(destroyUp));
-        simulationController.addSimulation(new TweenSimulation(destroyDown));
+        simulationController.addSimulation(new TweenChainSimulation(chainDown), true);
+        simulationController.addSimulation(new TweenChainSimulation(chainUp), true);
+        simulationController.addSimulation(new TweenSimulation(destroyUp), true);
+        simulationController.addSimulation(new TweenSimulation(destroyDown), true);
 
 
         this.scene.time.delayedCall(700, () => {

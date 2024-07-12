@@ -31,7 +31,7 @@ class BombTileEffect extends TileEffect {
 
         tileGrid.popTiles(this.tilesToDestroy);
         
-        tileGrid.destroyPopTile(this.tile);
+        //tileGrid.destroyPopTile(this.tile);
 	}
 
 	public onTileDestroy(): void {
@@ -67,7 +67,7 @@ class BombTileEffect extends TileEffect {
             element.destroy();
         });
 
-		simulationController.addSimulation(new TweenChainSimulation(explosionAnimation));
+		simulationController.addSimulation(new TweenChainSimulation(explosionAnimation), true);
 	}
 }
 
