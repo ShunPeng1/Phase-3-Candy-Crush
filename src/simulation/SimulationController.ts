@@ -10,6 +10,7 @@ class SimulationController extends Phaser.GameObjects.GameObject {
 
     public static readonly COMPLETE_EVENT = 'complete';
     public static readonly START_EVENT = 'start';
+    public static readonly END_EVENT = 'end';
 
     constructor(scene: Phaser.Scene){
         super(scene, 'SimulationController');
@@ -43,6 +44,7 @@ class SimulationController extends Phaser.GameObjects.GameObject {
             if (this.simulations.length == 0){
                 this.hasEnded = true;            
                 this.hasStarted = false;
+                this.emit(SimulationController.END_EVENT);
             }
             else{
                 this.hasEnded = false;
@@ -53,6 +55,7 @@ class SimulationController extends Phaser.GameObjects.GameObject {
         if (this.getCompleted() && this.hasStarted && this.hasCompleted && !this.hasEnded) {
             this.hasEnded = true;
             this.hasStarted = false;
+            this.emit(SimulationController.END_EVENT);
         }
     }
 

@@ -111,7 +111,7 @@ class GameScene extends Phaser.Scene {
 
         
 
-        this.simulationController.on(SimulationController.COMPLETE_EVENT, () => {
+        this.simulationController.on(SimulationController.END_EVENT, () => {
             this.gameInputHandler.startTimer();
         });
 
@@ -152,7 +152,7 @@ class GameScene extends Phaser.Scene {
         const tweenSimulation = new TweenChainSimulation(this.tweens.chain({
             tweens: [{
             targets: tile,
-            delay: 1500 / (endY ** 2 + 5),
+            delay: 1500 / (endY ** 2 + 3),
             y: (endY+0.5) * CONST.tileHeight,
             ease: "Cubic.In", // Directly reference the custom easing function
             duration: Math.max(150 * (endY - fromY), 300),
@@ -174,6 +174,7 @@ class GameScene extends Phaser.Scene {
 
             let squashTween = this.tweens.add({
                 targets: tile,
+                y : tile.y - 4 * (endY-fromY),
                 displayHeight: originalHeight * 0.8, // Squash the tile a bit
                 displayWidth: originalWidth * 1.2, // Compensate for the squashing to maintain volume
                 ease: "Quad.Out",
