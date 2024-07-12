@@ -129,6 +129,7 @@ class GameScene extends Phaser.Scene {
         const tweenSimulation = new TweenChainSimulation(this.tweens.chain({
             tweens: [{
             targets: tile,
+            delay: 1500 / (endY ** 2 + 5),
             y: (endY+0.5) * CONST.tileHeight,
             ease: "Cubic.In", // Directly reference the custom easing function
             duration: Math.max(150 * (endY - fromY), 300),
