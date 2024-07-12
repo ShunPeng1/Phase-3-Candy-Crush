@@ -15,6 +15,11 @@ class TileHinter {
 
     public startHintTiles(): void {
         let potentialMatches = this.TileMatcher.getPotentialMatches();
+
+        if (potentialMatches.length === 0) {
+            return;
+        }
+        
         let potentialMatch = potentialMatches[Math.floor(Math.random() * potentialMatches.length)];
 
         let fromTile = potentialMatch.fromTile;
