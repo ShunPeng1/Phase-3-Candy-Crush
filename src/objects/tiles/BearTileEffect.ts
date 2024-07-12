@@ -65,7 +65,17 @@ class BearTileEffect extends TileEffect {
             particles.destroy();
         });
 
+        if (this.tileGrid.getTileIndexInPopedGrid(this.tileToDestroy1) === null){
+            this.tileToDestroy1 = this.tileGrid.getRandomTileInPopedGrid()?? this.tileToDestroy1;
+        }
 
+        if (this.tileGrid.getTileIndexInPopedGrid(this.tileToDestroy2) === null){
+            this.tileToDestroy2 = this.tileGrid.getRandomTileInPopedGrid()?? this.tileToDestroy2;
+        }
+
+        while (this.tileToDestroy1 === this.tileToDestroy2){
+            this.tileToDestroy2 = this.tileGrid.getRandomTileInPopedGrid()?? this.tileToDestroy2;
+        }
 
         let bearProjectileTweenChain1 = this.createExplosionAnimation(this.tileToDestroy1);
         let bearProjectileTweenChain2 = this.createExplosionAnimation(this.tileToDestroy2);

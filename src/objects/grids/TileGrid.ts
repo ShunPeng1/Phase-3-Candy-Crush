@@ -325,6 +325,24 @@ class TileGrid extends GameObjects.Container {
         this.emit(TileGrid.TILE_CHANGE_EVENT);
     }
 
+    public getRandomTileInPopedGrid(): Tile | null {
+        let flattenGrid: Tile[] = [];
+        for (let y = 0; y < this.popedTilesGrid.length; y++) {
+            for (let x = 0; x < this.popedTilesGrid[y].length; x++) {
+                if (this.popedTilesGrid[y][x] !== null) {
+                    flattenGrid.push(this.popedTilesGrid[y][x]!);
+                }
+            }
+        }
+
+        if (flattenGrid.length === 0) {
+            return null;
+        }
+
+        return flattenGrid[Math.floor(Math.random() * flattenGrid.length)];
+    }
+    
+    
     public getTileGrid(): (Tile|null)[][] {
         return this.tileGrid;
     }
