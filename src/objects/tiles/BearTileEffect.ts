@@ -80,6 +80,7 @@ class BearTileEffect extends TileEffect {
         let target = tileToDestroy.getWorldPosition();
         
         let bearProjectile1 = this.scene.add.image(matrix.tx, matrix.ty, this.texture);
+        bearProjectile1.setFlipX(Math.random() > 0.5);
 
         let smallBomb = this.scene.add.image(target.tx, target.ty, "bomb-selection-01");
         smallBomb.setVisible(false);

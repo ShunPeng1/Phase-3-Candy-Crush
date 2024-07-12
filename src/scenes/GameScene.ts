@@ -1,6 +1,7 @@
 import CONST, { CandyColorKey, candyColors } from "../const/const";
 import GameInputHandler from "../handlers/GameInputHandler";
 import TileGrid from "../objects/grids/TileGrid";
+import TileGridDirector from "../objects/grids/TileGridDirector";
 import TileHinter from "../objects/grids/TileHinter";
 import TileMatcher from "../objects/grids/TileMatcher";
 import TileSwapper from "../objects/grids/TileSwapper";
@@ -16,6 +17,7 @@ class GameScene extends Phaser.Scene {
     private tileMatcher: TileMatcher;
     private tileSwapper: TileSwapper;
     private tileHinter: TileHinter;
+    private tileGridDirector: TileGridDirector;
     private simulationController: SimulationController;
     private gameInputHandler : GameInputHandler;
 
@@ -44,7 +46,8 @@ class GameScene extends Phaser.Scene {
         this.tileSwapper = new TileSwapper(this, this.tileGrid);
         this.tileHinter = new TileHinter(this, this.tileMatcher);
         this.gameInputHandler = new GameInputHandler(this, this.tileSwapper);
-    
+        this.tileGridDirector = new TileGridDirector(this, this.tileGrid);
+
         this.data.set('simulationController', this.simulationController);
     }
 
@@ -105,8 +108,16 @@ class GameScene extends Phaser.Scene {
     }
 
     private bindEvents(): void {
+        let idleCount = 0;
         this.gameInputHandler.on(GameInputHandler.NO_INPUT_PERIOD_EVENT, () => {
-            this.tileHinter.startHintTiles();
+            idleCount++;
+            if (idleCount % 3 === 0) {
+                this.tileGridDirector.startIdle();
+            }
+            else{
+                this.tileHinter.startHintTiles();
+            }
+            
         });
 
         

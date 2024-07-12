@@ -12,7 +12,7 @@ class GameInputHandler extends Phaser.Events.EventEmitter {
     private indicator: GameObjects.Sprite;
     
     private timer: Phaser.Time.TimerEvent;
-    private timeoutDuration = 2000;
+    private timeoutDuration = 3000;
 
     public static readonly NO_INPUT_PERIOD_EVENT = 'no input period';
     public static readonly CLICKED_INPUT_EVENT = 'clicked input';
