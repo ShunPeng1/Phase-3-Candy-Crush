@@ -17,18 +17,21 @@ class BombTileEffect extends TileEffect {
 
 	public onTilePop(): void {
 		let tileGrid = this.tile.getTileGrid();
-		let tileIndex = tileGrid.getTileIndex(this.tile)!;
+		let tileIndex = tileGrid.getTileIndex(this.tile, true)!;
         this.tileIndex = tileIndex;
 		// Target a 3x3 area around the bomb tile
 		for (let dx = -1; dx <= 1; dx++) {
 			for (let dy = -1; dy <= 1; dy++) {
 				let targetTile = tileGrid.getTileAtIndex(tileIndex.x + dx, tileIndex.y + dy);
 				if (targetTile != null && targetTile != this.tile) {
-					tileGrid.popTiles([targetTile]);
                     this.tilesToDestroy.push(targetTile);
 				}
 			}
 		}
+
+        tileGrid.popTiles(this.tilesToDestroy);
+        
+        tileGrid.destroyPopTile(this.tile);
 	}
 
 	public onTileDestroy(): void {

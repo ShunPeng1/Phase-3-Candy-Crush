@@ -6,6 +6,10 @@ import TweenSimulation from "../../simulation/TweenSimulation";
 import TweenChainSimulation from "../../simulation/TweenChainSimulation";
 
 class HorizontalStripeTileEffect extends TileEffect {
+    private tileIndex: Phaser.Math.Vector2;
+    private popTilesRight : Tile[] = [];
+    private popTilesLeft : Tile[] = [];
+
     constructor(scene: Scene, tile: Tile, color: string, texture: string) {
         super(scene, tile, color, texture);
     }
@@ -13,34 +17,47 @@ class HorizontalStripeTileEffect extends TileEffect {
     public onTilePop(): void {
         let tileGrid = this.tile.getTileGrid();
         
-        let tileIndex = tileGrid.getTileIndex(this.tile)!;
+        let tileIndex = tileGrid.getTileIndex(this.tile, true)!;
+        this.tileIndex = tileIndex;
 
-        for (let i = 0; i < tileGrid.getColumnCount(); i++) {
-            if (i == tileIndex.x) continue;
+        for (let i = tileIndex.x + 1; i < tileGrid.getRowCount(); i++) {
             let tile = tileGrid.getTileAtIndex(i, tileIndex.y);
             if (tile != null && tile != this.tile) {
-                tileGrid.popTiles([tile]);
+                this.popTilesLeft.push(tile);
             }
         }
+
+        for (let i = tileIndex.x - 1; i >= 0; i--) {
+            let tile = tileGrid.getTileAtIndex(i, tileIndex.y);
+            if (tile != null && tile != this.tile) {
+                this.popTilesRight.push(tile);
+            }
+        }
+
+        tileGrid.popTiles(this.popTilesRight);
+        tileGrid.popTiles(this.popTilesLeft);
+
+        tileGrid.destroyPopTile(this.tile);
     }
 
     public onTileDestroy(): void {
         let simulationController = this.scene.data.get("simulationController") as SimulationController;
         let matrix = this.tile.getWorldPosition();
         let tileGrid = this.tile.getTileGrid();
-        let popSet = new Set<number>();
-        popSet.add(tileGrid.x);
-
+        
         let stripeDestroyRight = this.scene.add.image(matrix.tx, matrix.ty, "stripes_destroy");
         stripeDestroyRight.setOrigin(1, 0.5); // Adjust origin for horizontal movement
 
-        const dynamicDestroy = (tween: Phaser.Tweens.Tween) => {
+        let destroyedSet = new Set<number>();
+        const dynamicDestroy = (tween : Phaser.Tweens.Tween) => {
             const value = tween.getValue();
-            let tile = tileGrid.getTileAtWorldPosition(value, matrix.ty);
-            if (tile != null && !popSet.has(tile.x)) {
-                popSet.add(tile.x);
-                tileGrid.destroyPopTile(tile);
+            const array = tween.targets as Tile[];
+
+            if (destroyedSet.has(Math.floor(value))) {
+                return;
             }
+
+            tileGrid.destroyPopTile(array[Math.floor(value)]);
         }
 
         let chainRight = this.scene.tweens.chain({
@@ -79,16 +96,16 @@ class HorizontalStripeTileEffect extends TileEffect {
 
         // Adjust these tweens for horizontal movement
         let destroyRight = this.scene.add.tween({
-            targets: this.tile,
-            values: { from: matrix.tx, to: matrix.tx - 600},
+            targets: this.popTilesRight,
+            values: { from: 0, to: this.popTilesRight.length - 1},
             duration: 500,
             ease: 'Cubic.easeInOut', // Corrected easing function name
             onUpdate: dynamicDestroy
         });
 
         let destroyLeft = this.scene.add.tween({
-            targets: this.tile,
-            values: { from: matrix.tx, to: matrix.tx + 600},
+            targets: this.popTilesLeft,
+            values: { from: 0, to: this.popTilesLeft.length - 1},
             duration: 500,
             ease: 'Cubic.easeInOut', // Corrected easing function name
             onUpdate: dynamicDestroy

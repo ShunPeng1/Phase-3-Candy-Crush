@@ -8,6 +8,12 @@ class NormalTileEffect extends TileEffect{
         super(scene, tile, color, texture);
     }
 
+    public onTilePop(): void {
+        let tileGrid = this.tile.getTileGrid();
+
+        tileGrid.destroyPopTile(this.tile);
+    }
+
     public onTileDestroy(): void {
         let matrix = this.tile.getWorldPosition();
         

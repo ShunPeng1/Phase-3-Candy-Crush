@@ -67,25 +67,27 @@ class GameScene extends Phaser.Scene {
         let matches = this.tileMatcher.getMatches();
 
         if (matches.length > 0) {
+            let map = new Map<Tile, {x : number, y : number}>();
             matches.forEach((match) => {
-                
+                if (match.specialTileType !== "NONE") {
+                    map.set(match.originTile, {x: match.originTile.x, y: match.originTile.y});
+                }
+
+                this.tileGrid.popTiles(match.matchTiles);
+            });
+            matches.forEach((match) => {
                 //console.log("Match", match.count, match.specialTileType, this.tileGrid.getTileIndex(match.originTile), match.matchTilesExceptOrigin.map(tile => this.tileGrid.getTileIndex(tile)));
                 if (match.specialTileType !== "NONE") {
                     let specialTile= this.tileFactory.createSpecialTile(match.originTile.getColor() as CandyColorKey, match.specialTileType, match.originTile.x, match.originTile.y);
-                    this.tileGrid.replaceTile(match.originTile, specialTile);
-                    this.tileGrid.destroyAllPopTiles();
-                    this.tileGrid.popTiles(match.matchTilesExceptOrigin);
-
+                    this.tileGrid.addTileAtLocalPosition(specialTile, map.get(match.originTile)!.x, map.get(match.originTile)!.y);
                 }
                 else{
-                    this.tileGrid.popTiles(match.matchTiles);
                 }
             });
 
-
             this.tileGrid.gravitateTile();
-            this.tileGrid.fillEmptyWithTile();
-            this.tileGrid.destroyAllPopTiles();
+            this.tileGrid.fillEmptyGridWithTile();
+            //this.tileGrid.destroyAllPopTiles();
             return true;
         }
 

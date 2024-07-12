@@ -5,7 +5,7 @@ import TileFactory from "../tiles/TileFactory";
 
 class TileGrid extends GameObjects.Container {
     private tileGrid: (Tile|null)[][];
-    private popedTiles: Tile[] = [];
+    private popedTilesGrid: (Tile|null)[][];
     
     private gridWidth: number;
     private gridHeight: number;
@@ -83,13 +83,21 @@ class TileGrid extends GameObjects.Container {
             }
         }
 
+        this.popedTilesGrid = [];
+        for (let y = 0; y < this.gridHeight; y++) {
+            this.popedTilesGrid[y] = [];
+            for (let x = 0; x < this.gridWidth; x++) {
+                this.popedTilesGrid[y][x] = null;
+            }
+        }
+
         this.emit(TileGrid.TILE_CHANGE_EVENT);
     }
 
 
     
 
-    public getTileIndex(tile: Tile): Phaser.Math.Vector2  | null {
+    public getTileIndex(tile: Tile, isAlsoCheckPopedGrid : boolean = false): Phaser.Math.Vector2 | null {
         let pos : Phaser.Math.Vector2 | null = null;
 
         //Find the position of a specific tile in the grid
@@ -98,7 +106,37 @@ class TileGrid extends GameObjects.Container {
                 //There is a match at this position so return the grid coords
                 if (tile === this.tileGrid[y][x]) {
                     pos = new Phaser.Math.Vector2(x, y);
-                    break;
+                    return pos;
+                }
+            }
+        }
+
+        if (isAlsoCheckPopedGrid){
+            for (let y = 0; y < this.popedTilesGrid.length; y++) {
+                for (let x = 0; x < this.popedTilesGrid[y].length; x++) {
+                    //There is a match at this position so return the grid coords
+                    if (tile === this.popedTilesGrid[y][x]) {
+                        pos = new Phaser.Math.Vector2(x, y);
+                        return pos;
+                    }
+                }
+            }
+        }
+        
+
+        return pos;
+    }
+
+    public getTileIndexInPopedGrid(tile: Tile): Phaser.Math.Vector2 | null {
+        let pos : Phaser.Math.Vector2 | null = null;
+
+        //Find the position of a specific tile in the grid
+        for (let y = 0; y < this.popedTilesGrid.length; y++) {
+            for (let x = 0; x < this.popedTilesGrid[y].length; x++) {
+                //There is a match at this position so return the grid coords
+                if (tile === this.popedTilesGrid[y][x]) {
+                    pos = new Phaser.Math.Vector2(x, y);
+                    return pos;
                 }
             }
         }
@@ -144,7 +182,7 @@ class TileGrid extends GameObjects.Container {
         }
     }
 
-    public fillEmptyWithTile(): void {
+    public fillEmptyGridWithTile(): void {
         //Check for blank spaces in the grid and add new tiles at that position
         for (var y = 0; y < this.tileGrid.length; y++) {
             for (var x = 0; x < this.tileGrid[y].length; x++) {
@@ -180,69 +218,86 @@ class TileGrid extends GameObjects.Container {
     
     public destroyAllPopTiles(): void {
         // Loop through all the matches and remove the associated tiles
-        this.popedTiles.forEach(element => {
-            this.remove(element);
-            element.destroy();
-        });
+        for (let y = 0; y < this.popedTilesGrid.length; y++) {
+            for (let x = 0; x < this.popedTilesGrid[y].length; x++) {
+                const element = this.popedTilesGrid[y][x];
+
+                if (element === null) {
+                    continue;
+                }
+
+                this.remove(element);
+                element.destroy();
+                this.popedTilesGrid[y][x] = null;
+            }
+        }
+
     }
 
     public destroyPopTile(tile: Tile): void {
-        let tilePos = this.popedTiles.indexOf(tile);
-        if (tilePos == -1) {
+        let tilePos = this.getTileIndexInPopedGrid(tile);
+        if (tilePos === null) {
             return;
         }
 
         this.remove(tile);
+        this.popedTilesGrid[tilePos.y][tilePos.x] = null;
         tile.destroy();
     }
 
     public destroyPopTiles(tiles: Tile[]): void {
         // Loop through all the matches and remove the associated tiles
         for (var i = 0; i < tiles.length; i++) {
-            let tile = tiles[i];
-            this.remove(tile);
-            tile.destroy();
+            this.destroyPopTile(tiles[i]);
         }
     }
 
     public popTiles(tiles: Tile[]): void {
         // Loop through all the matches and remove the associated tiles
         for (var i = 0; i < tiles.length; i++) {
-            let tile = tiles[i];
-            //Find where this tile lives in the theoretical grid
-            let tilePos = this.getTileIndex(tile);
-
-            // Remove the tile from the theoretical grid
-            if (tilePos) {
-                this.popedTiles.push(tile);
-                tile.pop();
-                this.tileGrid[tilePos.y][tilePos.x] = null;
-            }
+            this.popTile(tiles[i]);
         }
 
-        this.emit(TileGrid.TILE_CHANGE_EVENT);
     }
 
-    public replaceTile(oldTile : Tile, newTile: Tile): void {
-        let tilePos = this.getTileIndex(oldTile);
-        if (!tilePos) {
-            return;
+    public popTile(tile: Tile): void {
+        //Find where this tile lives in the theoretical grid
+        let tilePos = this.getTileIndex(tile);
+
+        // Remove the tile from the theoretical grid
+        if (tilePos) {
+            this.popedTilesGrid[tilePos.y][tilePos.x] = tile;
+            this.tileGrid[tilePos.y][tilePos.x] = null;
+            tile.pop();
         }
+    }
+
+    public addTileAtIndex(newTile: Tile, xIndex : number, yIndex : number): void {
         
         newTile.setTileGrid(this);
         this.add(newTile);
+        
+        newTile.setPosition((xIndex +0.5) * this.tileWidth, (yIndex + 0.5) * this.tileHeight);
 
-        if (this.popedTiles.includes(oldTile)){
-            this.popedTiles.push(oldTile);
-            oldTile.pop();
-        }
-        else{
-            newTile.setPosition(oldTile.x, oldTile.y);
-        }
+        this.tileGrid[yIndex][xIndex] = newTile;
+    }
 
-        this.tileGrid[tilePos.y][tilePos.x] = newTile;
-    
-        this.emit(TileGrid.TILE_CHANGE_EVENT);
+    public addTileAtWorldPosition(newTile: Tile, x: number, y: number): void {
+        let tileX = Math.floor((x - this.x) / this.tileWidth);
+        let tileY = Math.floor((y - this.y) / this.tileHeight);
+
+        if (tileY >= 0 && tileY < this.tileGrid.length && tileX >= 0 && tileX < this.tileGrid[tileY].length) {
+            this.addTileAtIndex(newTile, tileX, tileY);
+        }
+    }
+
+    public addTileAtLocalPosition(newTile: Tile, x: number, y: number): void {
+        let tileX = Math.floor((x+0.5) / this.tileWidth);
+        let tileY = Math.floor((y+0.5) / this.tileHeight);
+
+        if (tileY >= 0 && tileY < this.tileGrid.length && tileX >= 0 && tileX < this.tileGrid[tileY].length) {
+            this.addTileAtIndex(newTile, tileX, tileY);
+        }
     }
     
 
@@ -316,6 +371,14 @@ class TileGrid extends GameObjects.Container {
         }
 
         return tile;
+    }
+
+    public getWorldPositionFromIndex(xIndex: number, yIndex: number): Phaser.Math.Vector2 {
+        return new Phaser.Math.Vector2(xIndex * this.tileWidth + this.x, yIndex * this.tileHeight + this.y);
+    }
+
+    public getLocalPositionFromIndex(xIndex: number, yIndex: number): Phaser.Math.Vector2 {
+        return new Phaser.Math.Vector2((xIndex +0.5) * this.tileWidth, (yIndex + 0.5) * this.tileHeight);
     }
 
     public getRowCount(): number {
