@@ -36,18 +36,35 @@ class SimulationController extends Phaser.GameObjects.GameObject {
             
             this.emit('complete');
             
+            if (this.simulations.length == 0){
+                this.hasEnded = true;            
+                this.hasStarted = false;
+            }
+            else{
+                this.hasEnded = false;
+            }
             
-            this.hasStarted = false;
+        }
+
+        if (this.getCompleted() && this.hasStarted && this.hasCompleted && !this.hasEnded) {
             this.hasEnded = true;
+            this.hasStarted = false;
         }
     }
 
-    public addSimulation(simulation: ISimulation, isInNextLoop : boolean = false) : void{
-        if (!this.hasCompleted && !isInNextLoop){
+    public addSimulation(simulation: ISimulation, mustInThisLoopEvenHaveEnded : boolean = false) : void{
+        if (!this.hasCompleted){
             this.simulations.push(simulation);
             simulation.start();
             return;
         }
+
+        if (this.hasCompleted && !this.hasEnded && mustInThisLoopEvenHaveEnded) {
+            this.simulations.push(simulation);
+            simulation.start();
+            return;
+        }
+        
         
         this.nextSimulations.push(simulation);
         

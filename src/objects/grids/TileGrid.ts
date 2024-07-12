@@ -325,6 +325,27 @@ class TileGrid extends GameObjects.Container {
         this.emit(TileGrid.TILE_CHANGE_EVENT);
     }
 
+    public getTileGrid(): (Tile|null)[][] {
+        return this.tileGrid;
+    }
+
+    public getFlattenTileGrid(): Tile[] {
+        let flattenGrid: Tile[] = [];
+        for (let y = 0; y < this.tileGrid.length; y++) {
+            for (let x = 0; x < this.tileGrid[y].length; x++) {
+                if (this.tileGrid[y][x] !== null) {
+                    flattenGrid.push(this.tileGrid[y][x]!);
+                }
+            }
+        }
+
+        return flattenGrid;
+    }
+
+    public getPopedTileGrid(): (Tile|null)[][] {
+        return this.popedTilesGrid;
+    }
+
     public getDistance(firstTile: Tile, secondTile: Tile): number {
         return Math.abs(firstTile.x - secondTile.x) + Math.abs(firstTile.y - secondTile.y);
     }
