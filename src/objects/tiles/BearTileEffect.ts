@@ -93,7 +93,7 @@ class BearTileEffect extends TileEffect {
                     scale: {from: 0.25, to: 1},
                     x: {from : matrix.tx, to: (target.tx+ matrix.tx) / 2},
                     y: {from : matrix.ty, to: (target.ty+ matrix.ty) / 2},
-                    duration: 500,
+                    duration: 300,
                     ease: "Quart.easeOut",
                 },
                 {
@@ -102,7 +102,7 @@ class BearTileEffect extends TileEffect {
                     x: {from :(target.tx+ matrix.tx) / 2, to: target.tx},
                     y: {from : (target.ty+ matrix.ty) / 2, to: target.ty},
                     
-                    duration: 500,
+                    duration: 300,
                     ease: "Sine.easeIn",
                     onComplete: () => {
                         bearProjectile1.destroy();

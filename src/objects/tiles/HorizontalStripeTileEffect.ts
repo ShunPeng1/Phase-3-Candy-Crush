@@ -99,7 +99,7 @@ class HorizontalStripeTileEffect extends TileEffect {
             targets: this.popTilesRight,
             values: { from: 0, to: this.popTilesRight.length - 1},
             duration: 400,
-            ease: 'Cubic.easeInOut', // Corrected easing function name
+            ease: 'Linear', // Corrected easing function name
             onUpdate: dynamicDestroy
         });
 
@@ -107,7 +107,7 @@ class HorizontalStripeTileEffect extends TileEffect {
             targets: this.popTilesLeft,
             values: { from: 0, to: this.popTilesLeft.length - 1},
             duration: 400,
-            ease: 'Cubic.easeInOut', // Corrected easing function name
+            ease: 'Linear', // Corrected easing function name
             onUpdate: dynamicDestroy
         });
 

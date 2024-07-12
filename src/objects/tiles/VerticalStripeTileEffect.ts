@@ -106,16 +106,16 @@ class VerticalStripeTileEffect extends TileEffect {
         let destroyUp =this.scene.add.tween({
             targets: this.popTilesUp,
             values: { from: 0, to: this.popTilesUp.length - 1},
-            duration: 500,
-            ease: 'Cubic.easeInOut',
+            duration: 400,
+            ease: 'Linear',
             onUpdate: dynamicDestroy
         });
 
         let destroyDown =this.scene.add.tween({
             targets: this.popTilesDown,
             values: { from: 0, to: this.popTilesDown.length - 1},
-            duration: 500,
-            ease: 'Cubic.easeInOut',
+            duration: 400,
+            ease: 'Linear',
             onUpdate: dynamicDestroy
         });
 
