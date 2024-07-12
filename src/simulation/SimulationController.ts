@@ -7,6 +7,10 @@ class SimulationController extends Phaser.GameObjects.GameObject {
 
     private nextSimulations : ISimulation[] = [];
     private hasInvokeNextStart : boolean = false;
+
+    public static readonly COMPLETE_EVENT = 'complete';
+    public static readonly START_EVENT = 'start';
+
     constructor(scene: Phaser.Scene){
         super(scene, 'SimulationController');
         this.simulations = [];
@@ -34,7 +38,7 @@ class SimulationController extends Phaser.GameObjects.GameObject {
             this.hasCompleted = true;
             this.clear();
             
-            this.emit('complete');
+            this.emit(SimulationController.COMPLETE_EVENT);
             
             if (this.simulations.length == 0){
                 this.hasEnded = true;            
@@ -91,6 +95,8 @@ class SimulationController extends Phaser.GameObjects.GameObject {
         this.simulations.forEach(simulation => {
             simulation.start();
         });
+
+        this.emit(SimulationController.START_EVENT);
     
     }
 

@@ -2,7 +2,7 @@ import { GameObjects } from "phaser";
 
 class TweenUtilities {
 
-    static applyImageScaleTweens(gameObject: GameObjects.Image, eventOnString : string | string[], eventOffString : string | string[], scaleDownFactor: number = 0.95, duration: number = 100): void {
+    static applyImageScaleTweens(gameObject: GameObjects.Image, eventOnString : string | string[], eventOffString : string | string[], defaultScaleX : number = gameObject.scaleX, defaultScaleY : number = gameObject.scaleY, scaleDownFactor: number = 0.95, duration: number = 100): void {
         // Scale down on pointer down
         let isScaled = false;
         let scaleDownTween: Phaser.Tweens.Tween | null = null;
@@ -17,7 +17,7 @@ class TweenUtilities {
 
             //const currentScaleX = button.container.scaleX;
             //const currentScaleY = button.container.scaleY;
-            defaultScale = new Phaser.Math.Vector2(gameObject.scaleX, gameObject.scaleY)
+            defaultScale = new Phaser.Math.Vector2(defaultScaleX, defaultScaleY)
             const endScaleX = defaultScale.x * scaleDownFactor;
             const endScaleY = defaultScale.y * scaleDownFactor;
             isScaled = true;
@@ -76,7 +76,7 @@ class TweenUtilities {
         });
     }
 
-    static applyImageDisplaySizeTweens(gameObject: GameObjects.Image, eventOnString : string | string[], eventOffString : string | string[], scaleDownFactor: number = 0.95, duration: number = 100): void {
+    static applyImageDisplaySizeTweens(gameObject: GameObjects.Image, eventOnString : string | string[], eventOffString : string | string[], defaultWidth : number = gameObject.displayWidth, defaultHeight : number = gameObject.displayHeight, scaleDownFactor: number = 0.95, duration: number = 100): void {
         // Scale down on pointer down
         let isScaled = false;
         let scaleDownTween: Phaser.Tweens.Tween | null = null;
@@ -91,7 +91,7 @@ class TweenUtilities {
             console.log("Set to new scale")
             //const currentScaleX = button.container.scaleX;
             //const currentScaleY = button.container.scaleY;
-            defaultScale = new Phaser.Math.Vector2(gameObject.displayWidth, gameObject.displayHeight)
+            defaultScale = new Phaser.Math.Vector2(defaultWidth, defaultHeight)
             const endScaleX = defaultScale.x * scaleDownFactor;
             const endScaleY = defaultScale.y * scaleDownFactor;
             isScaled = true;

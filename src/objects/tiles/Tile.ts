@@ -4,6 +4,9 @@ import TileGrid from "../grids/TileGrid";
 class Tile extends Phaser.GameObjects.Image {
     private tileEffect: ITileEffect;
     private grid : TileGrid;
+    private tileWidth: number = 0;
+    private tileHeight: number = 0;
+
 
     private mapTween : Map<string, Phaser.Tweens.Tween> = new Map<string, Phaser.Tweens.Tween>();
     private isPointerOver: boolean = false; 
@@ -16,7 +19,6 @@ class Tile extends Phaser.GameObjects.Image {
 
         // set image settings
         this.setOrigin(0.5, 0.5);
-        this.enableTileInteraction();
 
         this.scene.add.existing(this);
 
@@ -42,7 +44,7 @@ class Tile extends Phaser.GameObjects.Image {
         this.on('pointerover', this.onPointerOver, this);
         this.on('pointerout', this.onPointerOut, this);
         
-        TweenUtilities.applyImageDisplaySizeTweens(this, 'pointerover', 'pointerout', 1.1, 100);
+        TweenUtilities.applyImageDisplaySizeTweens(this, 'pointerover', 'pointerout', this.tileWidth, this.tileHeight, 1.1, 100);
 
     }
 
@@ -73,8 +75,13 @@ class Tile extends Phaser.GameObjects.Image {
         return this;
     }
 
-    public setTileGrid(grid : TileGrid) : this { 
+    public setTileGrid(grid : TileGrid, tileWidth : number, tileHeight : number ) : this { 
         this.grid = grid;
+        this.tileWidth = tileWidth;
+        this.tileHeight = tileHeight;
+
+        
+        this.enableTileInteraction();
         return this;
     }
     
@@ -91,6 +98,14 @@ class Tile extends Phaser.GameObjects.Image {
 
     public getTileGrid() : TileGrid {
         return this.grid;
+    }
+
+    public getTileWidth() : number {
+        return this.tileWidth;
+    }
+
+    public getTileHeight() : number {
+        return this.tileHeight;
     }
 
     public getColor(): string {

@@ -1,6 +1,7 @@
 import CONST, { CandyColorKey, candyColors } from "../const/const";
 import GameInputHandler from "../handlers/GameInputHandler";
 import TileGrid from "../objects/grids/TileGrid";
+import TileHinter from "../objects/grids/TileHinter";
 import TileMatcher from "../objects/grids/TileMatcher";
 import TileSwapper from "../objects/grids/TileSwapper";
 import Tile from "../objects/tiles/Tile";
@@ -14,6 +15,7 @@ class GameScene extends Phaser.Scene {
     private tileFactory: TileFactory;
     private tileMatcher: TileMatcher;
     private tileSwapper: TileSwapper;
+    private tileHinter: TileHinter;
     private simulationController: SimulationController;
     private gameInputHandler : GameInputHandler;
 
@@ -26,6 +28,7 @@ class GameScene extends Phaser.Scene {
 
     create(): void {
         this.initializeVariables();
+        this.bindEvents();
         this.setBackground();
         this.initializeGrid();
         
@@ -39,7 +42,7 @@ class GameScene extends Phaser.Scene {
             this.tileFactory, ["item-spot-01", "item-spot-02"]);
         this.tileMatcher = new TileMatcher(this.tileGrid);
         this.tileSwapper = new TileSwapper(this, this.tileGrid);
-
+        this.tileHinter = new TileHinter(this, this.tileMatcher);
         this.gameInputHandler = new GameInputHandler(this, this.tileSwapper);
     
         this.data.set('simulationController', this.simulationController);
@@ -101,12 +104,32 @@ class GameScene extends Phaser.Scene {
         return false;
     }
 
+    private bindEvents(): void {
+        this.gameInputHandler.on(GameInputHandler.NO_INPUT_PERIOD_EVENT, () => {
+            this.tileHinter.startHintTiles();
+        });
+
+        
+
+        this.simulationController.on(SimulationController.COMPLETE_EVENT, () => {
+            this.gameInputHandler.startTimer();
+        });
+
+        this.simulationController.on(SimulationController.START_EVENT, () => {
+            this.gameInputHandler.stopTimer();
+        });
+
+
+
+
+    }
+
     private startCheckMatch(): void {
         
         this.tileSwapper.setCanMove(false);
 
         const onComplete = () => {
-            this.simulationController.off('complete', onComplete);
+            this.simulationController.off(SimulationController.COMPLETE_EVENT, onComplete);
             
             let isMatch = this.checkMatches();
             
@@ -118,7 +141,7 @@ class GameScene extends Phaser.Scene {
             }
         };
 
-        this.simulationController.on('complete', onComplete);
+        this.simulationController.on(SimulationController.COMPLETE_EVENT, onComplete);
         this.simulationController.startSimulation();
     }
 
@@ -205,7 +228,7 @@ class GameScene extends Phaser.Scene {
         this.simulationController.addSimulation(tweenSimulation2);
 
         const onComplete = () => {
-            this.simulationController.off('complete', onComplete);
+            this.simulationController.off(SimulationController.COMPLETE_EVENT, onComplete);
             const match = this.checkMatches();
 
             if (!match) {
@@ -221,7 +244,7 @@ class GameScene extends Phaser.Scene {
             }
         };
 
-        this.simulationController.on('complete', onComplete);
+        this.simulationController.on(SimulationController.COMPLETE_EVENT, onComplete);
         this.simulationController.startSimulation();
     }
 }

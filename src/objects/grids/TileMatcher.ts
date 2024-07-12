@@ -1,6 +1,7 @@
 import Tile from "../tiles/Tile";
 import TileGrid from "./TileGrid";
 import TileMatchResult from "./TileMatchResult";
+import TilePotentialMatchResult from "./TilePotentialMatchResult";
 
 class TileMatcher {
     private tileGrid : TileGrid;
@@ -236,7 +237,7 @@ class TileMatcher {
     
 
     private sliceAllNonVisitedTileInMatch(tiles: Tile[][]) {
-for (let i = tiles.length - 1; i >= 0; i--) {
+        for (let i = tiles.length - 1; i >= 0; i--) {
             let match = tiles[i];
             
             for (let j = match.length - 1; j >= 0; j--) {
@@ -344,15 +345,15 @@ for (let i = tiles.length - 1; i >= 0; i--) {
             let groups = [];
             for (let y = 0; y < this.tileGrid.getRowCount() - 2; y++) { // Iterate over rows within the column, leaving room for comparison
                 let tile = this.tileGrid.getTileAtIndex(x, y);
-                let belowTile = this.tileGrid.getTileAtIndex(x, y + 1);
-                let belowBelowTile = this.tileGrid.getTileAtIndex(x, y + 2);
+                let downTile = this.tileGrid.getTileAtIndex(x, y + 1);
+                let downDownTile = this.tileGrid.getTileAtIndex(x, y + 2);
 
-                if (!tile || !belowTile || !belowBelowTile) {
+                if (!tile || !downTile || !downDownTile) {
                     continue; // Skip if any of the tiles in the sequence are null
                 }
 
-                if (tile.getColor() !== belowTile.getColor() ||
-                    belowTile.getColor() !== belowBelowTile.getColor()) {
+                if (tile.getColor() !== downTile.getColor() ||
+                    downTile.getColor() !== downDownTile.getColor()) {
                     continue; // Skip if the tiles do not match
                 }
 
@@ -366,11 +367,11 @@ for (let i = tiles.length - 1; i >= 0; i--) {
                 if (groups.indexOf(tile) == -1) {
                     groups.push(tile);
                 }
-                if (groups.indexOf(belowTile) == -1) {
-                    groups.push(belowTile);
+                if (groups.indexOf(downTile) == -1) {
+                    groups.push(downTile);
                 }
-                if (groups.indexOf(belowBelowTile) == -1) {
-                    groups.push(belowBelowTile);
+                if (groups.indexOf(downDownTile) == -1) {
+                    groups.push(downDownTile);
                 }
             }
             if (groups.length > 0) {
@@ -389,24 +390,163 @@ for (let i = tiles.length - 1; i >= 0; i--) {
             for (let x = 0; x < this.tileGrid.getColumnCount() - 1; x++) {
                 let tile = this.tileGrid.getTileAtIndex(x, y);
                 let rightTile = this.tileGrid.getTileAtIndex(x + 1, y);
-                let belowTile = this.tileGrid.getTileAtIndex(x, y + 1);
-                let belowRightTile = this.tileGrid.getTileAtIndex(x + 1, y + 1);
+                let downTile = this.tileGrid.getTileAtIndex(x, y + 1);
+                let downRightTile = this.tileGrid.getTileAtIndex(x + 1, y + 1);
 
-                if (!tile || !rightTile || !belowTile || !belowRightTile) {
+                if (!tile || !rightTile || !downTile || !downRightTile) {
                     continue;
                 }
                 
                 if (tile.getColor() !== rightTile.getColor() ||
-                    tile.getColor() !== belowTile.getColor() ||
-                    tile.getColor() !== belowRightTile.getColor()) {
+                    tile.getColor() !== downTile.getColor() ||
+                    tile.getColor() !== downRightTile.getColor()) {
                     continue;
                 }
 
-                squareMatches.push([tile, rightTile, belowTile, belowRightTile]);
+                squareMatches.push([tile, rightTile, downTile, downRightTile]);
             }
         }
 
         return squareMatches;
+    }
+
+    private findPotentialHorizontalMatches(): TilePotentialMatchResult[] {
+        let horizontalPotentialMatches: TilePotentialMatchResult[] = [];
+
+        // Check for horizontal matches
+        for (let y = 0; y < this.tileGrid.getRowCount(); y++) {
+            let tempArray = this.tileGrid.getRow(y);
+     
+            for (let x = -1; x < tempArray.length - 2; x++) {
+                let tile = this.tileGrid.getTileAtIndex(x, y);
+                let rightTile = this.tileGrid.getTileAtIndex(x + 1, y);
+                let rightRightTile = this.tileGrid.getTileAtIndex(x + 2, y);
+                let rightRightRightTile = this.tileGrid.getTileAtIndex(x + 3, y);
+
+                if (tile && rightTile && rightRightTile && (!rightRightRightTile || (rightRightRightTile.getColor() !== rightRightTile.getColor()))) {
+                    
+                    if (tile.getColor() !== rightTile.getColor() && rightTile.getColor() === rightRightTile.getColor()) {
+                        
+                        let upTile = this.tileGrid.getTileAtIndex(x, y - 1);
+                        let downTile = this.tileGrid.getTileAtIndex(x, y + 1);
+                        let leftTile = this.tileGrid.getTileAtIndex(x - 1, y);
+
+                        let fromTile = tile;
+                        let matchTiles = [rightTile, rightRightTile];
+
+
+                        if (upTile && upTile.getColor() === rightTile.getColor()) {
+                            horizontalPotentialMatches.push(new TilePotentialMatchResult(matchTiles, fromTile, upTile));
+                        }
+
+                        if (downTile && downTile.getColor() === rightTile.getColor()) {
+                            horizontalPotentialMatches.push(new TilePotentialMatchResult(matchTiles, fromTile, downTile));
+                        }
+
+                        if (leftTile && leftTile.getColor() === rightTile.getColor()) {
+                            horizontalPotentialMatches.push(new TilePotentialMatchResult(matchTiles, fromTile, leftTile));
+                        }
+
+                    }
+
+                }
+
+                if (rightTile && rightRightTile && rightRightRightTile && (!tile || (tile.getColor() !== rightTile.getColor()))) {
+                    if (rightTile.getColor() === rightRightTile.getColor() && rightTile.getColor() !== rightRightRightTile.getColor()) {
+                        let rightRightRightUpTile = this.tileGrid.getTileAtIndex(x + 3, y - 1);
+                        let rightRightRightDownTile = this.tileGrid.getTileAtIndex(x + 3, y + 1);
+                        let rightRightRightRightTile = this.tileGrid.getTileAtIndex(x + 4, y);
+
+                        let fromTile = rightRightRightTile;
+                        let matchTiles = [rightTile, rightRightTile];
+
+                        if (rightRightRightUpTile && rightRightRightUpTile.getColor() === rightTile.getColor()) {
+                            horizontalPotentialMatches.push(new TilePotentialMatchResult(matchTiles, fromTile, rightRightRightUpTile));
+                        }
+
+                        if (rightRightRightDownTile && rightRightRightDownTile.getColor() === rightTile.getColor()) {
+                            horizontalPotentialMatches.push(new TilePotentialMatchResult(matchTiles, fromTile, rightRightRightDownTile));
+                        }
+
+                        if (rightRightRightRightTile && rightRightRightRightTile.getColor() === rightTile.getColor()) {
+                            horizontalPotentialMatches.push(new TilePotentialMatchResult(matchTiles, fromTile, rightRightRightRightTile));
+                        }
+                    }
+                }
+            
+            }
+
+        }
+
+        return horizontalPotentialMatches;
+    }
+    
+    public getPotentialMatches(): TilePotentialMatchResult[] {
+        let horizontalPotentialMatches = this.findPotentialHorizontalMatches();
+        let verticalPotentialMatches = this.findPotentialVerticalMatches();
+        let results = [...horizontalPotentialMatches, ...verticalPotentialMatches];
+
+        return results;
+    }
+
+    private findPotentialVerticalMatches(): TilePotentialMatchResult[] {
+        let verticalPotentialMatches: TilePotentialMatchResult[] = [];
+
+        // Check for vertical matches
+        for (let x = 0; x < this.tileGrid.getColumnCount(); x++) {
+            for (let y = -1; y < this.tileGrid.getRowCount() - 2; y++) {
+                let tile = this.tileGrid.getTileAtIndex(x, y);
+                let downTile = this.tileGrid.getTileAtIndex(x, y + 1);
+                let downDownTile = this.tileGrid.getTileAtIndex(x, y + 2);
+                let downDownDownTile = this.tileGrid.getTileAtIndex(x, y + 3);
+
+                if (tile && downTile && downDownTile && (!downDownDownTile || (downDownDownTile.getColor() !== downDownTile.getColor()))) {
+                    if (tile.getColor() !== downTile.getColor() && downTile.getColor() === downDownTile.getColor()) {
+                        let leftTile = this.tileGrid.getTileAtIndex(x - 1, y);
+                        let rightTile = this.tileGrid.getTileAtIndex(x + 1, y);
+                        let upTile = this.tileGrid.getTileAtIndex(x, y - 1);
+                        let fromTile = tile;
+                        let matchTiles = [downTile, downDownTile];
+
+                        if (leftTile && leftTile.getColor() === downTile.getColor()) {
+                            verticalPotentialMatches.push(new TilePotentialMatchResult(matchTiles, fromTile, leftTile));
+                        }
+
+                        if (rightTile && rightTile.getColor() === downTile.getColor()) {
+                            verticalPotentialMatches.push(new TilePotentialMatchResult(matchTiles, fromTile, rightTile));
+                        }
+
+                        if (upTile && upTile.getColor() === downTile.getColor()) {
+                            verticalPotentialMatches.push(new TilePotentialMatchResult(matchTiles, fromTile, upTile));
+                        }
+                    }
+                }
+
+                if (downTile && downDownTile && downDownDownTile && (!tile || (tile.getColor() !== downTile.getColor()))) {
+                    if (downTile.getColor() === downDownTile.getColor() && downTile.getColor() !== downDownDownTile.getColor()) {
+                        let downDownDownLeftTile = this.tileGrid.getTileAtIndex(x - 1, y + 3);
+                        let downDownDownRightTile = this.tileGrid.getTileAtIndex(x + 1, y + 3);
+                        let downDownDownDownTile = this.tileGrid.getTileAtIndex(x, y + 4);
+
+                        let fromTile = downDownDownTile;
+                        let matchTiles = [downTile, downDownTile];
+
+                        if (downDownDownDownTile && downDownDownDownTile.getColor() === downTile.getColor()) {
+                            verticalPotentialMatches.push(new TilePotentialMatchResult(matchTiles, fromTile, downDownDownDownTile));
+                        }
+                        
+                        if (downDownDownLeftTile && downDownDownLeftTile.getColor() === downTile.getColor()) {
+                            verticalPotentialMatches.push(new TilePotentialMatchResult(matchTiles, fromTile, downDownDownLeftTile));
+                        }
+
+                        if (downDownDownRightTile && downDownDownRightTile.getColor() === downTile.getColor()) {
+                            verticalPotentialMatches.push(new TilePotentialMatchResult(matchTiles, fromTile, downDownDownRightTile));
+                        }
+                    }
+                }
+            }
+        }
+        return verticalPotentialMatches;
     }
 
 }

@@ -67,7 +67,20 @@ class BootScene extends Phaser.Scene {
     }
 
     private createAnimations(): void {
-        
+        this.anims.create({
+            key: 'indicator-animation',
+            frames: [
+                { key: 'indicator-0' },
+                { key: 'indicator-1' },
+                { key: 'indicator-2' },
+                { key: 'indicator-3' }
+                // Add more frames as needed
+            ],
+            frameRate: 10,
+            repeat: -1 // Loop indefinitely
+        });
+
+
         let frames = [];
         for (let i = 5; i <= 17; i++) {
             frames.push({ key: `boom-${i.toString().padStart(2, '0')}` });

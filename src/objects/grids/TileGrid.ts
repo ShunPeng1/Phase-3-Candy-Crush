@@ -274,11 +274,11 @@ class TileGrid extends GameObjects.Container {
 
     public addTileAtIndex(newTile: Tile, xIndex : number, yIndex : number): void {
         
-        newTile.setTileGrid(this);
+        newTile.setTileGrid(this, this.tileWidth, this.tileHeight);
+        newTile.setDisplaySize(this.tileWidth, this.tileHeight);
+        newTile.setPosition((xIndex +0.5) * this.tileWidth, (yIndex + 0.5) * this.tileHeight);
         this.add(newTile);
         
-        newTile.setPosition((xIndex +0.5) * this.tileWidth, (yIndex + 0.5) * this.tileHeight);
-
         this.tileGrid[yIndex][xIndex] = newTile;
     }
 
@@ -414,7 +414,7 @@ class TileGrid extends GameObjects.Container {
     private createRandomTile(xIndex: number, yIndex: number): Tile {
         let tile = this.tileFactory.createRandomTile((xIndex +0.5) * this.tileWidth, (yIndex + 0.5) * this.tileHeight);
     
-        tile.setTileGrid(this);
+        tile.setTileGrid(this, this.tileWidth, this.tileHeight);
         this.add(tile);
 
         return tile;
