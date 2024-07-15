@@ -19,6 +19,13 @@ class TileSimulation implements ISimulation {
     public update() {
     
     }
+
+    protected getFlattenTiles(): Tile[] {
+        return this.tiles.reduce((acc : Tile[], val : (Tile | null)[]) => {
+            let arr = val.filter((tile) => tile !== null) as Tile[];
+            return acc.concat(arr);
+        }, []);
+    }
 }
 
 export default TileSimulation;

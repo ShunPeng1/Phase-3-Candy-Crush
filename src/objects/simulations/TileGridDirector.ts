@@ -1,0 +1,65 @@
+import TileSimulation from "./TileSimulation";
+import TileWaveIdleSimulation from "./TileWaveIdleSimulation";
+import TileGrid from "../grids/TileGrid";
+import TileCircleShuffleSimulation from "./TileCircleShuffleSimulation";
+import { GameObjects } from "phaser";
+
+class TileGridDirector extends GameObjects.GameObject {
+    private tileGrid : TileGrid;
+    
+
+    constructor(scene: Phaser.Scene, tileGrid : TileGrid) {
+        super(scene, 'tileGridDirector');
+        this.scene = scene;
+        this.tileGrid = tileGrid;
+    }
+
+
+    public startIdle(): void {
+        
+        let simulationIndex = Math.random() * 1;
+        let simulation : TileSimulation;
+        switch(simulationIndex) {
+            case 0:
+                simulation = new TileWaveIdleSimulation(this.scene, this.tileGrid.getTileGrid());
+                break;
+            default:
+                simulation = new TileWaveIdleSimulation(this.scene, this.tileGrid.getTileGrid());
+                break;
+        }
+
+        simulation.start();
+
+    }
+
+
+    public startShuffle(x : number, y : number, duration : number): void {
+        let simulationIndex = Math.random() * 1;
+        let simulation : TileSimulation;
+        switch(simulationIndex) {
+            case 0:
+                simulation = new TileCircleShuffleSimulation(this.scene, this.tileGrid.getTileGrid(), x, y, 200, 1000);
+                break;
+            default:
+                simulation = new TileCircleShuffleSimulation(this.scene, this.tileGrid.getTileGrid(), x, y, 100, 1000);
+                break;
+        }
+
+        simulation.start();
+
+        this.scene.time.delayedCall(duration, () => {
+            simulation.stop(); // Assuming there's a stop method in TileSimulation to stop the simulation
+        });
+    }
+
+    public endIdle(): void {
+        
+        
+    }
+
+
+
+}
+
+
+export default TileGridDirector;

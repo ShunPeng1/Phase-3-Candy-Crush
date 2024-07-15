@@ -1,7 +1,7 @@
 import CONST, { CandyColorKey, candyColors } from "../const/const";
 import GameInputHandler from "../handlers/GameInputHandler";
 import TileGrid from "../objects/grids/TileGrid";
-import TileGridDirector from "../objects/grids/TileGridDirector";
+import TileGridDirector from "../objects/simulations/TileGridDirector";
 import TileHinter from "../objects/grids/TileHinter";
 import TileMatcher from "../objects/grids/TileMatcher";
 import TileSwapper from "../objects/grids/TileSwapper";
@@ -24,6 +24,7 @@ class GameScene extends Phaser.Scene {
     private scoreController: ScoreController;
     private gameInputHandler : GameInputHandler;
 
+    private isReachTargetedScore : boolean = false;
 
     private progressUi : ProgressUi;
 
@@ -146,7 +147,9 @@ class GameScene extends Phaser.Scene {
             this.progressUi.setProgress(currentScore/targetScore);
         });
 
-
+        this.scoreController.on(ScoreController.TARGET_SCORE_REACHED_EVENT, () => {
+            this.isReachTargetedScore = true;
+        });
 
 
     }
@@ -154,6 +157,8 @@ class GameScene extends Phaser.Scene {
     private startCheckMatch(): void {
         
         this.tileSwapper.setCanMove(false);
+
+
 
         const onComplete = () => {
             this.simulationController.off(SimulationController.COMPLETE_EVENT, onComplete);
@@ -170,6 +175,7 @@ class GameScene extends Phaser.Scene {
 
         this.simulationController.on(SimulationController.COMPLETE_EVENT, onComplete);
         this.simulationController.startSimulation();
+    
     }
 
 
