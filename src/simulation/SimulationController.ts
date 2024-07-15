@@ -8,6 +8,12 @@ class SimulationController extends Phaser.GameObjects.GameObject {
     private nextSimulations : ISimulation[] = [];
     private hasInvokeNextStart : boolean = false;
 
+    private completeCallback : ()=>void = this.emptyFunction;
+    private endCallback : ()=>void = this.emptyFunction;
+
+    private nextCompleteCallback : ()=>void = this.emptyFunction;
+    private nextEndCallback : ()=>void = this.emptyFunction;
+
     public static readonly COMPLETE_EVENT = 'complete';
     public static readonly START_EVENT = 'start';
     public static readonly END_EVENT = 'end';
@@ -27,34 +33,31 @@ class SimulationController extends Phaser.GameObjects.GameObject {
         // });
 
         if ((this.hasInvokeNextStart) && this.hasEnded ) {
-            this.simulations = this.nextSimulations;
-            this.nextSimulations = [];
-            this.startSimulation();
-            
+            this.extractNextSimulations();
+
+            this.startSimulation(this.completeCallback, this.endCallback);
         }
 
         
 
-        if(this.getCompleted() && this.hasStarted && !this.hasCompleted){
+        if(this.getCompleted() && this.hasStarted && !this.hasCompleted && !this.hasEnded){
             this.hasCompleted = true;
-            this.clear();
+            this.simulations = [];
             
+            this.completeCallback();
             this.emit(SimulationController.COMPLETE_EVENT);
             
-            if (this.simulations.length == 0){
-                this.hasEnded = true;            
-                this.hasStarted = false;
-                this.emit(SimulationController.END_EVENT);
-            }
-            else{
-                this.hasEnded = false;
-            }
+            
+            this.hasEnded = false;
+        
             
         }
 
         if (this.getCompleted() && this.hasStarted && this.hasCompleted && !this.hasEnded) {
             this.hasEnded = true;
-            this.hasStarted = false;
+            this.simulations = [];
+            
+            this.endCallback();
             this.emit(SimulationController.END_EVENT);
         }
     }
@@ -77,10 +80,12 @@ class SimulationController extends Phaser.GameObjects.GameObject {
         
     }
 
-    public startSimulation() : void{
+    public startSimulation(completeCallback? : ()=>void, endCallback? : () => void) : void{
 
-        if (this.hasStarted) {
+        if (this.hasStarted && !this.hasEnded) {
             this.hasInvokeNextStart = true;
+            this.nextCompleteCallback = completeCallback || (this.emptyFunction);
+            this.nextEndCallback = endCallback || (this.emptyFunction);
             return;
         }
 
@@ -89,11 +94,13 @@ class SimulationController extends Phaser.GameObjects.GameObject {
         this.hasCompleted = false;
         this.hasEnded = false;
 
-        if (this.simulations.length == 0 && this.nextSimulations.length != 0) {
-            this.simulations = this.nextSimulations;
-            this.nextSimulations = [];
 
+        if (this.simulations.length == 0 && this.nextSimulations.length != 0) {
+            this.extractNextSimulations();
         }
+
+        this.completeCallback = completeCallback || (this.emptyFunction);
+        this.endCallback = endCallback || (this.emptyFunction);
 
         this.simulations.forEach(simulation => {
             simulation.start();
@@ -101,6 +108,23 @@ class SimulationController extends Phaser.GameObjects.GameObject {
 
         this.emit(SimulationController.START_EVENT);
     
+    }
+
+    private extractNextSimulations() : void{
+        this.simulations = this.nextSimulations;
+        this.nextSimulations = [];
+
+        this.hasInvokeNextStart = false;
+
+        this.completeCallback = this.nextCompleteCallback;
+        this.endCallback = this.nextEndCallback;
+
+        this.nextCompleteCallback = this.emptyFunction;
+        this.nextEndCallback = this.emptyFunction;
+    }
+
+    private emptyFunction(){
+
     }
 
     public removeSimulation(simulation: ISimulation): void{
@@ -124,9 +148,6 @@ class SimulationController extends Phaser.GameObjects.GameObject {
         return isComplete;
     }
 
-    public clear() : void{
-        this.simulations = [];
-    }
 
     public getSimulations(): ISimulation[]{
         return this.simulations;

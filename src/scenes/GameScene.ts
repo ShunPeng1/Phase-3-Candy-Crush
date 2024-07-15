@@ -158,23 +158,22 @@ class GameScene extends Phaser.Scene {
         
         this.tileSwapper.setCanMove(false);
 
-
+        let isMatch = false;
 
         const onComplete = () => {
-            this.simulationController.off(SimulationController.COMPLETE_EVENT, onComplete);
-            
-            let isMatch = this.checkMatches();
-            
+            isMatch = this.checkMatches();
+        };
+
+        const onEnd = () => {
             if (isMatch) {
                 this.startCheckMatch();
             }
             else{
                 this.tileSwapper.setCanMove(true);
             }
-        };
+        }
 
-        this.simulationController.on(SimulationController.COMPLETE_EVENT, onComplete);
-        this.simulationController.startSimulation();
+        this.simulationController.startSimulation(onComplete, onEnd);
     
     }
 
@@ -261,11 +260,14 @@ class GameScene extends Phaser.Scene {
         this.simulationController.addSimulation(tweenSimulation1);
         this.simulationController.addSimulation(tweenSimulation2);
 
+        let isMatch = false;
         const onComplete = () => {
             this.simulationController.off(SimulationController.COMPLETE_EVENT, onComplete);
-            const match = this.checkMatches();
+            isMatch = this.checkMatches();
+        };
 
-            if (!match) {
+        const onEnd = () => {
+            if (!isMatch) {
                 if (this.tileSwapper.checkIsSwapped()) {
                     this.tileSwapper.unswapTiles();
                 } else {
@@ -278,8 +280,9 @@ class GameScene extends Phaser.Scene {
             }
         };
 
+
         this.simulationController.on(SimulationController.COMPLETE_EVENT, onComplete);
-        this.simulationController.startSimulation();
+        this.simulationController.startSimulation(onComplete, onEnd);
     }
 }
 
