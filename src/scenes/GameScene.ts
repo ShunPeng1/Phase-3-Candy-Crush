@@ -36,7 +36,7 @@ class GameScene extends Phaser.Scene {
 
     create(): void {
         this.initializeVariables();
-        this.bindEvents();
+        this.initializeBindEvents();
         this.setBackground();
         this.initializeGrid();
         
@@ -81,6 +81,40 @@ class GameScene extends Phaser.Scene {
         this.tileGrid.initializeTiles();
     }
 
+    private initializeBindEvents(): void {
+        let idleCount = 0;
+        this.gameInputHandler.on(GameInputHandler.NO_INPUT_PERIOD_EVENT, () => {
+            idleCount++;
+            if (idleCount % 3 === 0) {
+                this.tileGridDirector.startIdle();
+            }
+            else{
+                this.tileHinter.startHintTiles();
+            }
+            
+        });
+
+        
+
+        this.simulationController.on(SimulationController.END_EVENT, () => {
+            this.gameInputHandler.startTimer();
+        });
+
+        this.simulationController.on(SimulationController.START_EVENT, () => {
+            this.gameInputHandler.stopTimer();
+        });
+
+        this.scoreController.on(ScoreController.SCORE_CHANGED_EVENT, (currentScore : number, addedScore : number, targetScore : number) => {
+            this.progressUi.setProgress(currentScore/targetScore);
+        });
+
+        this.scoreController.on(ScoreController.TARGET_SCORE_REACHED_EVENT, () => {
+            this.isReachTargetedScore = true;
+        });
+
+
+    }
+
 
     private checkMatches(): boolean {
         let matches = this.tileMatcher.getMatches();
@@ -118,40 +152,6 @@ class GameScene extends Phaser.Scene {
         }
 
         return false;
-    }
-
-    private bindEvents(): void {
-        let idleCount = 0;
-        this.gameInputHandler.on(GameInputHandler.NO_INPUT_PERIOD_EVENT, () => {
-            idleCount++;
-            if (idleCount % 3 === 0) {
-                this.tileGridDirector.startIdle();
-            }
-            else{
-                this.tileHinter.startHintTiles();
-            }
-            
-        });
-
-        
-
-        this.simulationController.on(SimulationController.END_EVENT, () => {
-            this.gameInputHandler.startTimer();
-        });
-
-        this.simulationController.on(SimulationController.START_EVENT, () => {
-            this.gameInputHandler.stopTimer();
-        });
-
-        this.scoreController.on(ScoreController.SCORE_CHANGED_EVENT, (currentScore : number, addedScore : number, targetScore : number) => {
-            this.progressUi.setProgress(currentScore/targetScore);
-        });
-
-        this.scoreController.on(ScoreController.TARGET_SCORE_REACHED_EVENT, () => {
-            this.isReachTargetedScore = true;
-        });
-
-
     }
 
     private startCheckMatch(): void {
