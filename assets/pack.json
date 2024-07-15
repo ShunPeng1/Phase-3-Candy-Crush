@@ -543,6 +543,11 @@
       },
       {
         "type": "image",
+        "key": "progress-bar-03",
+        "url": "./assets/candy-crush/ui/progress-bar-03.png"
+      },
+      {
+        "type": "image",
         "key": "ver-character-banner",
         "url": "./assets/candy-crush/ui/ver-character-banner.png"
       },
