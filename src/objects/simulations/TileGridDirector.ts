@@ -33,23 +33,20 @@ class TileGridDirector extends GameObjects.GameObject {
     }
 
 
-    public startShuffle(x : number, y : number, duration : number): void {
+    public startShuffle(x : number, y : number, duration : number, callback : ()=>void = () =>{}): void {
         let simulationIndex = Math.random() * 1;
         let simulation : TileSimulation;
         switch(simulationIndex) {
             case 0:
-                simulation = new TileCircleShuffleSimulation(this.scene, this.tileGrid.getTileGrid(), x, y, 200, 1000);
+                simulation = new TileCircleShuffleSimulation(this.scene, this.tileGrid, x, y, 200, duration, callback);
                 break;
             default:
-                simulation = new TileCircleShuffleSimulation(this.scene, this.tileGrid.getTileGrid(), x, y, 100, 1000);
+                simulation = new TileCircleShuffleSimulation(this.scene, this.tileGrid, x, y, 200, duration, callback);
                 break;
         }
 
         simulation.start();
-
-        this.scene.time.delayedCall(duration, () => {
-            simulation.stop(); // Assuming there's a stop method in TileSimulation to stop the simulation
-        });
+        
     }
 
     public endIdle(): void {

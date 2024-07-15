@@ -1,4 +1,5 @@
 class ScoreController extends Phaser.Events.EventEmitter{
+    
     private currentScore: number = 0;
     private targetScore: number = 0;
     private accumaletedScore: number = 0;
@@ -19,6 +20,12 @@ class ScoreController extends Phaser.Events.EventEmitter{
 
     public setTargetScore(targetScore: number) {
         this.targetScore = targetScore;
+    }
+
+    public setCurrentScore(score: number) {
+        this.currentScore = score;
+
+        this.emit(ScoreController.SCORE_CHANGED_EVENT, this.currentScore, 0, this.targetScore);
     }
 
     public getCurrentScore(): number {

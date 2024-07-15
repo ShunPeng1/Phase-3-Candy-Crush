@@ -272,8 +272,14 @@ class TileGrid extends GameObjects.Container {
         }
     }
 
-    public addTileAtIndex(newTile: Tile, xIndex : number, yIndex : number): void {
+    public addTileAtIndex(newTile: Tile, xIndex : number, yIndex? : number): void {
         
+        if (yIndex === undefined) { // The xIndex is the index of 1 dimensional after flattening the grid\
+            yIndex = Math.floor(xIndex / this.gridWidth);
+            xIndex = xIndex % this.gridWidth;
+        }
+
+
         newTile.setTileGrid(this, this.tileWidth, this.tileHeight);
         newTile.setDisplaySize(this.tileWidth, this.tileHeight);
         newTile.setPosition((xIndex +0.5) * this.tileWidth, (yIndex + 0.5) * this.tileHeight);
@@ -299,7 +305,33 @@ class TileGrid extends GameObjects.Container {
             this.addTileAtIndex(newTile, tileX, tileY);
         }
     }
+
+    public removeTileAtIndex(xIndex: number, yIndex?: number): Tile | null{
+        if (yIndex === undefined) { // The xIndex is the index of 1 dimensional after flattening the grid
+            yIndex = Math.floor(xIndex / this.gridWidth);
+            xIndex = xIndex % this.gridWidth;
+        }
+
+        let tile = this.tileGrid[yIndex][xIndex];
+        if (tile === null) {
+            return tile;
+        }
+
+        this.remove(tile);
+        this.tileGrid[yIndex][xIndex] = null;
+
+        return tile;
+    }
     
+    public removeTile(tile: Tile): void {
+        let tilePos = this.getTileIndex(tile);
+        if (tilePos === null) {
+            return;
+        }
+
+        this.remove(tile);
+        this.tileGrid[tilePos.y][tilePos.x] = null;
+    }
 
     public swapTiles(firstSelectedTile : Tile, secondSelectedTile : Tile ): void {
         if (!firstSelectedTile || !secondSelectedTile) {
@@ -412,8 +444,18 @@ class TileGrid extends GameObjects.Container {
         return tile;
     }
 
-    public getWorldPositionFromIndex(xIndex: number, yIndex: number): Phaser.Math.Vector2 {
-        return new Phaser.Math.Vector2(xIndex * this.tileWidth + this.x, yIndex * this.tileHeight + this.y);
+    public getWorldPositionFromIndex(xIndex: number, yIndex?: number): Phaser.Math.Vector2 {
+
+        if (yIndex === undefined) { // The xIndex is the index of 1 dimensional after flattening the grid
+            yIndex = Math.floor(xIndex / this.gridWidth);
+            xIndex = xIndex % this.gridWidth;
+        }
+
+        return new Phaser.Math.Vector2((xIndex +0.5)  * this.tileWidth + this.x, (yIndex + 0.5)  * this.tileHeight + this.y);
+    }
+
+    public getWorldPositionFromTile(tile: Tile): Phaser.Math.Vector2 {
+        return new Phaser.Math.Vector2(tile.x + this.x, tile.y + this.y);
     }
 
     public getLocalPositionFromIndex(xIndex: number, yIndex: number): Phaser.Math.Vector2 {

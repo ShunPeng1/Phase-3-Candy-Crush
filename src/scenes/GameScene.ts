@@ -45,7 +45,7 @@ class GameScene extends Phaser.Scene {
 
     private initializeVariables(): void {
         this.simulationController = new SimulationController(this);
-        this.scoreController = new ScoreController(50, 1.1);
+        this.scoreController = new ScoreController(10, 1);
 
         this.data.set('simulationController', this.simulationController);
         this.data.set('scoreController', this.scoreController);
@@ -110,9 +110,63 @@ class GameScene extends Phaser.Scene {
 
         this.scoreController.on(ScoreController.TARGET_SCORE_REACHED_EVENT, () => {
             this.isReachTargetedScore = true;
+            this.scoreController.setEnable(false);
         });
 
 
+    }
+
+    private startCheckMatch(): void {
+        
+        this.tileSwapper.setCanMove(false);
+
+        let isMatch = false;
+
+        const onComplete = () => {
+            isMatch = this.checkMatches();
+        };
+
+        const onEnd = () => {
+            if (isMatch) {
+                this.startCheckMatch();
+            }
+            else if (this.isReachTargetedScore) {
+                this.isReachTargetedScore = false;
+                this.scoreController.setEnable(true);
+                this.scoreController.setCurrentScore(0);
+                
+                shuffleTiles();
+            }
+            else{
+                checkForInputable();
+            }
+        }
+
+        const shuffleTiles = () => {
+            this.tileGridDirector.startShuffle(690, 370, 5000, () =>{
+                let isMatchAfterShuffle = this.checkMatches();
+                if (isMatchAfterShuffle) {
+                    this.startCheckMatch();
+                }
+                else{
+                    checkForInputable();
+                    
+                }
+            });
+        }
+
+        const checkForInputable = () => {
+            let potentialMatches = this.tileMatcher.getPotentialMatches();
+            if (potentialMatches.length == 0) {
+                shuffleTiles();
+            }
+            else{
+                this.tileSwapper.setCanMove(true);
+            }
+        }
+
+        this.simulationController.startSimulation(onComplete, onEnd);
+    
     }
 
 
@@ -152,29 +206,6 @@ class GameScene extends Phaser.Scene {
         }
 
         return false;
-    }
-
-    private startCheckMatch(): void {
-        
-        this.tileSwapper.setCanMove(false);
-
-        let isMatch = false;
-
-        const onComplete = () => {
-            isMatch = this.checkMatches();
-        };
-
-        const onEnd = () => {
-            if (isMatch) {
-                this.startCheckMatch();
-            }
-            else{
-                this.tileSwapper.setCanMove(true);
-            }
-        }
-
-        this.simulationController.startSimulation(onComplete, onEnd);
-    
     }
 
 
