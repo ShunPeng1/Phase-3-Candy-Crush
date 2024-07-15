@@ -51,14 +51,33 @@ class TileGridDirector extends GameObjects.GameObject {
         this.scene.add.particles(0, 1000, 'sunset-raster', {
             speed: {
                 onEmit: (particle) => {
-                    return Phaser.Math.Between(1000, 1300);
+                    return Phaser.Math.Between(900, 1200);
                 },
             },
-            lifespan: 5000,
-            gravityY: 500,
-            duration: duration,
+            lifespan: duration*1.5,
+            frequency: 1,
+            duration: duration/2,
             frame: [0, 4, 8, 12, 16],
-            x: { min: 0, max: 1200 },
+            x: { 
+                onEmit : (particle) => {
+                    return Phaser.Math.Between(0, 1300);
+                },
+                onUpdate : (particle, key, t) => {
+                    
+                
+                    if (particle.velocityY < 0){
+                        particle.velocityY += 5;
+                    }
+                    else{
+                        particle.velocityY += 0.7;
+                        particle.velocityX *= 0.995;
+                    }
+
+                    
+
+                    return particle.x;
+                }
+            },
             scaleX: {
                 onEmit: (particle) => {
                     return -1.0
