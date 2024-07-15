@@ -473,9 +473,41 @@ class TileMatcher {
                         }
                     }
                 }
-            
-            }
 
+                if (tile && rightTile && rightRightTile){
+                    if (tile.getColor() === rightRightTile.getColor() && rightTile.getColor() !== tile.getColor()) {
+                        let rightUpTile = this.tileGrid.getTileAtIndex(x + 1, y - 1);
+                        let rightDownTile = this.tileGrid.getTileAtIndex(x + 1, y + 1);
+                        let fromTile = rightTile;
+                        let matchTiles = [tile, rightRightTile];
+
+                        if (rightUpTile && rightUpTile.getColor() === tile.getColor()) {
+                            horizontalPotentialMatches.push(new TilePotentialMatchResult(matchTiles, fromTile, rightUpTile));
+                        }
+
+                        if (rightDownTile && rightDownTile.getColor() === tile.getColor()) {
+                            horizontalPotentialMatches.push(new TilePotentialMatchResult(matchTiles, fromTile, rightDownTile));
+                        }
+                    }
+                }
+
+                if (rightTile && rightRightTile && rightRightRightTile) {
+                    if (rightTile.getColor() === rightRightRightTile.getColor() && rightTile.getColor() !== rightRightTile.getColor()) {
+                        let rightRightUpTile = this.tileGrid.getTileAtIndex(x + 2, y - 1);
+                        let rightRightDownTile = this.tileGrid.getTileAtIndex(x + 2, y + 1);
+                        let fromTile = rightRightTile;
+                        let matchTiles = [rightTile, rightRightRightTile];
+
+                        if (rightRightUpTile && rightRightUpTile.getColor() === rightTile.getColor()) {
+                            horizontalPotentialMatches.push(new TilePotentialMatchResult(matchTiles, fromTile, rightRightUpTile));
+                        }
+
+                        if (rightRightDownTile && rightRightDownTile.getColor() === rightTile.getColor()) {
+                            horizontalPotentialMatches.push(new TilePotentialMatchResult(matchTiles, fromTile, rightRightDownTile));
+                        }
+                    }
+                }
+            }
         }
 
         return horizontalPotentialMatches;
@@ -541,6 +573,40 @@ class TileMatcher {
 
                         if (downDownDownRightTile && downDownDownRightTile.getColor() === downTile.getColor()) {
                             verticalPotentialMatches.push(new TilePotentialMatchResult(matchTiles, fromTile, downDownDownRightTile));
+                        }
+                    }
+                }
+
+                if (tile && downTile && downDownTile){
+                    if (tile.getColor() === downDownTile.getColor() && downTile.getColor() !== tile.getColor()) {
+                        let downLeftTile = this.tileGrid.getTileAtIndex(x - 1, y + 1);
+                        let downRightTile = this.tileGrid.getTileAtIndex(x + 1, y + 1);
+                        let fromTile = downTile;
+                        let matchTiles = [tile, downDownTile];
+
+                        if (downLeftTile && downLeftTile.getColor() === tile.getColor()) {
+                            verticalPotentialMatches.push(new TilePotentialMatchResult(matchTiles, fromTile, downLeftTile));
+                        }
+
+                        if (downRightTile && downRightTile.getColor() === tile.getColor()) {
+                            verticalPotentialMatches.push(new TilePotentialMatchResult(matchTiles, fromTile, downRightTile));
+                        }
+                    }
+                }
+
+                if (downTile && downDownTile && downDownDownTile) {
+                    if (downTile.getColor() === downDownDownTile.getColor() && downDownTile.getColor() !== downTile.getColor()) {
+                        let downDownLeftTile = this.tileGrid.getTileAtIndex(x - 1, y + 2);
+                        let downDownRightTile = this.tileGrid.getTileAtIndex(x + 1, y + 2);
+                        let fromTile = downDownTile;
+                        let matchTiles = [downTile, downDownDownTile];
+
+                        if (downDownLeftTile && downDownLeftTile.getColor() === downTile.getColor()) {
+                            verticalPotentialMatches.push(new TilePotentialMatchResult(matchTiles, fromTile, downDownLeftTile));
+                        }
+
+                        if (downDownRightTile && downDownRightTile.getColor() === downTile.getColor()) {
+                            verticalPotentialMatches.push(new TilePotentialMatchResult(matchTiles, fromTile, downDownRightTile));
                         }
                     }
                 }
