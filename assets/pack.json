@@ -462,6 +462,15 @@
         "url": "./assets/candy-crush/effects/teleport-anim-effect-06.png"  
       },
       {
+        "type": "spritesheet",
+        "key": "sunset-raster",
+        "url": "./assets/candy-crush/effects/sunset-raster.png",
+        "frameConfig": {
+          "frameWidth": 16,
+          "frameHeight": 16
+        }
+      },
+      {
         "type": "image",
         "key": "stripes_destroy",
         "url": "./assets/candy-crush/effects/stripes_destroy.png"  
