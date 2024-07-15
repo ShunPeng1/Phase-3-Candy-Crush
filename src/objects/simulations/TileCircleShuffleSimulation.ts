@@ -47,8 +47,8 @@ class TileCircleShuffleSimulation extends TileSimulation {
             outPlaceholders.push(new TilePlaceholder(this.scene, this.x, this.y, index));
         });
 
-        Phaser.Utils.Array.Shuffle(inPlaceholders);
         Phaser.Utils.Array.Shuffle(tiles);
+        Phaser.Utils.Array.Shuffle(outPlaceholders);
         const inPlaceholderGroup = this.scene.add.group(inPlaceholders);
         const outPlaceholderGroup = this.scene.add.group(outPlaceholders);
 
