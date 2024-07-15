@@ -27,7 +27,8 @@ class TileCircleShuffleSimulation extends TileSimulation {
     public start(): void {
         super.start();
 
-        let placeholders : TilePlaceholder[] = []; 
+        let inPlaceholders : TilePlaceholder[] = []; 
+        let outPlaceholders : TilePlaceholder[] = [];
         
         let tiles = this.getFlattenTiles();
         tiles.forEach((tile) => {
@@ -42,32 +43,37 @@ class TileCircleShuffleSimulation extends TileSimulation {
 
             this.tileGrid.removeTile(tile);
             tile.setPosition(worldPosition.x, worldPosition.y);
-            placeholders.push(new TilePlaceholder(this.scene, worldPosition.x, worldPosition.y, index));
+            inPlaceholders.push(new TilePlaceholder(this.scene, worldPosition.x, worldPosition.y, index));
+            outPlaceholders.push(new TilePlaceholder(this.scene, this.x, this.y, index));
         });
 
-        Phaser.Utils.Array.Shuffle(placeholders);
-        const placeholderGroup = this.scene.add.group(placeholders);
-        
+        Phaser.Utils.Array.Shuffle(inPlaceholders);
+        Phaser.Utils.Array.Shuffle(tiles);
+        const inPlaceholderGroup = this.scene.add.group(inPlaceholders);
+        const outPlaceholderGroup = this.scene.add.group(outPlaceholders);
+
         const tileGroup = this.scene.add.group(tiles);
 
         const circle = new Phaser.Geom.Circle(this.x, this.y, this.radius);
 
-        Phaser.Actions.PlaceOnCircle(placeholderGroup.getChildren(), circle);
+        Phaser.Actions.PlaceOnCircle(inPlaceholderGroup.getChildren(), circle);
 
 
         let count = 0;
         tiles.forEach((tile, index) => {
-            const placeholder = placeholders[index];
-            const matrix = placeholder.getWorldTransformMatrix();
-            const worldPosition = this.tileGrid.getWorldPositionFromIndex(placeholder.index.x, placeholder.index.y);
-                        
+            const inPlaceholder = inPlaceholders[index];
+            const inMatrix = inPlaceholder.getWorldTransformMatrix();
+
+            const outPlaceholder = outPlaceholders[index];
+            const outWorldPosition = this.tileGrid.getWorldPositionFromIndex(outPlaceholder.index.x, outPlaceholder.index.y);
+
 
             this.scene.tweens.chain({
                 tweens : [{
                 targets: tile,
-                x: matrix.tx,
-                y: matrix.ty,
-                ease: 'Cubic.easeInOut',
+                x: inMatrix.tx,
+                y: inMatrix.ty,
+                ease: Phaser.Math.Easing.Cubic.InOut,
                 duration: this.duration/4,
                 },{
 
@@ -79,15 +85,15 @@ class TileCircleShuffleSimulation extends TileSimulation {
                     Phaser.Actions.RotateAroundDistance(tileGroup.getChildren(), { x: this.x, y: this.y }, 0.0006, circle.radius);
                 }},{
                     targets: tile,
-                    x: worldPosition.x,
-                    y: worldPosition.y,
-                    ease: 'Cubic.easeInOut',
+                    x: outWorldPosition.x,
+                    y: outWorldPosition.y,
+                    ease: Phaser.Math.Easing.Cubic.InOut,
                     duration: this.duration/4
                                 
 
                 }],
                 onComplete: () => {
-                    this.tileGrid.addTileAtIndex(tile, placeholder.index.x, placeholder.index.y);
+                    this.tileGrid.addTileAtIndex(tile, outPlaceholder.index.x, outPlaceholder.index.y);
                     tile.enableTileInteraction();
                     
                     if (++count === tiles.length) {
