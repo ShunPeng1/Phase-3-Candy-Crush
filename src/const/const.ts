@@ -22,7 +22,7 @@ let CONST = {
         purple : 'item-04',
         blue : 'item-05',
         orange : 'item-06', 
-    },
+    },  
 
     verticalStripesCandyTextureKey: {
         red : 'item-01-stripes-vert',

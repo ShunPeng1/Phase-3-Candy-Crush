@@ -465,6 +465,101 @@
         "type": "image",
         "key": "stripes_destroy",
         "url": "./assets/candy-crush/effects/stripes_destroy.png"  
+      },
+      {
+        "type": "image",
+        "key": "fantastic!-text",
+        "url": "./assets/candy-crush/ui/fantastic!-text.png"
+      },
+      {
+        "type": "image",
+        "key": "field-bar-01",
+        "url": "./assets/candy-crush/ui/field-bar-01.png"
+      },
+      {
+        "type": "image",
+        "key": "field-bar-02",
+        "url": "./assets/candy-crush/ui/field-bar-02.png"
+      },
+      {
+        "type": "image",
+        "key": "good!-text",
+        "url": "./assets/candy-crush/ui/good!-text.png"
+      },
+      {
+        "type": "image",
+        "key": "great!-text",
+        "url": "./assets/candy-crush/ui/great!-text.png"
+      },
+      {
+        "type": "image",
+        "key": "horiz-foot-banner",
+        "url": "./assets/candy-crush/ui/horiz-foot-banner.png"
+      },
+      {
+        "type": "image",
+        "key": "horiz-gui-element",
+        "url": "./assets/candy-crush/ui/horiz-gui-element.png"
+      },
+      {
+        "type": "image",
+        "key": "horiz-moves-bar",
+        "url": "./assets/candy-crush/ui/horiz-moves-bar.png"
+      },
+      {
+        "type": "image",
+        "key": "horiz-top-banner",
+        "url": "./assets/candy-crush/ui/horiz-top-banner.png"
+      },
+      {
+        "type": "image",
+        "key": "level-completed!-text",
+        "url": "./assets/candy-crush/ui/level-completed!-text.png"
+      },
+      {
+        "type": "image",
+        "key": "level-failed!-text",
+        "url": "./assets/candy-crush/ui/level-failed!-text.png"
+      },
+      {
+        "type": "image",
+        "key": "moves",
+        "url": "./assets/candy-crush/ui/moves.png"
+      },
+      {
+        "type": "image",
+        "key": "no-match-text",
+        "url": "./assets/candy-crush/ui/no-match-text.png"
+      },
+      {
+        "type": "image",
+        "key": "progress-bar-01",
+        "url": "./assets/candy-crush/ui/progress-bar-01.png"
+      },
+      {
+        "type": "image",
+        "key": "progress-bar-02",
+        "url": "./assets/candy-crush/ui/progress-bar-02.png"
+      },
+      {
+        "type": "image",
+        "key": "ver-character-banner",
+        "url": "./assets/candy-crush/ui/ver-character-banner.png"
+      },
+      {
+        "type": "image",
+        "key": "ver-foot-banner",
+        "url": "./assets/candy-crush/ui/ver-foot-banner.png"
+      },
+      {
+        "type": "image",
+        "key": "ver-top-banner",
+        "url": "./assets/candy-crush/ui/ver-top-banner.png"
+      },
+      {
+        "type": "image",
+        "key": "yeah!-text",
+        "url": "./assets/candy-crush/ui/yeah!-text.png"
       }
     ]
   }

@@ -40,7 +40,7 @@ class GameScene extends Phaser.Scene {
     private initializeVariables(): void {
         this.simulationController = new SimulationController(this);
         this.tileFactory = new TileFactory(this, candyColors, CONST.tileWidth, CONST.tileHeight);
-        this.tileGrid = new TileGrid(this, 400, 100, CONST.gridWidth, CONST.gridHeight, CONST.tileWidth, CONST.tileHeight,
+        this.tileGrid = new TileGrid(this, 400, 70, CONST.gridWidth, CONST.gridHeight, CONST.tileWidth, CONST.tileHeight,
             this.tileFactory, ["item-spot-01", "item-spot-02"]);
         this.tileMatcher = new TileMatcher(this.tileGrid);
         this.tileSwapper = new TileSwapper(this, this.tileGrid);
@@ -56,7 +56,7 @@ class GameScene extends Phaser.Scene {
         
         const background = this.add.image(0, 0, 'background-01');
         background.setOrigin(0, 0);
-        background.setDisplaySize(this.game.canvas.width, this.game.canvas.height);
+        background.setDisplaySize(this.game.canvas.width + 50, this.game.canvas.height + 50);
         background.setDepth(-100);
     }
 
