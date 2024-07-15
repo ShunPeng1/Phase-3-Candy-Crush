@@ -121,7 +121,17 @@ class HorizontalStripeTileEffect extends TileEffect {
             stripeDestroyRight.destroy();
             stripeDestroyLeft.destroy();
         });
+
+        // Add score for each tile destroyed
+        let scoreController = this.scene.data.get("scoreController");
+        scoreController.addScore(1);
     }
+
+    
+    public onTileSwap(other: ITileEffect): void {
+        // To do, implement the swap effect
+    }
+
 }
 
 export default HorizontalStripeTileEffect;

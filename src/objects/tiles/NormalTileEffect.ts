@@ -40,6 +40,10 @@ class NormalTileEffect extends TileEffect{
         simulationController.addSimulation(new TimerEventSimulation(this.scene, 600, () => {
             particles.destroy();
         }));
+
+        // Add score for each tile destroyed
+        let scoreController = this.scene.data.get("scoreController");
+        scoreController.addScore(1);
     }
 
 

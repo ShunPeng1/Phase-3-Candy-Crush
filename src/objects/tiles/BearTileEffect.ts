@@ -7,6 +7,7 @@ import TweenChainSimulation from "../../simulation/TweenChainSimulation";
 import TileGrid from "../grids/TileGrid";
 
 class BearTileEffect extends TileEffect {
+    
     private tileGrid: TileGrid;
     private tileIndex: Phaser.Math.Vector2;
     private tileToDestroy1: Tile;
@@ -83,7 +84,16 @@ class BearTileEffect extends TileEffect {
 
 		simulationController.addSimulation(new TweenChainSimulation(bearProjectileTweenChain1), true);
         simulationController.addSimulation(new TweenChainSimulation(bearProjectileTweenChain2), true);
-	}
+	
+    
+        // Add score for each tile destroyed
+        let scoreController = this.scene.data.get("scoreController");
+        scoreController.addScore(1);
+    }
+
+    public onTileSwap(other: ITileEffect): void {
+        // To do, implement the swap effect
+    }
 
     private createExplosionAnimation(tileToDestroy : Tile): Phaser.Tweens.TweenChain {
         let matrix = this.tile.getWorldPosition();

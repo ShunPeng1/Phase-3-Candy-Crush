@@ -68,7 +68,17 @@ class BombTileEffect extends TileEffect {
         });
 
 		simulationController.addSimulation(new TweenChainSimulation(explosionAnimation), true);
-	}
+	
+        // Add score for each tile destroyed
+        let scoreController = this.scene.data.get("scoreController");
+        scoreController.addScore(1);
+    }
+
+    
+    public onTileSwap(other: ITileEffect): void {
+        // To do, implement the swap effect
+    }
+
 }
 
 export default BombTileEffect;

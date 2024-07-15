@@ -1,7 +1,7 @@
 import { Scene } from "phaser";
 import Tile from "./Tile";
 
-class TileEffect implements ITileEffect{
+abstract class TileEffect implements ITileEffect{
     protected scene: Scene;
     public readonly tile: Tile;
     public readonly color: string;
@@ -28,16 +28,9 @@ class TileEffect implements ITileEffect{
 
     }
     
-    public onTilePop(): void {
-
-    }
-
-    public onTileDestroy(): void {
-            
-    }
-    public onTileSwap(other: ITileEffect): void {
-
-    }
+    public abstract onTilePop(): void;
+    public abstract onTileDestroy(): void ;
+    public abstract onTileSwap(other: ITileEffect): void ;
 
 }
 

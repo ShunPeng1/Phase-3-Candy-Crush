@@ -5,8 +5,10 @@ import TileGridDirector from "../objects/grids/TileGridDirector";
 import TileHinter from "../objects/grids/TileHinter";
 import TileMatcher from "../objects/grids/TileMatcher";
 import TileSwapper from "../objects/grids/TileSwapper";
+import ScoreController from "../objects/score/ScoreController";
 import Tile from "../objects/tiles/Tile";
 import TileFactory from "../objects/tiles/TileFactory";
+import ProgressUi from "../objects/ui/ProgressUi";
 import SimulationController from "../simulation/SimulationController";
 import TweenChainSimulation from "../simulation/TweenChainSimulation";
 import TweenSimulation from "../simulation/TweenSimulation";
@@ -19,8 +21,11 @@ class GameScene extends Phaser.Scene {
     private tileHinter: TileHinter;
     private tileGridDirector: TileGridDirector;
     private simulationController: SimulationController;
+    private scoreController: ScoreController;
     private gameInputHandler : GameInputHandler;
 
+
+    private progressUi : ProgressUi;
 
     constructor() {
         super({ key: 'GameScene' });
@@ -39,6 +44,11 @@ class GameScene extends Phaser.Scene {
 
     private initializeVariables(): void {
         this.simulationController = new SimulationController(this);
+        this.scoreController = new ScoreController(50, 1.1);
+
+        this.data.set('simulationController', this.simulationController);
+        this.data.set('scoreController', this.scoreController);
+
         this.tileFactory = new TileFactory(this, candyColors, CONST.tileWidth, CONST.tileHeight);
         this.tileGrid = new TileGrid(this, 400, 70, CONST.gridWidth, CONST.gridHeight, CONST.tileWidth, CONST.tileHeight,
             this.tileFactory, ["item-spot-01", "item-spot-02"]);
@@ -48,7 +58,9 @@ class GameScene extends Phaser.Scene {
         this.gameInputHandler = new GameInputHandler(this, this.tileSwapper);
         this.tileGridDirector = new TileGridDirector(this, this.tileGrid);
 
-        this.data.set('simulationController', this.simulationController);
+        this.progressUi = new ProgressUi(this, 200, 360, 600, 40);
+        this.progressUi.setDepth(100);
+        
     }
 
     private setBackground(): void {
@@ -128,6 +140,10 @@ class GameScene extends Phaser.Scene {
 
         this.simulationController.on(SimulationController.START_EVENT, () => {
             this.gameInputHandler.stopTimer();
+        });
+
+        this.scoreController.on(ScoreController.SCORE_CHANGED_EVENT, (currentScore : number, addedScore : number, targetScore : number) => {
+            this.progressUi.setProgress(currentScore/targetScore);
         });
 
 
