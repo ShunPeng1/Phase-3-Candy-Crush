@@ -12,6 +12,7 @@ import ProgressUi from "../objects/ui/ProgressUi";
 import SimulationController from "../simulation/SimulationController";
 import TweenChainSimulation from "../simulation/TweenChainSimulation";
 import TweenSimulation from "../simulation/TweenSimulation";
+import ConffetiParticleEmitter from "../objects/particles/ConffetiParticleEmitter";
 
 class GameScene extends Phaser.Scene {
     private tileGrid: TileGrid;
@@ -153,6 +154,10 @@ class GameScene extends Phaser.Scene {
                     
                 }
             });
+
+            
+            let conffeti1 = new ConffetiParticleEmitter(this, 0, 800, 4000, new Phaser.Math.Vector2(1, -2), 900, 30, 5);
+            let conffeti2 = new ConffetiParticleEmitter(this, 1400, 800, 4000, new Phaser.Math.Vector2(-1, -2), 900, 30, 5);
         }
 
         const checkForInputable = () => {
