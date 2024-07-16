@@ -14,14 +14,11 @@ class NormalTileEffect extends TileEffect{
     public onTilePop(): void {
     }
 
-    public onTileDestroy(byTileEffect? : ITileEffect, isMerged : boolean = false): void {
+    public onTileDestroy(byTileEffect? : ITileEffect): void {
         // Add score for each tile destroyed
         let scoreController = this.scene.data.get("scoreController");
         scoreController.addScore(1);
         
-        if (isMerged) {
-            return;
-        }
 
         let simulationController = this.scene.data.get("simulationController") as SimulationController;
         let matrix = this.tile.getWorldPosition();

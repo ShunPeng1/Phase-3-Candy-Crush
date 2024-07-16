@@ -234,7 +234,7 @@ class TileGrid extends GameObjects.Container {
 
     }
 
-    public destroyPopTile(tile: Tile, fromTileEffect? : ITileEffect, isMerged : boolean = false): void {
+    public destroyPopTile(tile: Tile, fromTileEffect? : ITileEffect, canCallEffect : boolean = true): void {
         let tilePos = this.getTileIndexInPopedGrid(tile);
         if (tilePos === null) {
             return;
@@ -242,14 +242,7 @@ class TileGrid extends GameObjects.Container {
 
         this.remove(tile);
         this.popedTilesGrid[tilePos.y][tilePos.x] = null;
-        tile.destroy(true, fromTileEffect, isMerged);
-    }
-
-    public destroyPopTiles(tiles: Tile[]): void {
-        // Loop through all the matches and remove the associated tiles
-        for (var i = 0; i < tiles.length; i++) {
-            this.destroyPopTile(tiles[i]);
-        }
+        tile.destroy(true, fromTileEffect, canCallEffect);
     }
 
     public popTiles(tiles: Tile[]): void {
@@ -269,6 +262,23 @@ class TileGrid extends GameObjects.Container {
             this.popedTilesGrid[tilePos.y][tilePos.x] = tile;
             this.tileGrid[tilePos.y][tilePos.x] = null;
             tile.pop();
+        }
+    }
+
+    public swapPopTiles(firstSelectedTile : Tile, secondSelectedTile : Tile): void {
+        //Find where this tile lives in the theoretical grid
+        let firstTilePos = this.getTileIndex(firstSelectedTile);
+        let secondTilePos = this.getTileIndex(secondSelectedTile);
+
+        // Swap the tile from the theoretical grid
+        if (firstTilePos && secondTilePos) {
+            this.popedTilesGrid[firstTilePos.y][firstTilePos.x] = secondSelectedTile;
+            this.popedTilesGrid[secondTilePos.y][secondTilePos.x] = firstSelectedTile;
+
+            this.tileGrid[firstTilePos.y][firstTilePos.x] = null;
+            this.tileGrid[secondTilePos.y][secondTilePos.x] = null;
+
+            firstSelectedTile.swapPop(secondSelectedTile);
         }
     }
 

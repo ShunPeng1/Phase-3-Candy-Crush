@@ -117,7 +117,7 @@ class Tile extends Phaser.GameObjects.Image {
         return this.tileEffect.color;
     }
 
-    public getTileEffect(): any {
+    public getTileEffect(): ITileEffect {
         return this.tileEffect;    
     }
 
@@ -131,11 +131,14 @@ class Tile extends Phaser.GameObjects.Image {
         this.tileEffect.onTileSwapPop(tile.getTileEffect());
     }
 
-    public destroy(fromScene?: boolean, fromTileEffect? : ITileEffect, isMerged : boolean = false): void {
+    public destroy(fromScene?: boolean, fromTileEffect? : ITileEffect, canCallEffect : boolean = true): void {
         if (this.isDestroyed) return;
 
         this.isDestroyed = true;
-        this.tileEffect.onTileDestroy(fromTileEffect, isMerged);
+
+        if (canCallEffect) {
+            this.tileEffect.onTileDestroy(fromTileEffect);
+        }
         super.destroy(fromScene);
     }
 

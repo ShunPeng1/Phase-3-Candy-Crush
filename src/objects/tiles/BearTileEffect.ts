@@ -90,7 +90,7 @@ class BearTileEffect extends TileEffect {
     }
 
     public onTileSwapPop(other: ITileEffect): void {
-        // To do, implement the swap effect
+        console.log("BearTileEffect onTileSwapPop");
     }
 
     private createExplosionAnimation(tileToDestroy : Tile): Phaser.Tweens.TweenChain {

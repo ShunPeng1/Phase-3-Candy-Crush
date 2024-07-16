@@ -224,6 +224,41 @@ class GameScene extends Phaser.Scene {
         return false;
     }
 
+    private checkSwap(firstSelectedTile: Tile, secondSelectedTile : Tile) : boolean {
+        let firstType = firstSelectedTile.getTileEffect().type;
+        let secondType = secondSelectedTile.getTileEffect().type;
+        
+        if (firstType === "NONE" && secondType === "NONE") {
+            return false;
+        }
+
+        if (firstType === "NONE" && secondType !== "COLOR_CLEAR") {
+            return false;
+        }
+
+        if (secondType === "NONE" && firstType !== "COLOR_CLEAR") {
+            return false;
+        }
+        
+        if (firstType === "NONE"){
+            const temp = firstSelectedTile;
+            firstSelectedTile = secondSelectedTile;
+            secondSelectedTile = temp;
+        }
+
+        this.tileGrid.swapPopTiles(firstSelectedTile, secondSelectedTile);
+
+                
+        this.tileGrid.gravitateTile();
+        this.tileGrid.fillEmptyGridWithTile();
+        
+        this.tileGrid.destroyPopTile(firstSelectedTile);
+        this.tileGrid.destroyPopTile(secondSelectedTile, firstSelectedTile.getTileEffect(), false);
+
+        return true;
+
+    }
+
 
     private tweenDropdownTile(tile: Tile, fromX: number, fromY: number, endX: number, endY: number): void {
         
@@ -239,7 +274,7 @@ class GameScene extends Phaser.Scene {
             yoyo: false
         }],
         onActive: () => {
-            console.log("Disable Tile Interaction")
+            //console.log("Disable Tile Interaction")
             tile.disableTileInteraction();
         }, 
         onComplete: () => {
@@ -263,7 +298,7 @@ class GameScene extends Phaser.Scene {
                 onComplete: () => {
                     //tile.off('pointerover', pauseTween);
                     //tile.off('pointerout', unpauseTween);
-                    console.log("Enable Tile Interaction")
+                    //console.log("Enable Tile Interaction")
                     
                     tile.removeMapTween("displaySize");
                     tile.enableTileInteraction();
@@ -308,13 +343,20 @@ class GameScene extends Phaser.Scene {
         this.simulationController.addSimulation(tweenSimulation2);
 
         let isMatch = false;
+        let isSwapSpecialTile = false;
         const onComplete = () => {
-            this.simulationController.off(SimulationController.COMPLETE_EVENT, onComplete);
-            isMatch = this.checkMatches();
+            isSwapSpecialTile = this.checkSwap(firstSelectedTile, secondSelectedTile);
+            if (isSwapSpecialTile) {
+                return;
+            }
+            else{
+                isMatch = this.checkMatches();
+            }
         };
 
         const onEnd = () => {
-            if (!isMatch) {
+
+            if (!isSwapSpecialTile && !isMatch) {
                 if (this.tileSwapper.checkIsSwapped()) {
                     this.tileSwapper.unswapTiles();
                 } else {
@@ -328,7 +370,6 @@ class GameScene extends Phaser.Scene {
         };
 
 
-        this.simulationController.on(SimulationController.COMPLETE_EVENT, onComplete);
         this.simulationController.startSimulation(onComplete, onEnd);
     }
 }

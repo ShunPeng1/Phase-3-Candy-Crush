@@ -137,7 +137,7 @@ class VerticalStripeTileEffect extends TileEffect {
 
     
     public onTileSwapPop(other: ITileEffect): void {
-        // To do, implement the swap effect
+        console.log("VerticalStripeTileEffect onTileSwapPop");
     }
 
 }

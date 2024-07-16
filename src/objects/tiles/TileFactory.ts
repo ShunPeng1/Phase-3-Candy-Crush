@@ -1,6 +1,7 @@
 import CONST, { CandyColorKey } from "../../const/const";
 import BearTileEffect from "./BearTileEffect";
 import BombTileEffect from "./BombTileEffect";
+import ChocolateTileEffect from "./ChocolateTileEffect";
 import HorizontalStripeTileEffect from "./HorizontalStripeTileEffect";
 import NormalTileEffect from "./NormalTileEffect";
 import Tile from "./Tile";
@@ -89,7 +90,7 @@ class TileFactory {
             case "BOMB":
                 return new BombTileEffect(this.scene, tile, color, CONST.bombCandyTextureKey[color as keyof typeof CONST.normalCandyTextureKey]);
             case "COLOR_CLEAR":
-                return new NormalTileEffect(this.scene, tile, color, CONST.cholateCandyTextureKey);
+                return new ChocolateTileEffect(this.scene, tile, "", CONST.cholateCandyTextureKey);
             case "COLUMN_CLEAR":
                 return new VerticalStripeTileEffect(this.scene, tile, color, CONST.verticalStripesCandyTextureKey[color as keyof typeof CONST.normalCandyTextureKey]);
             case "ROW_CLEAR":

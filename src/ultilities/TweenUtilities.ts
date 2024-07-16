@@ -88,7 +88,7 @@ class TweenUtilities {
             if (scaleUpTween) {
                 scaleUpTween.complete();
             }
-            console.log("Set to new scale")
+            //console.log("Set to new scale")
             //const currentScaleX = button.container.scaleX;
             //const currentScaleY = button.container.scaleY;
             defaultScale = new Phaser.Math.Vector2(defaultWidth, defaultHeight)
