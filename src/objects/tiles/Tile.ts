@@ -1,7 +1,9 @@
 import TweenUtilities from "../../ultilities/TweenUtilities";
 import TileGrid from "../grids/TileGrid";
+import TileEffect from "./TileEffect";
 
 class Tile extends Phaser.GameObjects.Image {
+    
     private tileEffect: ITileEffect;
     private grid : TileGrid;
     private tileWidth: number = 0;
@@ -70,8 +72,11 @@ class Tile extends Phaser.GameObjects.Image {
 
     public setTileEffect(tileEffect: ITileEffect): this {
         this.tileEffect = tileEffect;
-        this.tileEffect.onTileAppear();
+        return this;
+    }
 
+    public setAppear(fromTileEffects : ITileEffect[] = []): this {
+        this.tileEffect.onTileAppear(fromTileEffects);
         return this;
     }
 
@@ -85,7 +90,7 @@ class Tile extends Phaser.GameObjects.Image {
         return this;
     }
     
-    public getWorldPosition() {
+    public getWorldPosition() : Phaser.GameObjects.Components.TransformMatrix {
         const gridWorldTransform = this.grid.getWorldTransformMatrix();
 
         let localTransform = this.getLocalTransformMatrix();
@@ -110,6 +115,10 @@ class Tile extends Phaser.GameObjects.Image {
 
     public getColor(): string {
         return this.tileEffect.color;
+    }
+
+    public getTileEffect(): any {
+        return this.tileEffect;    
     }
 
     public pop(): void {

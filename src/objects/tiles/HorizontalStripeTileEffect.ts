@@ -11,7 +11,7 @@ class HorizontalStripeTileEffect extends TileEffect {
     private popTilesLeft : Tile[] = [];
 
     constructor(scene: Scene, tile: Tile, color: string, texture: string) {
-        super(scene, tile, color, texture);
+        super(scene, tile, color, texture, "ROW_CLEAR");
     }
 
     public onTilePop(): void {

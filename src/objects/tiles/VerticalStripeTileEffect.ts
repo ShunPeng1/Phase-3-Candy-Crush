@@ -11,7 +11,7 @@ class VerticalStripeTileEffect extends TileEffect {
     private popTilesDown : Tile[] = [];
 
     constructor(scene : Scene, tile : Tile, color: string, texture: string) {
-        super(scene, tile, color, texture);
+        super(scene, tile, color, texture,"COLUMN_CLEAR");
     }
 
     

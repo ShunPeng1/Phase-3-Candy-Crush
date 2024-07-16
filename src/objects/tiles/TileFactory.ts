@@ -37,7 +37,7 @@ class TileFactory {
             scene: this.scene,
             x: x ,
             y: y ,
-            texture: randomTileColorTexture
+            texture: randomTileColorTexture,
         });
 
         tile.setDisplaySize(this.textureWidth, this.textureHeight)

@@ -13,11 +13,9 @@ class BearTileEffect extends TileEffect {
     private tileToDestroy1: Tile;
     private tileToDestroy2: Tile;
 
-	constructor(scene: Scene, tile: Tile, color: string, texture: string) {
-		super(scene, tile, color, texture);
-
-        
-	}
+	constructor(scene : Scene, tile : Tile, color: string, texture: string){ 
+        super(scene, tile, color, texture, "RANDOM_2");
+    }
 
 	public onTilePop(): void {
 		let tileGrid = this.tile.getTileGrid();

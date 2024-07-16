@@ -477,6 +477,7 @@ class TileGrid extends GameObjects.Container {
         tile.setTileGrid(this, this.tileWidth, this.tileHeight);
         this.add(tile);
 
+        tile.setAppear();
         return tile;
     }
 

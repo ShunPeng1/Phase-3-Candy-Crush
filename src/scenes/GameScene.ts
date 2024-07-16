@@ -46,7 +46,7 @@ class GameScene extends Phaser.Scene {
 
     private initializeVariables(): void {
         this.simulationController = new SimulationController(this);
-        this.scoreController = new ScoreController(10, 1);
+        this.scoreController = new ScoreController(50, 1);
 
         this.data.set('simulationController', this.simulationController);
         this.data.set('scoreController', this.scoreController);
@@ -193,6 +193,9 @@ class GameScene extends Phaser.Scene {
                 if (match.specialTileType !== "NONE") {
                     let specialTile= this.tileFactory.createSpecialTile(match.originTile.getColor() as CandyColorKey, match.specialTileType, match.originTile.x, match.originTile.y);
                     this.tileGrid.addTileAtLocalPosition(specialTile, map.get(match.originTile)!.x, map.get(match.originTile)!.y);
+
+                    let tileEffects = match.matchTilesExceptOrigin.map(tile => tile.getTileEffect()) as ITileEffect[];
+                    specialTile.setAppear(tileEffects);
                 }
                 else{
                 }

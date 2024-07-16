@@ -10,9 +10,7 @@ class BombTileEffect extends TileEffect {
     private tilesToDestroy: Tile[] = [];
 
 	constructor(scene: Scene, tile: Tile, color: string, texture: string) {
-		super(scene, tile, color, texture);
-
-        
+		super(scene, tile, color, texture, "BOMB");
 	}
 
 	public onTilePop(): void {

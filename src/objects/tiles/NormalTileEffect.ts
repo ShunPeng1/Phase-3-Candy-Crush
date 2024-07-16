@@ -7,13 +7,11 @@ import TimerEventSimulation from "../../simulation/TimerEventSimulation";
 class NormalTileEffect extends TileEffect{
     
     constructor(scene : Scene, tile : Tile, color: string, texture: string) {
-        super(scene, tile, color, texture);
+        super(scene, tile, color, texture, "NONE");
     }
 
+    
     public onTilePop(): void {
-        let tileGrid = this.tile.getTileGrid();
-
-        //tileGrid.destroyPopTile(this.tile);
     }
 
     public onTileDestroy(): void {

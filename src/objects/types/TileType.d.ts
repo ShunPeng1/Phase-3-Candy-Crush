@@ -1,9 +1,9 @@
 interface ITileEffect{
     color : string;
     texture : string;
-    
-    onTileDestroy(): void;
-    onTileAppear(): void;
+    type : SpecialTileEffectType;
+    onTileDestroy(byTileEffect? : ITileEffect): void;
+    onTileAppear(fromTileEffects : ITileEffect[] = []): void;
     onTilePop(): void;
     onTileSwap(other: ITileEffect): void;
     
