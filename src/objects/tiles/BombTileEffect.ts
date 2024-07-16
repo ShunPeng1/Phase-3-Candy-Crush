@@ -4,8 +4,10 @@ import Tile from "./Tile";
 import SimulationController from "../../simulation/SimulationController";
 import TweenSimulation from "../../simulation/TweenSimulation";
 import TweenChainSimulation from "../../simulation/TweenChainSimulation";
+import TileGrid from "../grids/TileGrid";
 
 class BombTileEffect extends TileEffect {
+    private tileGrid: TileGrid;
     private tileIndex: Phaser.Math.Vector2;
     private tilesToDestroy: Tile[] = [];
 
@@ -15,6 +17,7 @@ class BombTileEffect extends TileEffect {
 
 	public onTilePop(): void {
 		let tileGrid = this.tile.getTileGrid();
+        this.tileGrid = tileGrid;
 		let tileIndex = tileGrid.getTileIndex(this.tile, true)!;
         this.tileIndex = tileIndex;
 		// Target a 3x3 area around the bomb tile
@@ -35,7 +38,7 @@ class BombTileEffect extends TileEffect {
 	public onTileDestroy(): void {
 		let simulationController = this.scene.data.get("simulationController") as SimulationController;
 		let matrix = this.tile.getWorldPosition();
-		let explosionEffect = this.scene.add.sprite(matrix.tx, matrix.ty, "bomb-05");
+        let explosionEffect = this.scene.add.sprite(matrix.tx, matrix.ty, "bomb-05");
 		explosionEffect.play("bomb-animation");
 
 		// Animate the explosion to grow and then shrink, covering the 3x3 area
@@ -62,7 +65,7 @@ class BombTileEffect extends TileEffect {
 		});
 
         this.tilesToDestroy.forEach(element => {
-            element.destroy();
+            this.tileGrid.destroyPopTile(element, this);
         });
 
 		simulationController.addSimulation(new TweenChainSimulation(explosionAnimation), true);

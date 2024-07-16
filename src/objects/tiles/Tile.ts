@@ -127,11 +127,11 @@ class Tile extends Phaser.GameObjects.Image {
         this.tileEffect.onTilePop();
     }
 
-    public destroy(fromScene?: boolean): void {
+    public destroy(fromScene?: boolean, fromTileEffect? : ITileEffect, isMerged : boolean = false): void {
         if (this.isDestroyed) return;
 
         this.isDestroyed = true;
-        this.tileEffect.onTileDestroy();
+        this.tileEffect.onTileDestroy(fromTileEffect, isMerged);
         super.destroy(fromScene);
     }
 

@@ -2,7 +2,7 @@ interface ITileEffect{
     color : string;
     texture : string;
     type : SpecialTileEffectType;
-    onTileDestroy(byTileEffect? : ITileEffect): void;
+    onTileDestroy(byTileEffect? : ITileEffect, isMerged : boolean = false): void;
     onTileAppear(fromTileEffects : ITileEffect[] = []): void;
     onTilePop(): void;
     onTileSwap(other: ITileEffect): void;

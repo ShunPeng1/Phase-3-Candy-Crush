@@ -14,7 +14,15 @@ class NormalTileEffect extends TileEffect{
     public onTilePop(): void {
     }
 
-    public onTileDestroy(): void {
+    public onTileDestroy(byTileEffect? : ITileEffect, isMerged : boolean = false): void {
+        // Add score for each tile destroyed
+        let scoreController = this.scene.data.get("scoreController");
+        scoreController.addScore(1);
+        
+        if (isMerged) {
+            return;
+        }
+
         let simulationController = this.scene.data.get("simulationController") as SimulationController;
         let matrix = this.tile.getWorldPosition();
         
@@ -30,6 +38,7 @@ class NormalTileEffect extends TileEffect{
             
         });
         
+
         particles.setScale(0.15);
 
         particles.explode(25);
@@ -39,9 +48,6 @@ class NormalTileEffect extends TileEffect{
             particles.destroy();
         }));
 
-        // Add score for each tile destroyed
-        let scoreController = this.scene.data.get("scoreController");
-        scoreController.addScore(1);
     }
 
 

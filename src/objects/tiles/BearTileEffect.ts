@@ -140,7 +140,7 @@ class BearTileEffect extends TileEffect {
                         smallBomb.setVisible(false);
                         smallBomb.destroy();
 
-                        this.tileGrid.destroyPopTile(tileToDestroy);
+                        this.tileGrid.destroyPopTile(tileToDestroy, this);
                     }
                 }
             ]

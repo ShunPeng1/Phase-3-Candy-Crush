@@ -57,7 +57,7 @@ class HorizontalStripeTileEffect extends TileEffect {
                 return;
             }
 
-            tileGrid.destroyPopTile(array[Math.floor(value)]);
+            tileGrid.destroyPopTile(array[Math.floor(value)], this);
         }
 
         let chainRight = this.scene.tweens.chain({

@@ -47,7 +47,7 @@ abstract class TileEffect implements ITileEffect{
         });
 
         const thisTileWorldPosition = this.tile.getWorldPosition();
-        this.tile.setVisible(false);
+        this.tile.setScale(0,0);
         
         fromTiles.forEach((tile : Tile|null) => {
             if (tile == null){
@@ -56,8 +56,8 @@ abstract class TileEffect implements ITileEffect{
 
             let worldPosition = tile.getWorldPosition();
             let ghostTexture = this.scene.add.image(worldPosition.tx, worldPosition.ty, tile.texture);
-            ghostTexture.setDepth(0.1);
-            ghostTexture.setScale(tile.scaleX * 0.9, tile.scaleY * 0.9);
+            ghostTexture.setDepth(0);
+            ghostTexture.setScale(tile.scaleX, tile.scaleY);
             
             let mergeTween = this.scene.add.tween({
                 targets: ghostTexture,
@@ -65,8 +65,8 @@ abstract class TileEffect implements ITileEffect{
                 y : thisTileWorldPosition.ty,
                 scale : {from: ghostTexture.scale, to: ghostTexture.scale * 0.6},
                 alpha: {from : 1, to: 0.4},
-                duration: 700,
-                ease: Phaser.Math.Easing.Quintic.In,
+                duration: 500,
+                ease: Phaser.Math.Easing.Cubic.In,
                 onComplete: () => {
                     ghostTexture.destroy();
                 }
@@ -82,9 +82,6 @@ abstract class TileEffect implements ITileEffect{
             scaleY: { from: 0, to: currentScaleY },
             duration: 500,
             ease: 'Back.out',
-            onStart: () => {
-                this.tile.setVisible(true);
-            }
         });
 
         simulationController.addSimulation(new TweenSimulation(appearTween), true);
@@ -92,7 +89,7 @@ abstract class TileEffect implements ITileEffect{
     }
     
     public abstract onTilePop(): void;
-    public abstract onTileDestroy(): void ;
+    public abstract onTileDestroy(byTileEffect? : ITileEffect, isMerged? : boolean): void ;
     public abstract onTileSwap(other: ITileEffect): void ;
 
 }

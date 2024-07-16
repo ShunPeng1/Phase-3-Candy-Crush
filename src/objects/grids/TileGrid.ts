@@ -234,7 +234,7 @@ class TileGrid extends GameObjects.Container {
 
     }
 
-    public destroyPopTile(tile: Tile): void {
+    public destroyPopTile(tile: Tile, fromTileEffect? : ITileEffect, isMerged : boolean = false): void {
         let tilePos = this.getTileIndexInPopedGrid(tile);
         if (tilePos === null) {
             return;
@@ -242,7 +242,7 @@ class TileGrid extends GameObjects.Container {
 
         this.remove(tile);
         this.popedTilesGrid[tilePos.y][tilePos.x] = null;
-        tile.destroy();
+        tile.destroy(true, fromTileEffect, isMerged);
     }
 
     public destroyPopTiles(tiles: Tile[]): void {

@@ -179,11 +179,11 @@ class GameScene extends Phaser.Scene {
         let matches = this.tileMatcher.getMatches();
 
         if (matches.length > 0) {
-            let map = new Map<Tile, {x : number, y : number}>();
-            
+            let originTileToPosition = new Map<Tile, {x : number, y : number}>();
+            let originTileSpecialTile = new Map<Tile, Tile>();
             matches.forEach((match) => {
                 if (match.specialTileType !== "NONE") {
-                    map.set(match.originTile, {x: match.originTile.x, y: match.originTile.y});
+                    originTileToPosition.set(match.originTile, {x: match.originTile.x, y: match.originTile.y});
                 }
 
                 this.tileGrid.popTiles(match.matchTiles);
@@ -192,10 +192,12 @@ class GameScene extends Phaser.Scene {
                 //console.log("Match", match.count, match.specialTileType, this.tileGrid.getTileIndex(match.originTile), match.matchTilesExceptOrigin.map(tile => this.tileGrid.getTileIndex(tile)));
                 if (match.specialTileType !== "NONE") {
                     let specialTile= this.tileFactory.createSpecialTile(match.originTile.getColor() as CandyColorKey, match.specialTileType, match.originTile.x, match.originTile.y);
-                    this.tileGrid.addTileAtLocalPosition(specialTile, map.get(match.originTile)!.x, map.get(match.originTile)!.y);
+                    this.tileGrid.addTileAtLocalPosition(specialTile, originTileToPosition.get(match.originTile)!.x, originTileToPosition.get(match.originTile)!.y);
 
                     let tileEffects = match.matchTilesExceptOrigin.map(tile => tile.getTileEffect()) as ITileEffect[];
                     specialTile.setAppear(tileEffects);
+
+                    originTileSpecialTile.set(match.originTile, specialTile);
                 }
                 else{
                 }
@@ -206,7 +208,13 @@ class GameScene extends Phaser.Scene {
             
             matches.forEach((match) => {
                 match.matchTiles.forEach((tile) => {
-                    tile.destroy();
+                    if (match.specialTileType !== "NONE") {
+                        this.tileGrid.destroyPopTile(tile, originTileSpecialTile.get(match.originTile)!.getTileEffect(), true);
+                    }
+                    else{
+                        this.tileGrid.destroyPopTile(tile);
+                    }
+
                 });
             });
 
