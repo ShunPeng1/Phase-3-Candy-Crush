@@ -76,7 +76,7 @@ class BombTileEffect extends TileEffect {
     }
 
     
-    public onTileSwap(other: ITileEffect): void {
+    public onTileSwapPop(other: ITileEffect): void {
         // To do, implement the swap effect
     }
 

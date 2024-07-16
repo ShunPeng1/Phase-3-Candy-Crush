@@ -89,7 +89,7 @@ class BearTileEffect extends TileEffect {
         scoreController.addScore(1);
     }
 
-    public onTileSwap(other: ITileEffect): void {
+    public onTileSwapPop(other: ITileEffect): void {
         // To do, implement the swap effect
     }
 

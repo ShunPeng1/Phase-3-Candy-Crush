@@ -5,7 +5,7 @@ interface ITileEffect{
     onTileDestroy(byTileEffect? : ITileEffect, isMerged : boolean = false): void;
     onTileAppear(fromTileEffects : ITileEffect[] = []): void;
     onTilePop(): void;
-    onTileSwap(other: ITileEffect): void;
+    onTileSwapPop(other: ITileEffect): void;
     
 } 
 

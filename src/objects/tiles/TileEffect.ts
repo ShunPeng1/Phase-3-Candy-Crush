@@ -90,7 +90,7 @@ abstract class TileEffect implements ITileEffect{
     
     public abstract onTilePop(): void;
     public abstract onTileDestroy(byTileEffect? : ITileEffect, isMerged? : boolean): void ;
-    public abstract onTileSwap(other: ITileEffect): void ;
+    public abstract onTileSwapPop(other: ITileEffect): void ;
 
 }
 

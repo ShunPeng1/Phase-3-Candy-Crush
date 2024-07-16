@@ -127,6 +127,10 @@ class Tile extends Phaser.GameObjects.Image {
         this.tileEffect.onTilePop();
     }
 
+    public swapPop(tile: Tile): void {
+        this.tileEffect.onTileSwapPop(tile.getTileEffect());
+    }
+
     public destroy(fromScene?: boolean, fromTileEffect? : ITileEffect, isMerged : boolean = false): void {
         if (this.isDestroyed) return;
 
