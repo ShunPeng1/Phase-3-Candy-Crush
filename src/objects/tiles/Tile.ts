@@ -14,10 +14,13 @@ class Tile extends Phaser.GameObjects.Image {
     private isPointerOver: boolean = false; 
     private isDestroyed: boolean = false;
     private isPop: boolean = false;
+
+    private lastMoveTime: number = 0;
     
     constructor(params: IImageConstructor) {
         super(params.scene, params.x, params.y, params.texture, params.frame);
 
+        this.lastMoveTime = this.scene.time.now;
 
         // set image settings
         this.setOrigin(0.5, 0.5);
@@ -37,6 +40,14 @@ class Tile extends Phaser.GameObjects.Image {
         this.off('pointerover');
         this.off('pointerout');
     
+    }
+
+    public setLastMoveTime(time: number): void {
+        this.lastMoveTime = time;
+    }
+
+    public getLastMoveTime(): number {
+        return this.lastMoveTime;
     }
 
     public enableTileInteraction(): void {

@@ -50,6 +50,14 @@ class TileMatcher {
             let originTile = match[0];
             let count = match.length;
 
+            // Iterate through each tile in the match to find the one with the largest getLastMoveTime
+            for (let tile of match) {
+                let tileTime = tile.getLastMoveTime();
+                if (tileTime > originTile.getLastMoveTime()) {
+                    originTile = tile;
+                }
+            }
+
             results.push(new TileMatchResult(count, match, originTile, "COLOR_CLEAR"));
             this.addToVisitedTiles(match);
 
@@ -68,6 +76,14 @@ class TileMatcher {
             let match = horizontalMatches[i];
             let originTile = match[0];
             let count = match.length;
+
+            // Iterate through each tile in the match to find the one with the largest getLastMoveTime
+            for (let tile of match) {
+                let tileTime = tile.getLastMoveTime();
+                if (tileTime > originTile.getLastMoveTime()) {
+                    originTile = tile;
+                }
+            }
 
             results.push(new TileMatchResult(count, match, originTile, "COLOR_CLEAR"));
             this.addToVisitedTiles(match);
@@ -134,6 +150,14 @@ class TileMatcher {
             let originTile = match[0];
             let count = match.length;
 
+            // Iterate through each tile in the match to find the one with the largest getLastMoveTime
+            for (let tile of match) {
+                let tileTime = tile.getLastMoveTime();
+                if (tileTime > originTile.getLastMoveTime()) {
+                    originTile = tile;
+                }
+            }
+
             results.push(new TileMatchResult(count, match, originTile, "NONE"));
             this.addToVisitedTiles(match);
 
@@ -152,6 +176,14 @@ class TileMatcher {
             let match = horizontalMatches[i];
             let originTile = match[0];
             let count = match.length;
+
+            // Iterate through each tile in the match to find the one with the largest getLastMoveTime
+            for (let tile of match) {
+                let tileTime = tile.getLastMoveTime();
+                if (tileTime > originTile.getLastMoveTime()) {
+                    originTile = tile;
+                }
+            }
 
             results.push(new TileMatchResult(count, match, originTile, "NONE"));
             this.addToVisitedTiles(match);
@@ -175,6 +207,14 @@ class TileMatcher {
             let originTile = match[0];
             let count = match.length;
 
+            // Iterate through each tile in the match to find the one with the largest getLastMoveTime
+            for (let tile of match) {
+                let tileTime = tile.getLastMoveTime();
+                if (tileTime > originTile.getLastMoveTime()) {
+                    originTile = tile;
+                }
+            }
+
             results.push(new TileMatchResult(count, match, originTile, "ROW_CLEAR"));
             this.addToVisitedTiles(match);
 
@@ -193,6 +233,14 @@ class TileMatcher {
             let match = horizontalMatches[i];
             let originTile = match[0];
             let count = match.length;
+
+            // Iterate through each tile in the match to find the one with the largest getLastMoveTime
+            for (let tile of match) {
+                let tileTime = tile.getLastMoveTime();
+                if (tileTime > originTile.getLastMoveTime()) {
+                    originTile = tile;
+                }
+            }
 
             results.push(new TileMatchResult(count, match, originTile, "COLUMN_CLEAR"));
             this.addToVisitedTiles(match);
@@ -216,6 +264,14 @@ class TileMatcher {
             let match = squareMatches[i];
             let originTile = match[0];
             let count = match.length;
+
+            // Iterate through each tile in the match to find the one with the largest getLastMoveTime
+            for (let tile of match) {
+                let tileTime = tile.getLastMoveTime();
+                if (tileTime > originTile.getLastMoveTime()) {
+                    originTile = tile;
+                }
+            }
 
             results.push(new TileMatchResult(count, match, originTile, "RANDOM_2"));
             this.addToVisitedTiles(match);
