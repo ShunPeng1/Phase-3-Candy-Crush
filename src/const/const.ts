@@ -1,7 +1,7 @@
 let CONST = {
     score: 0,
     highscore: 0,
-    gridWidth: 12,
+    gridWidth: 8,
     gridHeight: 8,
     tileWidth: 72,
     tileHeight: 72,
@@ -77,7 +77,7 @@ interface ConstType {
     candyTypes: string[];
 }
 
-export const candyColors: CandyColorKey[] = ["red", "yellow", "green", "purple", "blue", "orange"];
+export const candyColors: CandyColorKey[] = ["red", "yellow", "green", "purple", "blue"]//, "orange"];
 
 export type CandyColorKey = keyof typeof CONST.normalCandyTextureKey;
 

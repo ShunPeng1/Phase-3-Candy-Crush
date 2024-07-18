@@ -52,7 +52,7 @@ class GameScene extends Phaser.Scene {
         this.data.set('scoreController', this.scoreController);
 
         this.tileFactory = new TileFactory(this, candyColors, CONST.tileWidth, CONST.tileHeight);
-        this.tileGrid = new TileGrid(this, 270, 70, CONST.gridWidth, CONST.gridHeight, CONST.tileWidth, CONST.tileHeight,
+        this.tileGrid = new TileGrid(this, 400, 70, CONST.gridWidth, CONST.gridHeight, CONST.tileWidth, CONST.tileHeight,
             this.tileFactory, ["item-spot-01", "item-spot-02"]);
         this.tileMatcher = new TileMatcher(this.tileGrid);
         this.tileSwapper = new TileSwapper(this, this.tileGrid);
