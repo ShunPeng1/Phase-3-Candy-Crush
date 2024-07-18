@@ -8,13 +8,18 @@ class TileWaveIdleSimulation extends TileSimulation {
     public start(): void {
         super.start();
 
-        for (let k = 0; k <= 2 * (this.tiles.length - 1); ++k) {
-            let yMin = Math.max(0, k - this.tiles.length + 1);
-            let yMax = Math.min(this.tiles.length - 1, k);
+        // Assuming this.tiles is a 2D array where the number of rows can be different from the number of columns
+        const maxRows = this.tiles.length;
+        const maxCols = this.tiles.reduce((max, row) => Math.max(max, row.length), 0);
+
+        for (let k = 0; k <= (maxRows + maxCols - 2); ++k) {
+            let yMin = Math.max(0, k - maxCols + 1);
+            let yMax = Math.min(maxRows - 1, k);
             for (let y = yMin; y <= yMax; ++y) {
                 let x = k - y;
-                
-                if (this.tiles[y][x] === null) {
+
+                // Check if x is within the bounds of the current row
+                if (x < 0 || x >= this.tiles[y].length || this.tiles[y][x] === null) {
                     continue;
                 }
 
