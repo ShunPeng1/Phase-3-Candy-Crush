@@ -3,8 +3,8 @@ import Tile from "../tiles/Tile";
 class TileMatchResult {
     public readonly count: number;
     public readonly matchTiles: Tile[];
-    public readonly originTile: Tile;
-    public readonly matchTilesExceptOrigin: Tile[];
+    public originTile: Tile;
+    public matchTilesExceptOrigin: Tile[];
 
     public readonly specialTileType: SpecialTileEffectType;
 

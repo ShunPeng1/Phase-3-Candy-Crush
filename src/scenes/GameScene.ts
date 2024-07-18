@@ -175,14 +175,25 @@ class GameScene extends Phaser.Scene {
     }
 
 
-    private checkMatches(): boolean {
+    private checkMatches(firstSwappedTile? : Tile, secondSwappedTile? :Tile ): boolean {
         let matches = this.tileMatcher.getMatches();
 
         if (matches.length > 0) {
             let originTileToPosition = new Map<Tile, {x : number, y : number}>();
             let originTileSpecialTile = new Map<Tile, Tile>();
+           
             matches.forEach((match) => {
                 if (match.specialTileType !== "NONE") {
+                    if (firstSwappedTile && match.matchTiles.includes(firstSwappedTile)) {
+                        match.originTile = firstSwappedTile;
+                        match.matchTilesExceptOrigin = match.matchTiles.filter(tile => tile !== match.originTile);
+                    }
+
+                    if (secondSwappedTile && match.matchTiles.includes(secondSwappedTile)) {
+                        match.originTile = secondSwappedTile;
+                        match.matchTilesExceptOrigin = match.matchTiles.filter(tile => tile !== match.originTile);
+                    }
+
                     originTileToPosition.set(match.originTile, {x: match.originTile.x, y: match.originTile.y});
                 }
 
@@ -350,7 +361,7 @@ class GameScene extends Phaser.Scene {
                 return;
             }
             else{
-                isMatch = this.checkMatches();
+                isMatch = this.checkMatches(firstSelectedTile, secondSelectedTile);
             }
         };
 
