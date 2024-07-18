@@ -91,6 +91,32 @@ class BootScene extends Phaser.Scene {
             frames: frames,
             frameRate: 15,
         });
+
+        this.anims.create({
+                key: 'lightning-blast',
+                frames: this.anims.generateFrameNumbers('lightning-1-sheet', { start: 0, end: 8 }),
+                frameRate: 100,
+                repeat: -1
+        });
+
+        this.anims.create({
+            key: 'lightning-strike-start',
+            frames: this.anims.generateFrameNumbers('lightning-2-sheet', { start: 0, end: 1 }),
+            frameRate: 10,
+        });
+
+        this.anims.create({
+            key: 'lightning-strike-loop',
+            frames: this.anims.generateFrameNumbers('lightning-2-sheet', { start: 2, end: 4 }),
+            frameRate: 10,
+            repeat: -1
+        });
+
+        this.anims.create({
+            key: 'lightning-strike-end',
+            frames: this.anims.generateFrameNumbers('lightning-2-sheet', { start: 5, end: 8 }),
+            frameRate: 10,
+        });
     }
 }
 

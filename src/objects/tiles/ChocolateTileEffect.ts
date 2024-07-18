@@ -33,8 +33,53 @@ class ChocolateTileEffect extends TileEffect {
         scoreController.addScore(1);
 
 
-        this.tileToDestroy.forEach(element => {
-            this.tileGrid.destroyPopTile(element, this);
+        let thisWorldPosition = this.tile.getWorldPosition();
+        this.tileToDestroy.forEach((element, index) => {
+
+            let lightningStrikeSprite = this.scene.add.sprite(thisWorldPosition.tx, thisWorldPosition.ty, "lightning-strike");
+            lightningStrikeSprite.play("lightning-strike-start");
+            lightningStrikeSprite.once("animationcomplete", () => {
+                lightningStrikeSprite.play("lightning-strike-loop");
+            });
+
+            let angle = Phaser.Math.Angle.Between(element.x, element.y, this.tile.x, this.tile.y);
+            lightningStrikeSprite.setRotation(angle - Math.PI/2);
+            lightningStrikeSprite.setOrigin(0.5, 1);
+            const finalScale = 0.5;
+        
+            let elementWorldPosition = element.getWorldPosition();
+            elementWorldPosition.tx += lightningStrikeSprite.displayHeight * finalScale/2 * Math.cos(angle);
+            elementWorldPosition.ty += lightningStrikeSprite.displayHeight * finalScale/2 * Math.sin(angle);
+
+            console.log(elementWorldPosition.tx, elementWorldPosition.ty, lightningStrikeSprite.displayHeight * finalScale, angle, Math.cos(angle), Math.sin(angle));
+
+            lightningStrikeSprite.setScale(0);
+            let chainTween = this.scene.tweens.chain({
+                tweens : [
+                    {
+                        delay: 50*index,
+                        targets: lightningStrikeSprite,
+                        x: elementWorldPosition.tx,
+                        y: elementWorldPosition.ty,
+                        scaleX: finalScale,
+                        scaleY: finalScale,
+                        duration: 700,
+                    }
+                ],
+                
+                onComplete: () => {
+                    this.tileGrid.destroyPopTile(element, this);
+
+                    lightningStrikeSprite.play("lightning-strike-end");
+                    lightningStrikeSprite.once("animationcomplete", () => {
+                        lightningStrikeSprite.destroy();
+                    });
+                }
+            });
+
+            simulationController.addSimulation(new TweenChainSimulation(chainTween), true);
+
+
         });
 
 
