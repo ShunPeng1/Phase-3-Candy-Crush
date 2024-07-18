@@ -11,7 +11,7 @@ class ChocolateTileEffect extends TileEffect {
     
     private tileGrid: TileGrid;
     private tileIndex: Phaser.Math.Vector2;
-    private tileToDestroy: Tile[];
+    private tileToDestroy: Tile[] = [];
 
 	constructor(scene : Scene, tile : Tile, color: string, texture: string){ 
         super(scene, tile, color, texture, "COLOR_CLEAR");
@@ -41,18 +41,29 @@ class ChocolateTileEffect extends TileEffect {
     }
 
     public onTileSwapPop(other: ITileEffect): void {
-        if (other.type === "NONE"){
-            this.popTileColor(other.color as CandyColorKey);
+        if (other.type === "COLOR_CLEAR"){
+            this.popTileColor(candyColors);
         }
+        else{
+            this.popTileColor(other.color as CandyColorKey);
+        }    
+        
     }
 
-    private popTileColor(color: CandyColorKey): void {        
+    private popTileColor(color: CandyColorKey[] | CandyColorKey): void {  
+        if (Array.isArray(color)){
+            color.forEach(element => {
+                this.popTileColor(element);
+            });
+            return;
+        }
+        
 		let tileGrid = this.tile.getTileGrid();
         this.tileGrid = tileGrid;
 
         let flattenGrid = tileGrid.getFlattenTileGrid();
         let sameColorTiles = flattenGrid.filter(tile => tile.getColor() === color);
-        this.tileToDestroy = sameColorTiles;
+        this.tileToDestroy = [...this.tileToDestroy,...sameColorTiles];
 
         tileGrid.popTiles(sameColorTiles);
     }

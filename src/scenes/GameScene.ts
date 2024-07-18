@@ -239,19 +239,13 @@ class GameScene extends Phaser.Scene {
         let firstType = firstSelectedTile.getTileEffect().type;
         let secondType = secondSelectedTile.getTileEffect().type;
         
-        if (firstType === "NONE" && secondType === "NONE") {
+
+        if (!(firstType === "COLOR_CLEAR" || secondType === "COLOR_CLEAR")) {
             return false;
         }
 
-        if (firstType === "NONE" && secondType !== "COLOR_CLEAR") {
-            return false;
-        }
-
-        if (secondType === "NONE" && firstType !== "COLOR_CLEAR") {
-            return false;
-        }
         
-        if (firstType === "NONE"){
+        if (firstType === "NONE") {
             const temp = firstSelectedTile;
             firstSelectedTile = secondSelectedTile;
             secondSelectedTile = temp;
