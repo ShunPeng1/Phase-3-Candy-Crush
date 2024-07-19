@@ -5,6 +5,7 @@ import TileCircleShuffleSimulation from "./TileCircleShuffleSimulation";
 import { GameObjects } from "phaser";
 import ConffetiParticleEmitter from "../particles/ConffetiParticleEmitter";
 import TileSquareShuffleSimulation from "./TileSquareShuffleSimulation";
+import TileStarShuffleSimulation from "./TileStarShuffleSimulation";
 
 class TileGridDirector extends GameObjects.GameObject {
     private tileGrid : TileGrid;
@@ -36,14 +37,17 @@ class TileGridDirector extends GameObjects.GameObject {
 
 
     public startShuffle(x : number, y : number, duration : number, callback : ()=>void = () =>{}): void {
-        let simulationIndex = Math.floor(Math.random() * 2);
+        let simulationIndex = Math.floor(Math.random() * 1);
         let simulation : TileSimulation;
         switch(simulationIndex) {
             case 0:
-                simulation = new TileCircleShuffleSimulation(this.scene, this.tileGrid, x, y, 200, duration, callback);
+                simulation = new TileStarShuffleSimulation(this.scene, this.tileGrid, x, y, 200, duration, callback);
                 break;
             case 1: 
                 simulation = new TileSquareShuffleSimulation(this.scene, this.tileGrid, x, y, 400, duration, callback);
+                break;
+            case 2:
+                simulation = new TileCircleShuffleSimulation(this.scene, this.tileGrid, x, y, 200, duration, callback);
                 break;
             default:
                 simulation = new TileSquareShuffleSimulation(this.scene, this.tileGrid, x, y, 200, duration, callback);
