@@ -156,8 +156,8 @@ class GameScene extends Phaser.Scene {
             });
 
             
-            let conffeti1 = new ConffetiParticleEmitter(this, 0, 800, 4000, new Phaser.Math.Vector2(1, -2), 900, 30, 5);
-            let conffeti2 = new ConffetiParticleEmitter(this, 1400, 800, 4000, new Phaser.Math.Vector2(-1, -2), 900, 30, 5);
+            let conffeti1 = new ConffetiParticleEmitter(this, 0, 800, 4000, new Phaser.Math.Vector2(1, -2), 900, 30, 10);
+            let conffeti2 = new ConffetiParticleEmitter(this, 1400, 800, 4000, new Phaser.Math.Vector2(-1, -2), 900, 30, 10);
         }
 
         const checkForInputable = () => {
