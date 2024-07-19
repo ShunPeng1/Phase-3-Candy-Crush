@@ -271,14 +271,15 @@ class TileGrid extends GameObjects.Container {
         let secondTilePos = this.getTileIndex(secondSelectedTile);
 
         // Swap the tile from the theoretical grid
-        if (firstTilePos && secondTilePos) {
-            this.popedTilesGrid[firstTilePos.y][firstTilePos.x] = secondSelectedTile;
-            this.popedTilesGrid[secondTilePos.y][secondTilePos.x] = firstSelectedTile;
+        if (firstTilePos && secondTilePos) { // Already swapped position in the swapTiles method
+            this.popedTilesGrid[firstTilePos.y][firstTilePos.x] = firstSelectedTile;
+            this.popedTilesGrid[secondTilePos.y][secondTilePos.x] = secondSelectedTile;
 
             this.tileGrid[firstTilePos.y][firstTilePos.x] = null;
             this.tileGrid[secondTilePos.y][secondTilePos.x] = null;
 
             firstSelectedTile.swapPop(secondSelectedTile);
+            secondSelectedTile.pop();
         }
     }
 

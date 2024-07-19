@@ -41,6 +41,8 @@ class BombTileEffect extends TileEffect {
         let explosionEffect = this.scene.add.sprite(matrix.tx, matrix.ty, "bomb-05");
 		explosionEffect.play("bomb-animation");
 
+        this.tileGrid = this.tile.getTileGrid();
+        
 		// Animate the explosion to grow and then shrink, covering the 3x3 area
 		let explosionAnimation = this.scene.tweens.chain({ 
 			tweens: [

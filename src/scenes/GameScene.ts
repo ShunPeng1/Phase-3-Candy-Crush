@@ -245,7 +245,7 @@ class GameScene extends Phaser.Scene {
         }
 
         
-        if (firstType === "NONE") {
+        if (firstType !== "COLOR_CLEAR") {
             const temp = firstSelectedTile;
             firstSelectedTile = secondSelectedTile;
             secondSelectedTile = temp;
@@ -258,7 +258,7 @@ class GameScene extends Phaser.Scene {
         this.tileGrid.fillEmptyGridWithTile();
         
         this.tileGrid.destroyPopTile(firstSelectedTile);
-        this.tileGrid.destroyPopTile(secondSelectedTile, firstSelectedTile.getTileEffect(), false);
+        this.tileGrid.destroyPopTile(secondSelectedTile);
 
         return true;
 

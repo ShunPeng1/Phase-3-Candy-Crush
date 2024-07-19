@@ -43,6 +43,7 @@ class BearTileEffect extends TileEffect {
 	public onTileDestroy(): void {
 		let simulationController = this.scene.data.get("simulationController") as SimulationController;
 		let matrix = this.tile.getWorldPosition();
+        this.tileGrid = this.tile.getTileGrid();
 		
         let particles = this.scene.add.particles(matrix.tx, matrix.ty, this.texture, {
             radial: true,
@@ -73,7 +74,13 @@ class BearTileEffect extends TileEffect {
         }
 
         while (this.tileToDestroy1 === this.tileToDestroy2){
-            this.tileToDestroy2 = this.tileGrid.getRandomTileInPopedGrid()?? this.tileToDestroy2;
+            let randomTile = this.tileGrid.getRandomTileInPopedGrid();
+            if (randomTile !== null){
+                this.tileToDestroy2 = randomTile;
+            }
+            else{
+                break;
+            }
         }
 
         let bearProjectileTweenChain1 = this.createExplosionAnimation(this.tileToDestroy1);
