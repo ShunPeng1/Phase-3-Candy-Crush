@@ -46,7 +46,7 @@ class GameScene extends Phaser.Scene {
 
     private initializeVariables(): void {
         this.simulationController = new SimulationController(this);
-        this.scoreController = new ScoreController(50, 1);
+        this.scoreController = new ScoreController(10, 1);
 
         this.data.set('simulationController', this.simulationController);
         this.data.set('scoreController', this.scoreController);
