@@ -93,10 +93,9 @@ class BootScene extends Phaser.Scene {
         });
 
         this.anims.create({
-                key: 'lightning-blast',
-                frames: this.anims.generateFrameNumbers('lightning-1-sheet', { start: 0, end: 8 }),
-                frameRate: 100,
-                repeat: -1
+            key: 'lightning-blast',
+            frames: this.anims.generateFrameNumbers('lightning-1-sheet', { start: 0, end: 8 }),
+            frameRate: 10,
         });
 
         this.anims.create({
@@ -115,6 +114,12 @@ class BootScene extends Phaser.Scene {
         this.anims.create({
             key: 'lightning-strike-end',
             frames: this.anims.generateFrameNumbers('lightning-2-sheet', { start: 5, end: 8 }),
+            frameRate: 10,
+        });
+
+        this.anims.create({
+            key: 'lightning-bolt',
+            frames: this.anims.generateFrameNumbers('lightning-3-sheet', { start: 0, end: 15 }),
             frameRate: 10,
         });
     }
