@@ -574,6 +574,33 @@
         "type": "image",
         "key": "yeah!-text",
         "url": "./assets/candy-crush/ui/yeah!-text.png"
+      },
+      {
+        "type": "spritesheet",
+        "key": "lightning-1-sheet",
+        "url": "./assets/candy-crush/effects/lightning-1-sheet.png",
+        "frameConfig": {
+          "frameWidth": 512,
+          "frameHeight": 512
+        }
+      },
+      {
+        "type": "spritesheet",
+        "key": "lightning-2-sheet",
+        "url": "./assets/candy-crush/effects/lightning-2-sheet.png",
+        "frameConfig": {
+          "frameWidth": 512,
+          "frameHeight": 512
+        }
+      },
+      {
+        "type": "spritesheet",
+        "key": "lightning-3-sheet",
+        "url": "./assets/candy-crush/effects/lightning-3-sheet.png",
+        "frameConfig": {
+          "frameWidth": 512,
+          "frameHeight": 512
+        }
       }
     ]
   }
