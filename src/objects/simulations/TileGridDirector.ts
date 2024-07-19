@@ -45,7 +45,7 @@ class TileGridDirector extends GameObjects.GameObject {
                 simulation = new TileHourglassShuffleSimulation(this.scene, this.tileGrid, x, y, 300, duration, callback);
                 break;
             case 1: 
-                simulation = new TileSquareShuffleSimulation(this.scene, this.tileGrid, x, y, 400, duration, callback);
+                simulation = new TileSquareShuffleSimulation(this.scene, this.tileGrid, x, y, 350, duration, callback);
                 break;
             case 2:
                 simulation = new TileCircleShuffleSimulation(this.scene, this.tileGrid, x, y, 200, duration, callback);

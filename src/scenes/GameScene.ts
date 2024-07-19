@@ -46,7 +46,7 @@ class GameScene extends Phaser.Scene {
 
     private initializeVariables(): void {
         this.simulationController = new SimulationController(this);
-        this.scoreController = new ScoreController(10, 1);
+        this.scoreController = new ScoreController(50, 1);
 
         this.data.set('simulationController', this.simulationController);
         this.data.set('scoreController', this.scoreController);
@@ -63,6 +63,12 @@ class GameScene extends Phaser.Scene {
         this.progressUi = new ProgressUi(this, 200, 360, 600, 40);
         this.progressUi.setDepth(100);
         
+        
+        
+        let maskGraphics = this.add.graphics();
+        maskGraphics.fillRect(400, 70 , CONST.gridWidth * CONST.tileWidth, (CONST.gridHeight+1) * CONST.tileHeight);
+        maskGraphics.fillStyle(0xffffff); // Setting the fill style to white
+        this.tileGrid.setMask(maskGraphics.createGeometryMask());
     }
 
     private setBackground(): void {

@@ -3,6 +3,7 @@ import Tile from "../tiles/Tile";
 import TileSimulation from "./TileSimulation";
 import TileGrid from "../grids/TileGrid";
 import TilePlaceholder from "./TilePlaceholder";
+import CONST from "../../const/const";
 
 class TileSquareShuffleSimulation extends TileSimulation {
     private tileGrid: TileGrid;
@@ -29,6 +30,11 @@ class TileSquareShuffleSimulation extends TileSimulation {
         let inPlaceholders: TilePlaceholder[] = [];
         let outPlaceholders: TilePlaceholder[] = [];
 
+        
+        let maskGraphics = this.scene.add.graphics();
+        maskGraphics.fillRect(400, 70 , CONST.gridWidth * CONST.tileWidth, (CONST.gridHeight+1) * CONST.tileHeight);
+        maskGraphics.fillStyle(0xffffff); // Setting the fill style to white
+        
         let tiles = this.getFlattenTiles();
         tiles.forEach((tile) => {
             tile.disableTileInteraction();
@@ -41,6 +47,7 @@ class TileSquareShuffleSimulation extends TileSimulation {
             }
 
             this.tileGrid.removeTile(tile);
+            tile.setMask(maskGraphics.createGeometryMask());
             tile.setPosition(worldPosition.x, worldPosition.y);
             inPlaceholders.push(new TilePlaceholder(this.scene, worldPosition.x, worldPosition.y, index));
             outPlaceholders.push(new TilePlaceholder(this.scene, this.x, this.y, index));
@@ -117,6 +124,7 @@ class TileSquareShuffleSimulation extends TileSimulation {
                 onComplete: () => {
                     this.tileGrid.addTileAtIndex(tile, outPlaceholder.index.x, outPlaceholder.index.y);
                     tile.enableTileInteraction();
+                    tile.clearMask();
 
                     if (++count === tiles.length) {
                         this.callback();
